@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CTSWebApp", "CTSWebApp\CTSWebApp.csproj", "{ECE3BC6D-B6AA-4428-9E26-EFB982AF8713}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PasswordUtilityApp", "PasswordUtilityApp\PasswordUtilityApp.csproj", "{B8F1AF0F-1685-4B03-BD7B-5E6AF7311C09}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ECE3BC6D-B6AA-4428-9E26-EFB982AF8713}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECE3BC6D-B6AA-4428-9E26-EFB982AF8713}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECE3BC6D-B6AA-4428-9E26-EFB982AF8713}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECE3BC6D-B6AA-4428-9E26-EFB982AF8713}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B8F1AF0F-1685-4B03-BD7B-5E6AF7311C09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B8F1AF0F-1685-4B03-BD7B-5E6AF7311C09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B8F1AF0F-1685-4B03-BD7B-5E6AF7311C09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B8F1AF0F-1685-4B03-BD7B-5E6AF7311C09}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {98F59678-7284-4D0E-9714-212B21338425}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Cary Tamil School</title>
+    <link href="~/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/styles/app.css" rel="stylesheet" />
+</head>
+<body>
+    @RenderBody()
+    <header class="container">
+        <nav class="navbar navbar-dark bg-dark navbar-expand-md">
+            <h1 class="navbar-brand"><i class="fa fa-gear"></i> @ViewBag.AppName</h1>
+            <button class="navbar-toggler" data-toggle="collapse" data-target="#menuBar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div id="menuBar" class="navbar-collapse collapse">
+                <ul class="navbar-nav">
+                    @*<li><a href="~/">Home</a></li>
+                <li><a href="~/app/Contact">Contact Us</a></li>
+                <li><a href="~/app/About">About Us</a></li>*@
+                    <li class="nav-item"><a class="nav-link" asp-controller="App" asp-action="Index">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-controller="App" asp-action="Teacher">Teachers</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-controller="App" asp-action="Contact">Contact Us</a></li>
+                    <li class="nav-item"><a class="nav-link" asp-controller="App" asp-action="About">About Us</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <h2 class="text-center">@ViewBag.PageTitle</h2>
+        @RenderBody()
+    </div>
+    <footer class="container">
+        <hr />
+        <div class="text-center">(C) @ViewBag.AppName - @DateTime.Now.Year</div>
+    </footer>
+    <script src="~/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="~/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @RenderSection("scripts", false)
+
+    <script src="~/node_modules/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/node_modules/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+
+    <script src="~/ClientApp/dist/runtime.js"></script>
+    <script src="~/ClientApp/dist/polyfills.js"></script>
+    <script src="~/ClientApp/dist/styles.js"></script>
+    <script src="~/ClientApp/dist/vendor.js"></script>
+    <script src="~/ClientApp/dist/main.js"></script>
+</body>
+</html>

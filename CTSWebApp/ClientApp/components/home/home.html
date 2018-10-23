@@ -1,0 +1,21 @@
+﻿<header class="container-fluid p0">
+    <nav class="navbar navbar-light navbar-expand-md bgcolorMenu">
+        <div class="row ">
+            <button class="navbar-toggler" data-toggle="collapse" data-target="#menuBar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div id="menuBar" class="navbar-collapse collapse">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link py-0" routerLink="/home">Home</a></li>
+                    <li *ngIf="isLoggedOn" class="nav-item"><a class="nav-link py-0" routerLink="/attendance">Attendance</a></li>
+                    <li class="nav-item"><a class="nav-link py-0" routerLink="/contactus">Contact Us</a></li>
+                    <li class="nav-item"><a class="nav-link py-0">About Us</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+<div class="container-fluid p0">
+    <h4 class="text-center">{{pageTitle}}</h4>
+    <h3 *ngIf="isLoggedOn">Welcome {{userName}}</h3>
+</div>

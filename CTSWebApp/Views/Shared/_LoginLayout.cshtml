@@ -1,0 +1,35 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.AppName</title>
+    <link href="~/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/styles/app.css" rel="stylesheet" />
+</head>
+<body>
+    <header class="container-fluid p0">
+        <nav class="navbar navbar-default navbar-fixed-top navbar-expand-md">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar1">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <img src="~/img/logo.png" class="py-0" height="40" width="40" alt="Cary Tamil School" />
+            <h4 class="pl10 py-0 white" >Cary Tamil School</h4>
+        </nav>
+    </header>
+    @RenderBody()
+
+    <footer class="container-fluid p0">
+        <hr />
+        <div class="text-center font-small"><strong><i class="fa fa-copyright"></i> @ViewBag.AppName - @DateTime.Now.Year</strong></div>
+    </footer>
+
+    <script src="~/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="~/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="~/node_modules/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/node_modules/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+
+    <script src="~/scripts/login.js"></script>
+</body>
+</html>

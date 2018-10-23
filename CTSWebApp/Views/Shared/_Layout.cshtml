@@ -1,0 +1,75 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewBag.AppName</title>
+    <link href="~/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+
+    <link href="~/styles/loading.css" rel="stylesheet" />
+    <link href="~/styles/app.css" rel="stylesheet" />
+    
+</head>
+<body>
+    <header class="container-fluid p0">
+        @*<nav class="navbar navbar-dark bg-dark navbar-expand-md">*@
+        @*<nav class="navbar navbar-dark bg-dark navbar-expand-md">
+            <div class="row headerAlign">
+                <div class="col-md-4">
+                    <div class="pull-left">
+                        <img src="~/img/logo.png" height="45" width="45" alt="Cary Tamil School" />
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="pull-left">
+                        <h2 class="navbar-brand">Cary Tamil School</h2>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="pull-right">Hello</div>
+                </div>
+            </div>
+        </nav>*@
+
+        <nav class="navbar navbar-default navbar-fixed-top navbar-expand-md">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar1">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <img src="~/img/logo.png" class="py-0" height="40" width="40" alt="Cary Tamil School" />
+            <h4 class="pl10 py-0 white" >Cary Tamil School</h4>
+            <div class="collapse navbar-collapse" id="navbar1">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <div id="loggedInAs" class="white font-small w90p pr5"></div>
+                    </li>
+                    <li class="nav-item active">
+                        <button type="button" id="loginLink" class="btn btn-success py-0" onclick="onLoginClick()" ><i class="fa fa-unlock" aria-hidden="true"></i> Login</button>
+                    </li>
+                    <li class="nav-item active">
+                        <button type="button" id="logoutLink" class="btn btn-danger py-0 hide" onclick="onLogoutClick()" ><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</button>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    @RenderBody()
+
+    <footer class="container-fluid p0">
+        <hr />
+        <div class="text-center font-small"><strong><i class="fa fa-copyright"></i> @ViewBag.AppName - @DateTime.Now.Year</strong></div>
+    </footer>
+
+    <script src="~/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="~/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="~/node_modules/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/node_modules/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+
+    <script src="~/ClientApp/dist/runtime.js"></script>
+    <script src="~/ClientApp/dist/polyfills.js"></script>
+    <script src="~/ClientApp/dist/styles.js"></script>
+    <script src="~/ClientApp/dist/vendor.js"></script>
+    <script src="~/ClientApp/dist/main.js"></script>
+    <script src="~/scripts/app.js"></script>
+</body>
+</html>

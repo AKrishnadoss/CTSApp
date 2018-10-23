@@ -1,0 +1,44 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewBag.AppName = "Cary Tamil School";
+}
+@model ContactViewModel
+@section Scripts{ 
+<script src="~/node_modules/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/node_modules/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+}
+
+<div class="col-md-6 offset-md-3">
+    <div class="card card-body bg-light">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly"></div>
+            <div class="form-group">
+                <label asp-for="UserName">Name:</label>
+                <input asp-for="UserName" type="text" class="form-control" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserEmail">Email:</label>
+                <input asp-for="UserEmail" type="email" class="form-control" />
+                <span asp-validation-for="UserEmail" class="text-danger"></span>
+            </div>    
+            <div class="form-group">
+                <label asp-for="Subject">Subject:</label>
+                <input asp-for="Subject" type="text" class="form-control" />
+                <span asp-validation-for="Subject" class="text-danger"></span>
+            </div>    
+            <div class="form-group">
+                <label asp-for="Message">Message:</label>
+                <textarea asp-for="Message" class="form-control" ></textarea>
+                <span asp-validation-for="Message" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                
+                <button type="submit" class="btn btn-primary btn-sm" ><i class="fa fa-envelope"> </i> Send Message</button>
+                <div class="text-success">@ViewBag.UserMessage</div>
+            </div>
+        </form>
+    </div>
+</div>

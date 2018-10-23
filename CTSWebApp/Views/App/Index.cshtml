@@ -1,0 +1,17 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model  CTSWebApp.ViewModels.AuthServiceAuthorizeResult
+@{
+    if (Model != null)
+    {
+        <div id="hdnToken" class="hide">@Model.Token</div>
+        <div id="hdnEmail" class="hide">@Model.Email</div>
+        <div id="hdnUserName" class="hide">@Model.UserName</div>
+    }
+}
+
+<ctsApp>
+    Loading Application. Please wait...
+    <div class="lds-grid"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+</ctsApp>

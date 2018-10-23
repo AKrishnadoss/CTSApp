@@ -1,0 +1,25 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    ViewBag.AppName = "Cary Tamil School";
+    ViewBag.PageTitle = "Teachers";
+}
+@model IEnumerable<CTSUser>
+
+<div class="row">
+    @foreach (var user in Model)
+    {
+        <div class="col-md-3">
+            <div class="border bg-light bordered rounded p-1">
+                <ul>
+                    <li>@user.Id</li>
+                    <li>@user.FirstName</li>
+                    <li>@user.LastName</li>
+                    <li>@user.Email</li>
+                    <li>@user.Phone</li>
+                </ul>
+            </div>
+        </div>
+    }
+</div>
