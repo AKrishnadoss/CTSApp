@@ -16,6 +16,11 @@ namespace CTSWebApp.Data
 
         public DbSet<CTSUser> CTSUsers { get; set; }
         public DbSet<TeacherAssignment> TeacherAssignment { get; set; }
+        public DbSet<Student> Students { get; set; }
+
+        public DbSet<StudentEnrollment> StudentEnrollment { get; set; }
+
+        public DbSet<StudentWeekGrade> StudentWeekGrade { get; set; }
 
     }
 }

@@ -9,11 +9,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Component } from '@angular/core';
 import { AuthService } from '../../services/AuthService';
+import { CalendarService } from '../../services/CalendarService';
 var AttendanceComponent = /** @class */ (function () {
-    function AttendanceComponent(_authService) {
+    function AttendanceComponent(_authService, _calendarService) {
         this._authService = _authService;
+        this._calendarService = _calendarService;
         this.pageTitle = "Attendance";
         this.userName = '';
+        this.CalendarWeeks = [];
     }
     AttendanceComponent.prototype.ngOnInit = function () {
         this.isLoggedOn = this._authService.getIsLoggedOn();
@@ -22,12 +25,14 @@ var AttendanceComponent = /** @class */ (function () {
             return;
         }
         this.userName = this._authService.getUserName();
+        this.CalendarWeeks = this._calendarService.CalendarWeeks;
     };
     AttendanceComponent = __decorate([
         Component({
             templateUrl: './attendance.html'
         }),
-        __metadata("design:paramtypes", [AuthService])
+        __metadata("design:paramtypes", [AuthService,
+            CalendarService])
     ], AttendanceComponent);
     return AttendanceComponent;
 }());

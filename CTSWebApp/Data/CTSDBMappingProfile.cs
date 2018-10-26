@@ -19,6 +19,14 @@ namespace CTSWebApp.Data
 
             CreateMap<TeacherAssignment, TeacherAssignmentViewModel>()
                 .ReverseMap();
+
+            CreateMap<Student, StudentViewModel>()
+                .ReverseMap();
+
+            CreateMap<StudentEnrollment, StudentEnrollmentViewModel>()
+                .ReverseMap();
+
+
         }
     }
 }

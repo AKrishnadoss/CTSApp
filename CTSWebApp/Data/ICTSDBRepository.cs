@@ -15,7 +15,11 @@ namespace CTSWebApp.Data
         //UserIdentity ValidateUser(string email, string password);
 
         TeacherAssignment GetTeacherAssignment(int teacherID);
+        IEnumerable<StudentEnrollment> GetAssignedStudents(int teacherID);
+        IEnumerable<StudentWeekGrade> GetAssignedStudentsWeekGrade(int teacherId, int weekId);
 
         CTSUser SaveOrUpdate(CTSUser teacher);
+
+        IEnumerable<Student> GetAllStudents(bool includeInActive = false);
     }
 }

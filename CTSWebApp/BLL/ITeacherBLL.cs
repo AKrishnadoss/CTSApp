@@ -8,6 +8,11 @@ namespace CTSWebApp.BLL
 {
     public interface ITeacherBLL
     {
+        IEnumerable<CTSUser> GetAllTeachers();
+        CTSUser GetCTSUserById(int id);
         TeacherAssignment GetTeacherAssignment(int teacherID);
+
+        IEnumerable<StudentEnrollment> GetAssignedStudents(int teacherID);
+        IEnumerable<StudentWeekGrade> GetAssignedStudentsWeekGrade(int teacherID, int weekId);
     }
 }

@@ -20,9 +20,34 @@ namespace CTSWebApp.BLL
             this._ctsDBRepository = ctsDBRepository;
         }
 
+        public IEnumerable<CTSUser> GetAllTeachers()
+        {
+            return _ctsDBRepository.GetAllTeachers();
+        }
+
+        public CTSUser GetCTSUserById(int id)
+        {
+            CTSUser ctsUser = _ctsDBRepository.GetCTSUserById(id);
+            if ( ctsUser != null && ctsUser.Teacher == "Y")
+            {
+                return ctsUser;
+            }
+            return null;
+        }
+
         public TeacherAssignment GetTeacherAssignment(int teacherID)
         {
             return _ctsDBRepository.GetTeacherAssignment(teacherID);
+        }
+
+        public IEnumerable<StudentEnrollment> GetAssignedStudents(int teacherID)
+        {
+            return _ctsDBRepository.GetAssignedStudents(teacherID);
+        }
+
+        public IEnumerable<StudentWeekGrade> GetAssignedStudentsWeekGrade(int teacherID, int weekId)
+        {
+            return _ctsDBRepository.GetAssignedStudentsWeekGrade(teacherID, weekId);
         }
     }
 }

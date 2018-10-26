@@ -207,5 +207,100 @@ namespace CTSWebApp.Data
 
             return null;
         }
+
+        public IEnumerable<StudentEnrollment> GetAssignedStudents(int teacherId)
+        {
+            _logger.LogInformation("CTSDBRepository.GetAssignedStudents() called");
+
+            List<SqlParameter> paramList = new List<SqlParameter>();
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@teacherId",
+                SqlDbType = System.Data.SqlDbType.Int,
+                SqlValue = teacherId
+            });
+
+
+            string sql = "SELECT SE.ID ID, S.ID STUDENTID, SE.CALENDARYEARID, SE.TEACHERID, S.FIRSTNAME FIRSTNAME, S.LASTNAME LASTNAME, S.ACTIVE ACTIVE, "
+                + " SE.CTSGRADE CTSGRADE, SE.COUNTYGRADE COUNTYGRADE, SE.ENROLLMENTDATE, SE.DATEOFLEAVING, SE.NOTES "
+                + " FROM STUDENTENROLLMENT SE "
+                + " JOIN STUDENT S ON S.ID = SE.STUDENTID "
+                + " JOIN CALENDARYEAR CY ON CY.ID = SE.CALENDARYEARID AND "
+                + " CY.ACTIVEYEAR = 'Y' AND "
+                + " SE.TEACHERID = @teacherId ";
+
+            var result = _dbContext.StudentEnrollment.FromSql(sql, paramList.ToArray());
+
+            //var rr = _dbContext.Students
+            //        .Include(s => s.StudentEnrollment);
+
+            if (result != null)
+            {
+                return result.ToList();
+            }
+
+            return null;
+        }
+
+        public IEnumerable<StudentWeekGrade> GetAssignedStudentsWeekGrade(int teacherId, int weekId)
+        {
+            _logger.LogInformation("CTSDBRepository.GetAssignedStudentsWeekGrade() called");
+
+            List<SqlParameter> paramList = new List<SqlParameter>();
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@teacherId",
+                SqlDbType = System.Data.SqlDbType.Int,
+                SqlValue = teacherId
+            });
+
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@weekId",
+                SqlDbType = System.Data.SqlDbType.Int,
+                SqlValue = weekId
+            });
+
+            string sql = "SELECT ISNULL(SWG.ID,0) ID, S.ID STUDENTID, CW.ID CALENDARWEEKID, SE.TEACHERID, S.FIRSTNAME FIRSTNAME, S.LASTNAME LASTNAME, S.ACTIVE ACTIVE, "
+                    + " SE.CTSGRADE CTSGRADE, SE.COUNTYGRADE COUNTYGRADE, SE.ENROLLMENTDATE, SE.DATEOFLEAVING, "
+                    + "SWG.ATTENDANCE, SWG.HOMEWORK, SWG.READING, SWG.WRITING, SWG.SPEAKING, SWG.BEHAVIOR, SWG.QUIZ, SWG.NOTES "
+                    + "FROM STUDENTENROLLMENT SE "
+                    + "JOIN STUDENT S ON S.ID = SE.STUDENTID "
+                    + "JOIN CALENDARYEAR CY ON CY.ID = SE.CALENDARYEARID "
+                    + "LEFT OUTER JOIN STUDENTWEEKGRADE SWG ON SWG.StudentID = S.ID "
+                    + "LEFT OUTER JOIN CALENDARWEEK CW ON CW.CalendarYearID = CY.ID "
+                    + "AND CY.ACTIVEYEAR = 'Y' "
+                    + "AND SE.TEACHERID = @teacherId "
+                    + "AND CW.ID = @weekId ";
+
+            var result = _dbContext.StudentWeekGrade.FromSql(sql, paramList.ToArray());
+
+            if (result != null)
+            {
+                return result.ToList();
+            }
+
+            return null;
+        }
+
+        public IEnumerable<Student> GetAllStudents(bool includeInActive = false)
+        {
+            IEnumerable<Student> result = null;
+            if (includeInActive == true)
+            {
+                // return all students
+                result = _dbContext.Students
+                    .ToList();
+            }
+            else
+            {
+                // return only 'Active' Students
+                result = _dbContext.Students
+                    .Where(s => s.Active == "Y")
+                    .ToList();
+            }
+
+            return result;
+        }
     }
 }

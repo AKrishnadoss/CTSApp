@@ -8,26 +8,19 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Injectable } from '@angular/core';
-import { environment } from '../environments/environment';
-var LoggerService = /** @class */ (function () {
-    function LoggerService() {
-        if (LoggerService_1.instance == null) {
-            LoggerService_1.instance = this;
-        }
-        return LoggerService_1.instance;
+var CalendarService = /** @class */ (function () {
+    function CalendarService() {
+        this.CalendarWeeks = [
+            { WeekNo: 1, Description: "08/26/2018" },
+            { WeekNo: 2, Description: "09/09/2018" },
+            { WeekNo: 3, Description: "09/16/2018" }
+        ];
     }
-    LoggerService_1 = LoggerService;
-    LoggerService.prototype.logMessage = function (message) {
-        if (!environment.production) {
-            console.log(message);
-        }
-    };
-    var LoggerService_1;
-    LoggerService = LoggerService_1 = __decorate([
+    CalendarService = __decorate([
         Injectable(),
         __metadata("design:paramtypes", [])
-    ], LoggerService);
-    return LoggerService;
+    ], CalendarService);
+    return CalendarService;
 }());
-export { LoggerService };
-//# sourceMappingURL=LoggerService.js.map
+export { CalendarService };
+//# sourceMappingURL=CalendarService.js.map

@@ -12,7 +12,7 @@
   ],
 
   "ConnectionStrings": {
-    "CTSDBConnectionString": "Server=.\\SQLEXPRESS;Database=CTSDB;Integrated Security=True;MultipleActiveResultSets=true;"
+    "CTSDBConnectionString": "Server=NIRANJANAKILA\\SQLEXPRESS;Database=CTSDB;User=SA;Pwd=admin123;MultipleActiveResultSets=true;"
   },
   "Logging": {
     "LogLevel": {

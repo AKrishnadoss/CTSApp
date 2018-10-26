@@ -40,12 +40,12 @@ var AuthService = /** @class */ (function () {
     AuthService.prototype.getIsLoggedOn = function () {
         return this.isLoggedOn;
     };
+    var AuthService_1;
     AuthService = AuthService_1 = __decorate([
         Injectable(),
         __metadata("design:paramtypes", [])
     ], AuthService);
     return AuthService;
-    var AuthService_1;
 }());
 export { AuthService };
 //# sourceMappingURL=AuthService.js.map

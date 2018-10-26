@@ -1,5 +1,7 @@
 ﻿import {Component, OnInit} from '@angular/core'
-import {AuthService} from '../../services/AuthService';
+import { AuthService } from '../../services/AuthService';
+import { CalendarService } from '../../services/CalendarService';
+import { CalendarWeek } from '../../model/CalendarWeek';
 
 @Component ({
 	templateUrl : './attendance.html'
@@ -8,9 +10,11 @@ export class AttendanceComponent  implements OnInit {
 
 	pageTitle = "Attendance";
 	userName = '';
-	isLoggedOn : boolean;
+    isLoggedOn: boolean;
+    CalendarWeeks: CalendarWeek[] ;
 
-	constructor(private _authService: AuthService){
+    constructor(private _authService: AuthService,
+        private _calendarService: CalendarService) {
 	}
 
 	ngOnInit(){
@@ -20,7 +24,8 @@ export class AttendanceComponent  implements OnInit {
 			return;
 		}
 
-		this.userName = this._authService.getUserName();
+        this.userName = this._authService.getUserName();
+        this.CalendarWeeks = this._calendarService.getCalendarWeeks();
 	}
 
  }

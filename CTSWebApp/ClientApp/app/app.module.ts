@@ -3,7 +3,9 @@ import { NgModule } from '@angular/core';
 import {RouterModule} from '@angular/Router';
 
 import {LoggerService} from '../services/LoggerService';
-import {AuthService} from '../services/AuthService';
+import { AuthService } from '../services/AuthService';
+import { CalendarService } from '../services/CalendarService';
+
 import { AppComponent } from './app.component';
 import {AppRoutingModule} from '../routes';
 import {HomeComponent} from '../components/home/Home';
@@ -23,7 +25,7 @@ import {AttendanceComponent} from '../components/attendance/Attendance';
     BrowserModule,
 	AppRoutingModule
   ],
-  providers: [AuthService, LoggerService],
+  providers: [AuthService, LoggerService, CalendarService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
