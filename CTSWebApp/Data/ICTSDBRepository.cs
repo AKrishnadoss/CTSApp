@@ -21,5 +21,8 @@ namespace CTSWebApp.Data
         CTSUser SaveOrUpdate(CTSUser teacher);
 
         IEnumerable<Student> GetAllStudents(bool includeInActive = false);
+        IEnumerable<CalendarWeek> GetCalendarWeeks(bool includeInActive = false);
+        IEnumerable<Grade> GetGrades();
+
     }
 }

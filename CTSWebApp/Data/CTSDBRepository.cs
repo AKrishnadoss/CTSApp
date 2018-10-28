@@ -302,5 +302,35 @@ namespace CTSWebApp.Data
 
             return result;
         }
+
+        public IEnumerable<CalendarWeek> GetCalendarWeeks(bool includeInActive = false)
+        {
+            IEnumerable<CalendarWeek> result = null;
+            if (includeInActive == true)
+            {
+                // return all CalendarWeek
+                result = _dbContext.CalendarWeeks
+                    .ToList();
+            }
+            else
+            {
+                // return only 'Active' CalendarWeek
+                result = _dbContext.CalendarWeeks
+                    .Where(s => s.Active == "Y")
+                    .ToList();
+            }
+
+            return result;
+        }
+
+        public IEnumerable<Grade> GetGrades()
+        {
+            IEnumerable<Grade> result = null;
+               // return all CalendarWeek
+                result = _dbContext.Grades
+                    .ToList();
+                 
+            return result;
+        }
     }
 }

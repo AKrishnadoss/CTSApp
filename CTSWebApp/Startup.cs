@@ -51,6 +51,9 @@ namespace CTSWebApp
 
             services.AddTransient<IIdentityBLL, IdentityBLL>();
             services.AddTransient<ITeacherBLL, TeacherBLL>();
+            services.AddTransient<ICalendarBLL, CalendarBLL>();
+            services.AddTransient<IGradeBLL, GradeBLL>();
+            services.AddTransient<IStudentBLL, StudentBLL>();
             services.AddTransient<IMailService, MailService>();
             services.AddTransient<IAuthService, AuthService>();
 

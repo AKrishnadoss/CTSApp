@@ -8,17 +8,43 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 var CalendarService = /** @class */ (function () {
-    function CalendarService() {
-        this.CalendarWeeks = [
-            { WeekNo: 1, Description: "08/26/2018" },
-            { WeekNo: 2, Description: "09/09/2018" },
-            { WeekNo: 3, Description: "09/16/2018" }
-        ];
+    function CalendarService(_http) {
+        this._http = _http;
     }
+    //private weeks : CalendarWeek[] = [
+    //    {
+    //        Id: 1,
+    //        CalendarYearId: 1,
+    //        WeekNo: 1,
+    //        Description: "08/26/2018",
+    //        TermNo: 1
+    //    },
+    //    {
+    //        Id: 2,
+    //        CalendarYearId: 1,
+    //        WeekNo: 2,
+    //        Description: "09/09/2018",
+    //        TermNo: 1
+    //    },
+    //    {
+    //        Id: 3,
+    //        CalendarYearId: 1,
+    //        WeekNo: 3,
+    //        Description: "09/16/2018",
+    //        TermNo: 1
+    //    }
+    //];
+    CalendarService.prototype.getCalendarWeeks = function () {
+        //this.weeks[0].WeekDate = new Date(2018, 08, 26);
+        //this.weeks[1].WeekDate = new Date(2018, 09, 09);
+        //return this.weeks;
+        return this._http.get('/api/calendar/weeks');
+    };
     CalendarService = __decorate([
         Injectable(),
-        __metadata("design:paramtypes", [])
+        __metadata("design:paramtypes", [HttpClient])
     ], CalendarService);
     return CalendarService;
 }());

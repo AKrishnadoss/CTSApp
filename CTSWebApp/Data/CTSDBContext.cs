@@ -21,6 +21,8 @@ namespace CTSWebApp.Data
         public DbSet<StudentEnrollment> StudentEnrollment { get; set; }
 
         public DbSet<StudentWeekGrade> StudentWeekGrade { get; set; }
+        public DbSet<CalendarWeek> CalendarWeeks { get; set; }
+        public DbSet<Grade> Grades { get; set; }
 
     }
 }

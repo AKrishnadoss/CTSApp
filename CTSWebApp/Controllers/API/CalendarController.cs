@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using CTSWebApp.BLL;
+using CTSWebApp.Data;
 using CTSWebApp.Data.Entities;
-using CTSWebApp.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -11,42 +11,42 @@ using System.Threading.Tasks;
 
 namespace CTSWebApp.Controllers.API
 {
-
     [Route("api/[Controller]")]
     [ApiController]
     [Produces("application/json")]
-    public class GradeController : Controller
+    public class CalendarController : Controller
     {
-        private readonly ILogger<GradeController> _logger;
+        private readonly ILogger<CalendarController> _logger;
         private readonly IMapper _mapper;
-        private readonly IGradeBLL _gradeBLL;
+        private readonly ICalendarBLL _calendarBLL;
 
-        public GradeController(ILogger<GradeController> logger, IMapper mapper,IGradeBLL gradeBLL)
+        public CalendarController(ICTSDBRepository ctsDBRepository, ILogger<CalendarController> logger, IMapper mapper,
+            ICalendarBLL calendarBLL)
         {
             this._logger = logger;
             this._mapper = mapper;
-            this._gradeBLL = gradeBLL;
+            this._calendarBLL = calendarBLL;
         }
 
         [HttpGet]
-        [Route("grades")]
+        [Route("weeks")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public ActionResult<IEnumerable<GradeViewModel>> GetAllGrades()
+        public ActionResult<IEnumerable<CalendarWeek>> GetWeeks(bool includeInactive=false)
         {
             try
             {
-                var result=_gradeBLL.GetGrades();
+                var result = _calendarBLL.GetCalendarWeeks(includeInactive);
                 if (result != null)
                 {
-                    return Ok(_mapper.Map<IEnumerable<Grade>, IEnumerable<GradeViewModel>>(result));
+                    return Ok(result);
                 }
                 return NotFound();
             }
             catch (Exception exception)
             {
-                _logger.LogError($"Exception occurred in GetAllGrades() => {exception}");
-                return BadRequest("Exception occurred in GradeController.GetAllGrades()");
+                _logger.LogError($"Exception occurred in GetCalendarWeeks() => {exception}");
+                return BadRequest("Exception occurred in CalendarController.GetCalendarWeeks()");
             }
         }
     }

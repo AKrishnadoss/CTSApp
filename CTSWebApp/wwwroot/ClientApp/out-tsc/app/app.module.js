@@ -6,9 +6,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { HttpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 import { LoggerService } from '../services/LoggerService';
 import { AuthService } from '../services/AuthService';
 import { CalendarService } from '../services/CalendarService';
+import { GradeService } from '../services/GradeService';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from '../routes';
 import { HomeComponent } from '../components/home/Home';
@@ -27,9 +30,11 @@ var AppModule = /** @class */ (function () {
             ],
             imports: [
                 BrowserModule,
+                HttpModule,
+                HttpClientModule,
                 AppRoutingModule
             ],
-            providers: [AuthService, LoggerService, CalendarService],
+            providers: [AuthService, LoggerService, CalendarService, GradeService],
             bootstrap: [AppComponent]
         })
     ], AppModule);

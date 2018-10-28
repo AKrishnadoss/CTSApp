@@ -10,13 +10,14 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Component } from '@angular/core';
 import { AuthService } from '../../services/AuthService';
 import { CalendarService } from '../../services/CalendarService';
+import { GradeService } from '../../services/GradeService';
 var AttendanceComponent = /** @class */ (function () {
-    function AttendanceComponent(_authService, _calendarService) {
+    function AttendanceComponent(_authService, _calendarService, _gradeService) {
         this._authService = _authService;
         this._calendarService = _calendarService;
+        this._gradeService = _gradeService;
         this.pageTitle = "Attendance";
         this.userName = '';
-        this.CalendarWeeks = [];
     }
     AttendanceComponent.prototype.ngOnInit = function () {
         this.isLoggedOn = this._authService.getIsLoggedOn();
@@ -25,14 +26,42 @@ var AttendanceComponent = /** @class */ (function () {
             return;
         }
         this.userName = this._authService.getUserName();
-        this.CalendarWeeks = this._calendarService.CalendarWeeks;
+        this.getCalendarWeeks();
+        this.getGrades();
+    };
+    AttendanceComponent.prototype.getGrades = function () {
+        var _this = this;
+        this._gradeService.getGrades()
+            .subscribe(function (result) {
+            _this.Grades = result;
+        }, function (err) {
+            console.log(err.error);
+        });
+    };
+    AttendanceComponent.prototype.getCalendarWeeks = function () {
+        var _this = this;
+        this._calendarService.getCalendarWeeks()
+            .subscribe(function (result) {
+            _this.CalendarWeeks = result;
+        }, function (err) {
+            console.log(err.error);
+        });
+    };
+    AttendanceComponent.prototype.onSelectCalendarWeek = function (value) {
+        console.log(value);
+        this.calendarWeekId = value;
+    };
+    AttendanceComponent.prototype.onSelectGrade = function (value) {
+        console.log(value);
+        this.ctsGrade = value;
     };
     AttendanceComponent = __decorate([
         Component({
             templateUrl: './attendance.html'
         }),
         __metadata("design:paramtypes", [AuthService,
-            CalendarService])
+            CalendarService,
+            GradeService])
     ], AttendanceComponent);
     return AttendanceComponent;
 }());

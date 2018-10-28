@@ -2,6 +2,10 @@
 import { AuthService } from '../../services/AuthService';
 import { CalendarService } from '../../services/CalendarService';
 import { CalendarWeek } from '../../model/CalendarWeek';
+import { Observable } from 'rxjs';
+import { GradeService } from '../../services/GradeService';
+import { Grade } from '../../model/Grade';
+
 
 @Component ({
 	templateUrl : './attendance.html'
@@ -11,10 +15,17 @@ export class AttendanceComponent  implements OnInit {
 	pageTitle = "Attendance";
 	userName = '';
     isLoggedOn: boolean;
-    CalendarWeeks: CalendarWeek[] ;
+    CalendarWeeks: CalendarWeek[];
+    Grades: Grade[];
+
+    // Search criteria
+    calendarWeekId: number;
+    ctsGrade: string;
+    teacherId: number;
 
     constructor(private _authService: AuthService,
-        private _calendarService: CalendarService) {
+        private _calendarService: CalendarService,
+        private _gradeService: GradeService) {
 	}
 
 	ngOnInit(){
@@ -25,7 +36,35 @@ export class AttendanceComponent  implements OnInit {
 		}
 
         this.userName = this._authService.getUserName();
-        this.CalendarWeeks = this._calendarService.getCalendarWeeks();
-	}
+        this.getCalendarWeeks();
+        this.getGrades();
+    }
+    getGrades() {
+        this._gradeService.getGrades()
+            .subscribe(result => {
+                this.Grades = result;
+            },
+                err => {
+                    console.log(err.error);
+                });
+    }
+    getCalendarWeeks() {
+        this._calendarService.getCalendarWeeks()
+            .subscribe(result => {
+                this.CalendarWeeks = result;
+            },
+                err => {
+                    console.log(err.error);
+                });
+    }
 
+    onSelectCalendarWeek(value : any) {
+        console.log(value);
+        this.calendarWeekId = value;
+    }
+
+    onSelectGrade(value: any) {
+        console.log(value);
+        this.ctsGrade = value;
+    }
  }

@@ -11,60 +11,61 @@
                     <li class="nav-item"><a class="nav-link py-0" routerLink="/contactus">Contact Us</a></li>
                     <li class="nav-item"><a class="nav-link py-0">About Us</a></li>
                 </ul>
-                
             </div>
         </div>
     </nav>
+
 </header>
-<div class="container p0">
+<div class="container p0 mt10">
     <!--<h4 class="text-center">{{pageTitle}}</h4>-->
     
-    <div class="row justify-content-md-center">
-        <div class="col-md-2 col-md-offset-2">
-            <label class="left">Week</label>
-            <select class="left ml10" data-style="btn-primary">
-                <option value="0">--Select--</option>
-                <option *ngFor="let week of CalendarWeeks" value={{week.WeekNo}}>
-                    {{week.Description}}
+    <div class="row bgBar br5 m5 p5">
+        <div class="col-md-4">
+            <select class="left ml10 selectpicker form-control show-tick" data-width="auto" (change)="onSelectCalendarWeek($event.target.value)">
+                <option value="0">--Select Week--</option>
+                <option *ngFor="let week of CalendarWeeks" value={{week.weekNo}}>
+                    {{week.description}} - {{week.weekDate | date: 'MM/dd/yyyy'}}
                 </option>
             </select>
         </div>
         <div class="col-md-2">
-            <label class="left">Class</label>
-            <select class="left ml10" data-style="btn-primary">
-                <option>Pre-K</option>
-                <option>1</option>
-                <option>2</option>
+            <select class="left ml10 selectpicker form-control" data-width="auto" (change)="onSelectGrade($event.target.value)">
+                <option value="0">--Select Grade--</option>
+                <option *ngFor="let grade of Grades" value={{grade.ctsGrade}}>
+                    {{grade.ctsGrade}}
+                </option>
             </select>
         </div>
         <div class="col-md-4">
-            <label class="left">Teacher</label>
-            <select class="left ml10" data-style="btn-primary">
+            <select class="left ml10 selectpicker form-control" data-width="auto">
+                <option value="0">--Select Teacher--</option>
                 <option>Uthami</option>
                 <option>Latha</option>
                 <option>Niranjan</option>
             </select>
         </div>
-        <div class="col-md-1">
-            <button class="btn btn-primary btn-sm"><i class="fa fa-list-ul"></i> List Students</button>
+        <div class="col-md-2">
+            <button class="btn btn-primary btn-sm right"><strong><i class="fa fa-list-ul"></i> List Students</strong></button>
         </div>
     </div>
-    <div class="row justify-content-md-center">
-        <div class="col-md-11 col-md-offset-1">
-        <table class="table table-hover table-bordered mt10 table-sm" id="dev-table">
-            <thead class="table-primary">
+</div>
+<div class="container p0 mt10">
+    <div class="row">
+        <div class="col-md-12">
+        <table class="table table-hover table-bordered table-sm font-small" id="dev-table">
+            <thead class="bgTableHead">
                 <tr>
-                    <th>Student ID</th>
-                    <th style="width:250px">First Name</th>
-                    <th style="width:250px">Last Name</th>
-                    <th>Attendance</th>
-                    <th>Homework</th>
-                    <th>Reading</th>
-                    <th>Writing</th>
-                    <th>Speaking</th>
-                    <th>Behaviour</th>
-                    <th>Quiz</th>
-                    <th style="width:200px">Notes</th>
+                    <th class="fw">Student ID</th>
+                    <th class="fw" style="width:200px">First Name</th>
+                    <th class="fw" style="width:200px">Last Name</th>
+                    <th class="fw">Attendance</th>
+                    <th class="fw">Homework</th>
+                    <th class="fw">Reading</th>
+                    <th class="fw">Writing</th>
+                    <th class="fw">Speaking</th>
+                    <th class="fw">Behaviour</th>
+                    <th class="fw">Quiz</th>
+                    <th class="fw" style="width:200px">Notes</th>
 
                 </tr>
             </thead>
@@ -74,19 +75,13 @@
                     <td>Kilgore</td>
                     <td>Trout</td>
                     <td>
-                        <label class="customradio">
-                            <span class="radiotextsty">Present</span>
-                            <input type="radio" checked="checked" name="radio">
-                            <span class="checkmark"></span>
-                        </label>
-                        <label class="customradio">
-                            <span class="radiotextsty">Absent</span>
-                            <input type="radio" name="radio">
-                            <span class="checkmark"></span>
-                        </label>
+                        <select class="left ml10 selectpicker" data-width="fit">
+                            <option>Yes</option>
+                            <option>No</option>
+                        </select>
                     </td>
                     <td>
-                        <select class="left ml10" data-style="btn-primary">
+                        <select class="left ml10 selectpicker" data-width="fit">
                             <option>1</option>
                             <option>2</option>
                             <option>3</option>
@@ -100,7 +95,7 @@
                         </select>
                     </td>
                     <td>
-                        <select class="left ml10" data-style="btn-primary">
+                        <select class="left ml10 selectpicker" data-width="fit">
                             <option>1</option>
                             <option>2</option>
                             <option>3</option>
@@ -114,7 +109,7 @@
                         </select>
                     </td>
                     <td>
-                        <select class="left ml10" data-style="btn-primary">
+                        <select class="left ml10 selectpicker " data-width="fit">
                             <option>1</option>
                             <option>2</option>
                             <option>3</option>
@@ -128,7 +123,7 @@
                         </select>
                     </td>
                     <td>
-                        <select class="left ml10" data-style="btn-primary">
+                        <select class="left ml10 selectpicker " data-width="fit">
                             <option>1</option>
                             <option>2</option>
                             <option>3</option>
@@ -141,7 +136,7 @@
                         </select>
                     </td>
                     <td>
-                        <select class="left ml10" data-style="btn-primary">
+                        <select class="left ml10 selectpicker" data-width="fit">
                             <option>1</option>
                             <option>2</option>
                             <option>3</option>
@@ -154,7 +149,7 @@
                         </select>
                     </td>
                     <td>
-                        <select class="left ml10" data-style="btn-primary">
+                        <select class="left ml10 selectpicker" data-width="fit">
                             <option>1</option>
                             <option>2</option>
                             <option>3</option>
@@ -175,19 +170,13 @@
                     <td>Bob</td>
                     <td>Loblaw</td>
                     <td>
-                        <label class="customradio">
-                            <span class="radiotextsty">Present</span>
-                            <input type="radio" checked="checked" name="radio">
-                            <span class="checkmark"></span>
-                        </label>
-                        <label class="customradio">
-                            <span class="radiotextsty">Absent</span>
-                            <input type="radio" name="radio">
-                            <span class="checkmark"></span>
-                        </label>
+                        <select class="left ml10 selectpicker" data-width="fit">
+                            <option>Yes</option>
+                            <option>No</option>
+                        </select>
                     </td>
                     <td>
-                        <select class="left ml10" data-style="btn-primary">
+                        <select class="left ml10 selectpicker " data-width="fit">
                             <option>1</option>
                             <option>2</option>
                             <option>3</option>
@@ -200,25 +189,8 @@
 
                         </select>
                     </td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Holden</td>
-                    <td>Caulfield</td>
                     <td>
-                        <label class="customradio">
-                            <span class="radiotextsty">Present</span>
-                            <input type="radio" checked="checked" name="radio">
-                            <span class="checkmark"></span>
-                        </label>
-                        <label class="customradio">
-                            <span class="radiotextsty">Absent</span>
-                            <input type="radio" name="radio">
-                            <span class="checkmark"></span>
-                        </label>
-                    </td>
-                    <td>
-                        <select class="left ml10" data-style="btn-primary">
+                        <select class="left ml10 selectpicker " data-width="fit">
                             <option>1</option>
                             <option>2</option>
                             <option>3</option>
@@ -231,25 +203,8 @@
 
                         </select>
                     </td>
-                </tr>
-                <tr>
-                    <td>1</td>
-                    <td>Kilgore</td>
-                    <td>Trout</td>
                     <td>
-                        <label class="customradio">
-                            <span class="radiotextsty">Present</span>
-                            <input type="radio" checked="checked" name="radio">
-                            <span class="checkmark"></span>
-                        </label>
-                        <label class="customradio">
-                            <span class="radiotextsty">Absent</span>
-                            <input type="radio" name="radio">
-                            <span class="checkmark"></span>
-                        </label>
-                    </td>
-                    <td>
-                        <select class="left ml10" data-style="btn-primary">
+                        <select class="left ml10 selectpicker " data-width="fit">
                             <option>1</option>
                             <option>2</option>
                             <option>3</option>
@@ -262,25 +217,8 @@
 
                         </select>
                     </td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Bob</td>
-                    <td>Loblaw</td>
                     <td>
-                        <label class="customradio">
-                            <span class="radiotextsty">Present</span>
-                            <input type="radio" checked="checked" name="radio">
-                            <span class="checkmark"></span>
-                        </label>
-                        <label class="customradio">
-                            <span class="radiotextsty">Absent</span>
-                            <input type="radio" name="radio">
-                            <span class="checkmark"></span>
-                        </label>
-                    </td>
-                    <td>
-                        <select class="left ml10" data-style="btn-primary">
+                        <select class="left ml10 selectpicker " data-width="fit">
                             <option>1</option>
                             <option>2</option>
                             <option>3</option>
@@ -293,25 +231,8 @@
 
                         </select>
                     </td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>Holden</td>
-                    <td>Caulfield</td>
                     <td>
-                        <label class="customradio">
-                            <span class="radiotextsty">Present</span>
-                            <input type="radio" checked="checked" name="radio">
-                            <span class="checkmark"></span>
-                        </label>
-                        <label class="customradio">
-                            <span class="radiotextsty">Absent</span>
-                            <input type="radio" name="radio">
-                            <span class="checkmark"></span>
-                        </label>
-                    </td>
-                    <td>
-                        <select class="left ml10" data-style="btn-primary">
+                        <select class="left ml10 selectpicker " data-width="fit">
                             <option>1</option>
                             <option>2</option>
                             <option>3</option>
@@ -324,13 +245,36 @@
 
                         </select>
                     </td>
+                    <td>
+                        <select class="left ml10 selectpicker " data-width="fit">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+
+                        </select>
+                    </td>
+                    <td>
+                        <textarea></textarea>
+                    </td>
                 </tr>
+                
             </tbody>
         </table>
         </div>
     </div>
-    <div class="row justify-content-md-center">
-        <button>Cancel</button>
-        <button>Save</button>
+    <div class="row row bgBar br5 m5 p5">
+        <div class="col-md-4"></div>
+        <div class="col-md-4 ">
+            <button class="btn btn-warning btn-sm"><strong><i class="fa fa-times-circle"></i> Cancel</strong></button>
+            <button class="btn btn-success btn-sm ml10"><strong><i class="fa fa-save"></i> Save</strong></button>
+        </div>
+        <div class="col-md-4"></div>
     </div>
-</div>
+
+  

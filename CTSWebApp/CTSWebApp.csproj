@@ -9,9 +9,11 @@
     <None Remove="ClientApp\components\contact\contact.ts" />
     <None Remove="ClientApp\components\home\home.ts" />
     <None Remove="ClientApp\model\CalendarWeek.ts" />
+    <None Remove="ClientApp\model\Grade.ts" />
     <None Remove="ClientApp\routes.ts" />
     <None Remove="ClientApp\services\AuthService.ts" />
     <None Remove="ClientApp\services\CalendarService.ts" />
+    <None Remove="ClientApp\services\GradeService.ts" />
     <None Remove="ClientApp\services\LoggerService.ts" />
   </ItemGroup>
 
@@ -33,9 +35,11 @@
     <TypeScriptCompile Include="ClientApp\components\contact\contact.ts" />
     <TypeScriptCompile Include="ClientApp\components\home\home.ts" />
     <TypeScriptCompile Include="ClientApp\model\CalendarWeek.ts" />
+    <TypeScriptCompile Include="ClientApp\model\Grade.ts" />
     <TypeScriptCompile Include="ClientApp\routes.ts" />
     <TypeScriptCompile Include="ClientApp\services\AuthService.ts" />
     <TypeScriptCompile Include="ClientApp\services\CalendarService.ts" />
+    <TypeScriptCompile Include="ClientApp\services\GradeService.ts" />
     <TypeScriptCompile Include="ClientApp\services\LoggerService.ts" />
   </ItemGroup>
 

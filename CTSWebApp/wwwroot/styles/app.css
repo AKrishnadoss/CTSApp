@@ -35,6 +35,11 @@
 .left{
     float:left;
 }
+
+.right {
+    float:right;
+}
+
 .ml10{
     margin-left:10px;
 }
@@ -150,7 +155,31 @@
     color: #fff;
 }
 
-/*
+.bgBar {
+    background-color: #b7defa;
+}
+
+.bgTableHead {
+    background-color: #1192ee;
+}
+
+.br5{
+    border-radius:5px;
+}
+
+.m5 {
+    margin:5px;
+}
+
+.p5 {
+    padding:5px;
+}
+
+.fw{
+   color:white;
+}
+
+    /*
 header {
     background-color:lightgray
 }

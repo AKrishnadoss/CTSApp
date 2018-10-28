@@ -156,14 +156,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AppModule", function() { return AppModule; });
 /* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/platform-browser */ "../node_modules/@angular/platform-browser/fesm5/platform-browser.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "../node_modules/@angular/core/fesm5/core.js");
-/* harmony import */ var _services_LoggerService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../services/LoggerService */ "./services/LoggerService.ts");
-/* harmony import */ var _services_AuthService__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../services/AuthService */ "./services/AuthService.ts");
-/* harmony import */ var _services_CalendarService__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../services/CalendarService */ "./services/CalendarService.ts");
-/* harmony import */ var _app_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./app.component */ "./app/app.component.ts");
-/* harmony import */ var _routes__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../routes */ "./routes.ts");
-/* harmony import */ var _components_home_Home__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../components/home/Home */ "./components/home/Home.ts");
-/* harmony import */ var _components_contact_Contact__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../components/contact/Contact */ "./components/contact/Contact.ts");
-/* harmony import */ var _components_attendance_Attendance__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../components/attendance/Attendance */ "./components/attendance/Attendance.ts");
+/* harmony import */ var _angular_http__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/http */ "../node_modules/@angular/http/fesm5/http.js");
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/common/http */ "../node_modules/@angular/common/fesm5/http.js");
+/* harmony import */ var _services_LoggerService__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../services/LoggerService */ "./services/LoggerService.ts");
+/* harmony import */ var _services_AuthService__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../services/AuthService */ "./services/AuthService.ts");
+/* harmony import */ var _services_CalendarService__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../services/CalendarService */ "./services/CalendarService.ts");
+/* harmony import */ var _services_GradeService__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../services/GradeService */ "./services/GradeService.ts");
+/* harmony import */ var _app_component__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./app.component */ "./app/app.component.ts");
+/* harmony import */ var _routes__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../routes */ "./routes.ts");
+/* harmony import */ var _components_home_Home__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../components/home/Home */ "./components/home/Home.ts");
+/* harmony import */ var _components_contact_Contact__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ../components/contact/Contact */ "./components/contact/Contact.ts");
+/* harmony import */ var _components_attendance_Attendance__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ../components/attendance/Attendance */ "./components/attendance/Attendance.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -180,23 +183,28 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 
 
+
+
+
 var AppModule = /** @class */ (function () {
     function AppModule() {
     }
     AppModule = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["NgModule"])({
             declarations: [
-                _app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"],
-                _components_home_Home__WEBPACK_IMPORTED_MODULE_7__["HomeComponent"],
-                _components_attendance_Attendance__WEBPACK_IMPORTED_MODULE_9__["AttendanceComponent"],
-                _components_contact_Contact__WEBPACK_IMPORTED_MODULE_8__["ContactComponent"]
+                _app_component__WEBPACK_IMPORTED_MODULE_8__["AppComponent"],
+                _components_home_Home__WEBPACK_IMPORTED_MODULE_10__["HomeComponent"],
+                _components_attendance_Attendance__WEBPACK_IMPORTED_MODULE_12__["AttendanceComponent"],
+                _components_contact_Contact__WEBPACK_IMPORTED_MODULE_11__["ContactComponent"]
             ],
             imports: [
                 _angular_platform_browser__WEBPACK_IMPORTED_MODULE_0__["BrowserModule"],
-                _routes__WEBPACK_IMPORTED_MODULE_6__["AppRoutingModule"]
+                _angular_http__WEBPACK_IMPORTED_MODULE_2__["HttpModule"],
+                _angular_common_http__WEBPACK_IMPORTED_MODULE_3__["HttpClientModule"],
+                _routes__WEBPACK_IMPORTED_MODULE_9__["AppRoutingModule"]
             ],
-            providers: [_services_AuthService__WEBPACK_IMPORTED_MODULE_3__["AuthService"], _services_LoggerService__WEBPACK_IMPORTED_MODULE_2__["LoggerService"], _services_CalendarService__WEBPACK_IMPORTED_MODULE_4__["CalendarService"]],
-            bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_5__["AppComponent"]]
+            providers: [_services_AuthService__WEBPACK_IMPORTED_MODULE_5__["AuthService"], _services_LoggerService__WEBPACK_IMPORTED_MODULE_4__["LoggerService"], _services_CalendarService__WEBPACK_IMPORTED_MODULE_6__["CalendarService"], _services_GradeService__WEBPACK_IMPORTED_MODULE_7__["GradeService"]],
+            bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_8__["AppComponent"]]
         })
     ], AppModule);
     return AppModule;
@@ -219,6 +227,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "../node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _services_AuthService__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../services/AuthService */ "./services/AuthService.ts");
 /* harmony import */ var _services_CalendarService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../services/CalendarService */ "./services/CalendarService.ts");
+/* harmony import */ var _services_GradeService__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../services/GradeService */ "./services/GradeService.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -231,10 +240,12 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 
 
+
 var AttendanceComponent = /** @class */ (function () {
-    function AttendanceComponent(_authService, _calendarService) {
+    function AttendanceComponent(_authService, _calendarService, _gradeService) {
         this._authService = _authService;
         this._calendarService = _calendarService;
+        this._gradeService = _gradeService;
         this.pageTitle = "Attendance";
         this.userName = '';
     }
@@ -245,14 +256,42 @@ var AttendanceComponent = /** @class */ (function () {
             return;
         }
         this.userName = this._authService.getUserName();
-        this.CalendarWeeks = this._calendarService.getCalendarWeeks();
+        this.getCalendarWeeks();
+        this.getGrades();
+    };
+    AttendanceComponent.prototype.getGrades = function () {
+        var _this = this;
+        this._gradeService.getGrades()
+            .subscribe(function (result) {
+            _this.Grades = result;
+        }, function (err) {
+            console.log(err.error);
+        });
+    };
+    AttendanceComponent.prototype.getCalendarWeeks = function () {
+        var _this = this;
+        this._calendarService.getCalendarWeeks()
+            .subscribe(function (result) {
+            _this.CalendarWeeks = result;
+        }, function (err) {
+            console.log(err.error);
+        });
+    };
+    AttendanceComponent.prototype.onSelectCalendarWeek = function (value) {
+        console.log(value);
+        this.calendarWeekId = value;
+    };
+    AttendanceComponent.prototype.onSelectGrade = function (value) {
+        console.log(value);
+        this.ctsGrade = value;
     };
     AttendanceComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
             template: __webpack_require__(/*! ./attendance.html */ "./components/attendance/attendance.html")
         }),
         __metadata("design:paramtypes", [_services_AuthService__WEBPACK_IMPORTED_MODULE_1__["AuthService"],
-            _services_CalendarService__WEBPACK_IMPORTED_MODULE_2__["CalendarService"]])
+            _services_CalendarService__WEBPACK_IMPORTED_MODULE_2__["CalendarService"],
+            _services_GradeService__WEBPACK_IMPORTED_MODULE_3__["GradeService"]])
     ], AttendanceComponent);
     return AttendanceComponent;
 }());
@@ -268,7 +307,7 @@ var AttendanceComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<header class=\"container-fluid p0\">\r\n    <nav class=\"navbar navbar-light navbar-expand-md bgcolorMenu\">\r\n        <div class=\"row \">\r\n            <button class=\"navbar-toggler\" data-toggle=\"collapse\" data-target=\"#menuBar\">\r\n                <span class=\"navbar-toggler-icon\"></span>\r\n            </button>\r\n            <div id=\"menuBar\" class=\"navbar-collapse collapse\">\r\n                <ul class=\"navbar-nav\">\r\n                    <li class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/home\">Home</a></li>\r\n                    <li *ngIf=\"isLoggedOn\" class=\"nav-item active\"><a class=\"nav-link py-0\" routerLink=\"/attendance\">Attendance</a></li>\r\n                    <li class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/contactus\">Contact Us</a></li>\r\n                    <li class=\"nav-item\"><a class=\"nav-link py-0\">About Us</a></li>\r\n                </ul>\r\n                \r\n            </div>\r\n        </div>\r\n    </nav>\r\n</header>\r\n<div class=\"container p0\">\r\n    <!--<h4 class=\"text-center\">{{pageTitle}}</h4>-->\r\n    \r\n    <div class=\"row justify-content-md-center\">\r\n        <div class=\"col-md-2 col-md-offset-2\">\r\n            <label class=\"left\">Week</label>\r\n            <select class=\"left ml10\" data-style=\"btn-primary\">\r\n                <option value=\"0\">--Select--</option>\r\n                <option *ngFor=\"let week of CalendarWeeks\" value={{week.WeekNo}}>\r\n                    {{week.Description}}\r\n                </option>\r\n            </select>\r\n        </div>\r\n        <div class=\"col-md-2\">\r\n            <label class=\"left\">Class</label>\r\n            <select class=\"left ml10\" data-style=\"btn-primary\">\r\n                <option>Pre-K</option>\r\n                <option>1</option>\r\n                <option>2</option>\r\n            </select>\r\n        </div>\r\n        <div class=\"col-md-4\">\r\n            <label class=\"left\">Teacher</label>\r\n            <select class=\"left ml10\" data-style=\"btn-primary\">\r\n                <option>Uthami</option>\r\n                <option>Latha</option>\r\n                <option>Niranjan</option>\r\n            </select>\r\n        </div>\r\n        <div class=\"col-md-1\">\r\n            <button class=\"btn btn-primary btn-sm\"><i class=\"fa fa-list-ul\"></i> List Students</button>\r\n        </div>\r\n    </div>\r\n    <div class=\"row justify-content-md-center\">\r\n        <div class=\"col-md-11 col-md-offset-1\">\r\n        <table class=\"table table-hover table-bordered mt10 table-sm\" id=\"dev-table\">\r\n            <thead class=\"table-primary\">\r\n                <tr>\r\n                    <th>Student ID</th>\r\n                    <th style=\"width:250px\">First Name</th>\r\n                    <th style=\"width:250px\">Last Name</th>\r\n                    <th>Attendance</th>\r\n                    <th>Homework</th>\r\n                    <th>Reading</th>\r\n                    <th>Writing</th>\r\n                    <th>Speaking</th>\r\n                    <th>Behaviour</th>\r\n                    <th>Quiz</th>\r\n                    <th style=\"width:200px\">Notes</th>\r\n\r\n                </tr>\r\n            </thead>\r\n            <tbody>\r\n                <tr>\r\n                    <td>1</td>\r\n                    <td>Kilgore</td>\r\n                    <td>Trout</td>\r\n                    <td>\r\n                        <label class=\"customradio\">\r\n                            <span class=\"radiotextsty\">Present</span>\r\n                            <input type=\"radio\" checked=\"checked\" name=\"radio\">\r\n                            <span class=\"checkmark\"></span>\r\n                        </label>\r\n                        <label class=\"customradio\">\r\n                            <span class=\"radiotextsty\">Absent</span>\r\n                            <input type=\"radio\" name=\"radio\">\r\n                            <span class=\"checkmark\"></span>\r\n                        </label>\r\n                    </td>\r\n                    <td>\r\n                        <select class=\"left ml10\" data-style=\"btn-primary\">\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n\r\n                        </select>\r\n                    </td>\r\n                    <td>\r\n                        <select class=\"left ml10\" data-style=\"btn-primary\">\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n\r\n                        </select>\r\n                    </td>\r\n                    <td>\r\n                        <select class=\"left ml10\" data-style=\"btn-primary\">\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n\r\n                        </select>\r\n                    </td>\r\n                    <td>\r\n                        <select class=\"left ml10\" data-style=\"btn-primary\">\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                        </select>\r\n                    </td>\r\n                    <td>\r\n                        <select class=\"left ml10\" data-style=\"btn-primary\">\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                        </select>\r\n                    </td>\r\n                    <td>\r\n                        <select class=\"left ml10\" data-style=\"btn-primary\">\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                        </select>\r\n                    </td>\r\n                    <td>\r\n                        <textarea></textarea>\r\n                    </td>\r\n                </tr>\r\n                <tr>\r\n                    <td>2</td>\r\n                    <td>Bob</td>\r\n                    <td>Loblaw</td>\r\n                    <td>\r\n                        <label class=\"customradio\">\r\n                            <span class=\"radiotextsty\">Present</span>\r\n                            <input type=\"radio\" checked=\"checked\" name=\"radio\">\r\n                            <span class=\"checkmark\"></span>\r\n                        </label>\r\n                        <label class=\"customradio\">\r\n                            <span class=\"radiotextsty\">Absent</span>\r\n                            <input type=\"radio\" name=\"radio\">\r\n                            <span class=\"checkmark\"></span>\r\n                        </label>\r\n                    </td>\r\n                    <td>\r\n                        <select class=\"left ml10\" data-style=\"btn-primary\">\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n\r\n                        </select>\r\n                    </td>\r\n                </tr>\r\n                <tr>\r\n                    <td>3</td>\r\n                    <td>Holden</td>\r\n                    <td>Caulfield</td>\r\n                    <td>\r\n                        <label class=\"customradio\">\r\n                            <span class=\"radiotextsty\">Present</span>\r\n                            <input type=\"radio\" checked=\"checked\" name=\"radio\">\r\n                            <span class=\"checkmark\"></span>\r\n                        </label>\r\n                        <label class=\"customradio\">\r\n                            <span class=\"radiotextsty\">Absent</span>\r\n                            <input type=\"radio\" name=\"radio\">\r\n                            <span class=\"checkmark\"></span>\r\n                        </label>\r\n                    </td>\r\n                    <td>\r\n                        <select class=\"left ml10\" data-style=\"btn-primary\">\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n\r\n                        </select>\r\n                    </td>\r\n                </tr>\r\n                <tr>\r\n                    <td>1</td>\r\n                    <td>Kilgore</td>\r\n                    <td>Trout</td>\r\n                    <td>\r\n                        <label class=\"customradio\">\r\n                            <span class=\"radiotextsty\">Present</span>\r\n                            <input type=\"radio\" checked=\"checked\" name=\"radio\">\r\n                            <span class=\"checkmark\"></span>\r\n                        </label>\r\n                        <label class=\"customradio\">\r\n                            <span class=\"radiotextsty\">Absent</span>\r\n                            <input type=\"radio\" name=\"radio\">\r\n                            <span class=\"checkmark\"></span>\r\n                        </label>\r\n                    </td>\r\n                    <td>\r\n                        <select class=\"left ml10\" data-style=\"btn-primary\">\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n\r\n                        </select>\r\n                    </td>\r\n                </tr>\r\n                <tr>\r\n                    <td>2</td>\r\n                    <td>Bob</td>\r\n                    <td>Loblaw</td>\r\n                    <td>\r\n                        <label class=\"customradio\">\r\n                            <span class=\"radiotextsty\">Present</span>\r\n                            <input type=\"radio\" checked=\"checked\" name=\"radio\">\r\n                            <span class=\"checkmark\"></span>\r\n                        </label>\r\n                        <label class=\"customradio\">\r\n                            <span class=\"radiotextsty\">Absent</span>\r\n                            <input type=\"radio\" name=\"radio\">\r\n                            <span class=\"checkmark\"></span>\r\n                        </label>\r\n                    </td>\r\n                    <td>\r\n                        <select class=\"left ml10\" data-style=\"btn-primary\">\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n\r\n                        </select>\r\n                    </td>\r\n                </tr>\r\n                <tr>\r\n                    <td>3</td>\r\n                    <td>Holden</td>\r\n                    <td>Caulfield</td>\r\n                    <td>\r\n                        <label class=\"customradio\">\r\n                            <span class=\"radiotextsty\">Present</span>\r\n                            <input type=\"radio\" checked=\"checked\" name=\"radio\">\r\n                            <span class=\"checkmark\"></span>\r\n                        </label>\r\n                        <label class=\"customradio\">\r\n                            <span class=\"radiotextsty\">Absent</span>\r\n                            <input type=\"radio\" name=\"radio\">\r\n                            <span class=\"checkmark\"></span>\r\n                        </label>\r\n                    </td>\r\n                    <td>\r\n                        <select class=\"left ml10\" data-style=\"btn-primary\">\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n\r\n                        </select>\r\n                    </td>\r\n                </tr>\r\n            </tbody>\r\n        </table>\r\n        </div>\r\n    </div>\r\n    <div class=\"row justify-content-md-center\">\r\n        <button>Cancel</button>\r\n        <button>Save</button>\r\n    </div>\r\n</div>"
+module.exports = "<header class=\"container-fluid p0\">\r\n    <nav class=\"navbar navbar-light navbar-expand-md bgcolorMenu\">\r\n        <div class=\"row \">\r\n            <button class=\"navbar-toggler\" data-toggle=\"collapse\" data-target=\"#menuBar\">\r\n                <span class=\"navbar-toggler-icon\"></span>\r\n            </button>\r\n            <div id=\"menuBar\" class=\"navbar-collapse collapse\">\r\n                <ul class=\"navbar-nav\">\r\n                    <li class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/home\">Home</a></li>\r\n                    <li *ngIf=\"isLoggedOn\" class=\"nav-item active\"><a class=\"nav-link py-0\" routerLink=\"/attendance\">Attendance</a></li>\r\n                    <li class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/contactus\">Contact Us</a></li>\r\n                    <li class=\"nav-item\"><a class=\"nav-link py-0\">About Us</a></li>\r\n                </ul>\r\n            </div>\r\n        </div>\r\n    </nav>\r\n\r\n</header>\r\n<div class=\"container p0 mt10\">\r\n    <!--<h4 class=\"text-center\">{{pageTitle}}</h4>-->\r\n    \r\n    <div class=\"row bgBar br5 m5 p5\">\r\n        <div class=\"col-md-4\">\r\n            <select class=\"left ml10 selectpicker form-control show-tick\" data-width=\"auto\" (change)=\"onSelectCalendarWeek($event.target.value)\">\r\n                <option value=\"0\">--Select Week--</option>\r\n                <option *ngFor=\"let week of CalendarWeeks\" value={{week.weekNo}}>\r\n                    {{week.description}} - {{week.weekDate | date: 'MM/dd/yyyy'}}\r\n                </option>\r\n            </select>\r\n        </div>\r\n        <div class=\"col-md-2\">\r\n            <select class=\"left ml10 selectpicker form-control\" data-width=\"auto\" (change)=\"onSelectGrade($event.target.value)\">\r\n                <option value=\"0\">--Select Grade--</option>\r\n                <option *ngFor=\"let grade of Grades\" value={{grade.ctsGrade}}>\r\n                    {{grade.ctsGrade}}\r\n                </option>\r\n            </select>\r\n        </div>\r\n        <div class=\"col-md-4\">\r\n            <select class=\"left ml10 selectpicker form-control\" data-width=\"auto\">\r\n                <option value=\"0\">--Select Teacher--</option>\r\n                <option>Uthami</option>\r\n                <option>Latha</option>\r\n                <option>Niranjan</option>\r\n            </select>\r\n        </div>\r\n        <div class=\"col-md-2\">\r\n            <button class=\"btn btn-primary btn-sm right\"><strong><i class=\"fa fa-list-ul\"></i> List Students</strong></button>\r\n        </div>\r\n    </div>\r\n</div>\r\n<div class=\"container p0 mt10\">\r\n    <div class=\"row\">\r\n        <div class=\"col-md-12\">\r\n        <table class=\"table table-hover table-bordered table-sm font-small\" id=\"dev-table\">\r\n            <thead class=\"bgTableHead\">\r\n                <tr>\r\n                    <th class=\"fw\">Student ID</th>\r\n                    <th class=\"fw\" style=\"width:200px\">First Name</th>\r\n                    <th class=\"fw\" style=\"width:200px\">Last Name</th>\r\n                    <th class=\"fw\">Attendance</th>\r\n                    <th class=\"fw\">Homework</th>\r\n                    <th class=\"fw\">Reading</th>\r\n                    <th class=\"fw\">Writing</th>\r\n                    <th class=\"fw\">Speaking</th>\r\n                    <th class=\"fw\">Behaviour</th>\r\n                    <th class=\"fw\">Quiz</th>\r\n                    <th class=\"fw\" style=\"width:200px\">Notes</th>\r\n\r\n                </tr>\r\n            </thead>\r\n            <tbody>\r\n                <tr>\r\n                    <td>1</td>\r\n                    <td>Kilgore</td>\r\n                    <td>Trout</td>\r\n                    <td>\r\n                        <select class=\"left ml10 selectpicker\" data-width=\"fit\">\r\n                            <option>Yes</option>\r\n                            <option>No</option>\r\n                        </select>\r\n                    </td>\r\n                    <td>\r\n                        <select class=\"left ml10 selectpicker\" data-width=\"fit\">\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n\r\n                        </select>\r\n                    </td>\r\n                    <td>\r\n                        <select class=\"left ml10 selectpicker\" data-width=\"fit\">\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n\r\n                        </select>\r\n                    </td>\r\n                    <td>\r\n                        <select class=\"left ml10 selectpicker \" data-width=\"fit\">\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n\r\n                        </select>\r\n                    </td>\r\n                    <td>\r\n                        <select class=\"left ml10 selectpicker \" data-width=\"fit\">\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                        </select>\r\n                    </td>\r\n                    <td>\r\n                        <select class=\"left ml10 selectpicker\" data-width=\"fit\">\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                        </select>\r\n                    </td>\r\n                    <td>\r\n                        <select class=\"left ml10 selectpicker\" data-width=\"fit\">\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                        </select>\r\n                    </td>\r\n                    <td>\r\n                        <textarea></textarea>\r\n                    </td>\r\n                </tr>\r\n                <tr>\r\n                    <td>2</td>\r\n                    <td>Bob</td>\r\n                    <td>Loblaw</td>\r\n                    <td>\r\n                        <select class=\"left ml10 selectpicker\" data-width=\"fit\">\r\n                            <option>Yes</option>\r\n                            <option>No</option>\r\n                        </select>\r\n                    </td>\r\n                    <td>\r\n                        <select class=\"left ml10 selectpicker \" data-width=\"fit\">\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n\r\n                        </select>\r\n                    </td>\r\n                    <td>\r\n                        <select class=\"left ml10 selectpicker \" data-width=\"fit\">\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n\r\n                        </select>\r\n                    </td>\r\n                    <td>\r\n                        <select class=\"left ml10 selectpicker \" data-width=\"fit\">\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n\r\n                        </select>\r\n                    </td>\r\n                    <td>\r\n                        <select class=\"left ml10 selectpicker \" data-width=\"fit\">\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n\r\n                        </select>\r\n                    </td>\r\n                    <td>\r\n                        <select class=\"left ml10 selectpicker \" data-width=\"fit\">\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n\r\n                        </select>\r\n                    </td>\r\n                    <td>\r\n                        <select class=\"left ml10 selectpicker \" data-width=\"fit\">\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n                            <option>1</option>\r\n                            <option>2</option>\r\n                            <option>3</option>\r\n\r\n                        </select>\r\n                    </td>\r\n                    <td>\r\n                        <textarea></textarea>\r\n                    </td>\r\n                </tr>\r\n                \r\n            </tbody>\r\n        </table>\r\n        </div>\r\n    </div>\r\n    <div class=\"row row bgBar br5 m5 p5\">\r\n        <div class=\"col-md-4\"></div>\r\n        <div class=\"col-md-4 \">\r\n            <button class=\"btn btn-warning btn-sm\"><strong><i class=\"fa fa-times-circle\"></i> Cancel</strong></button>\r\n            <button class=\"btn btn-success btn-sm ml10\"><strong><i class=\"fa fa-save\"></i> Save</strong></button>\r\n        </div>\r\n        <div class=\"col-md-4\"></div>\r\n    </div>\r\n\r\n  "
 
 /***/ }),
 
@@ -565,6 +604,7 @@ var AuthService = /** @class */ (function () {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CalendarService", function() { return CalendarService; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "../node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/common/http */ "../node_modules/@angular/common/fesm5/http.js");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -575,42 +615,86 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 
+
 var CalendarService = /** @class */ (function () {
-    function CalendarService() {
-        this.weeks = [
-            {
-                Id: 1,
-                CalendarYearId: 1,
-                WeekNo: 1,
-                Description: "08/26/2018",
-                TermNo: 1
-            },
-            {
-                Id: 2,
-                CalendarYearId: 1,
-                WeekNo: 2,
-                Description: "09/09/2018",
-                TermNo: 1
-            },
-            {
-                Id: 3,
-                CalendarYearId: 1,
-                WeekNo: 3,
-                Description: "09/16/2018",
-                TermNo: 1
-            }
-        ];
+    function CalendarService(_http) {
+        this._http = _http;
     }
+    //private weeks : CalendarWeek[] = [
+    //    {
+    //        Id: 1,
+    //        CalendarYearId: 1,
+    //        WeekNo: 1,
+    //        Description: "08/26/2018",
+    //        TermNo: 1
+    //    },
+    //    {
+    //        Id: 2,
+    //        CalendarYearId: 1,
+    //        WeekNo: 2,
+    //        Description: "09/09/2018",
+    //        TermNo: 1
+    //    },
+    //    {
+    //        Id: 3,
+    //        CalendarYearId: 1,
+    //        WeekNo: 3,
+    //        Description: "09/16/2018",
+    //        TermNo: 1
+    //    }
+    //];
     CalendarService.prototype.getCalendarWeeks = function () {
         //this.weeks[0].WeekDate = new Date(2018, 08, 26);
         //this.weeks[1].WeekDate = new Date(2018, 09, 09);
-        return this.weeks;
+        //return this.weeks;
+        return this._http.get('/api/calendar/weeks');
     };
     CalendarService = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])(),
-        __metadata("design:paramtypes", [])
+        __metadata("design:paramtypes", [_angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpClient"]])
     ], CalendarService);
     return CalendarService;
+}());
+
+
+
+/***/ }),
+
+/***/ "./services/GradeService.ts":
+/*!*********************************************!*\
+  !*** ../clientapp/services/GradeService.ts ***!
+  \*********************************************/
+/*! exports provided: GradeService */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GradeService", function() { return GradeService; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "../node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/common/http */ "../node_modules/@angular/common/fesm5/http.js");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (undefined && undefined.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+var GradeService = /** @class */ (function () {
+    function GradeService(_http) {
+        this._http = _http;
+    }
+    GradeService.prototype.getGrades = function () {
+        return this._http.get('/api/grade/grades');
+    };
+    GradeService = __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])(),
+        __metadata("design:paramtypes", [_angular_common_http__WEBPACK_IMPORTED_MODULE_1__["HttpClient"]])
+    ], GradeService);
+    return GradeService;
 }());
 
 
