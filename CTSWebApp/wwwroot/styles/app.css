@@ -28,6 +28,18 @@
     width:90%;
 }
 
+.w200{
+    width:200px;
+}
+
+.w150 {
+    width: 150px;
+}
+
+.w300 {
+    width: 300px;
+}
+
 .hide {
     display:none;
 }
@@ -45,6 +57,14 @@
 }
 .mt10{
     margin-top:10px;
+}
+
+.mt5 {
+    margin-top: 5px;
+}
+
+.selectWidth {
+    width: auto;
 }
 
 /*styling for radio button*/

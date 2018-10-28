@@ -21,251 +21,259 @@
     
     <div class="row bgBar br5 m5 p5">
         <div class="col-md-4">
-            <select class="left ml10 selectpicker form-control show-tick" data-width="auto" (change)="onSelectCalendarWeek($event.target.value)">
-                <option value="0">--Select Week--</option>
-                <option *ngFor="let week of CalendarWeeks" value={{week.weekNo}}>
-                    {{week.description}} - {{week.weekDate | date: 'MM/dd/yyyy'}}
-                </option>
-            </select>
+            <div class="input-group">
+                <label for="selectCalenderWeek" class="mt5">Week</label>
+                <select name="selectCalenderWeek" class="ml10 selectpicker form-control selectWidth" (change)="onSelectCalendarWeek($event.target.value)">
+                    <option value="0">--Select Week--</option>
+                    <option *ngFor="let week of CalendarWeeks" value={{week.weekNo}}>
+                        {{week.description}} - {{week.weekDate | date: 'MM/dd/yyyy'}}
+                    </option>
+                </select>
+            </div>
         </div>
         <div class="col-md-2">
-            <select class="left ml10 selectpicker form-control" data-width="auto" (change)="onSelectGrade($event.target.value)">
-                <option value="0">--Select Grade--</option>
-                <option *ngFor="let grade of Grades" value={{grade.ctsGrade}}>
-                    {{grade.ctsGrade}}
-                </option>
-            </select>
+            <div class="input-group">
+                <label for="selectGrade" class="mt5">Grade</label>
+                <select name="selectGrade" class="ml10 selectpicker form-control selectWidth" (change)="onSelectGrade($event.target.value)">
+                    <option value="0">--Select Grade--</option>
+                    <option *ngFor="let grade of Grades" value={{grade.ctsGrade}}>
+                        {{grade.ctsGrade}}
+                    </option>
+                </select>
+            </div>
+
         </div>
         <div class="col-md-4">
-            <select class="left ml10 selectpicker form-control" data-width="auto">
-                <option value="0">--Select Teacher--</option>
-                <option>Uthami</option>
-                <option>Latha</option>
-                <option>Niranjan</option>
-            </select>
+            <div class="input-group">
+                <label for="selectTeacher" class="mt5">Teacher</label>
+                <select name="selectTeacher" class="ml10 selectpicker form-control selectWidth">
+                    <option value="0">--Select Teacher--</option>
+                    <option>Uthami</option>
+                    <option>Latha</option>
+                    <option>Niranjan</option>
+                </select>
+            </div>
         </div>
         <div class="col-md-2">
-            <button class="btn btn-primary btn-sm right"><strong><i class="fa fa-list-ul"></i> List Students</strong></button>
+            <button class="btn btn-primary btn-sm right mt5"><strong><i class="fa fa-list-ul"></i> List Students</strong></button>
         </div>
     </div>
-</div>
-<div class="container p0 mt10">
     <div class="row">
         <div class="col-md-12">
-        <table class="table table-hover table-bordered table-sm font-small" id="dev-table">
-            <thead class="bgTableHead">
-                <tr>
-                    <th class="fw">Student ID</th>
-                    <th class="fw" style="width:200px">First Name</th>
-                    <th class="fw" style="width:200px">Last Name</th>
-                    <th class="fw">Attendance</th>
-                    <th class="fw">Homework</th>
-                    <th class="fw">Reading</th>
-                    <th class="fw">Writing</th>
-                    <th class="fw">Speaking</th>
-                    <th class="fw">Behaviour</th>
-                    <th class="fw">Quiz</th>
-                    <th class="fw" style="width:200px">Notes</th>
+            <table class="table table-hover table-bordered table-sm font-small" id="dev-table">
+                <thead class="bgTableHead">
+                    <tr>
+                        <th class="fw">Student ID</th>
+                        <th class="fw" style="width:200px">First Name</th>
+                        <th class="fw" style="width:200px">Last Name</th>
+                        <th class="fw">Attendance</th>
+                        <th class="fw">Homework</th>
+                        <th class="fw">Reading</th>
+                        <th class="fw">Writing</th>
+                        <th class="fw">Speaking</th>
+                        <th class="fw">Behaviour</th>
+                        <th class="fw">Quiz</th>
+                        <th class="fw" style="width:200px">Notes</th>
 
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Kilgore</td>
-                    <td>Trout</td>
-                    <td>
-                        <select class="left ml10 selectpicker" data-width="fit">
-                            <option>Yes</option>
-                            <option>No</option>
-                        </select>
-                    </td>
-                    <td>
-                        <select class="left ml10 selectpicker" data-width="fit">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Kilgore</td>
+                        <td>Trout</td>
+                        <td>
+                            <select class="left ml10 selectpicker" data-width="fit">
+                                <option>Yes</option>
+                                <option>No</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="left ml10 selectpicker" data-width="fit">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
 
-                        </select>
-                    </td>
-                    <td>
-                        <select class="left ml10 selectpicker" data-width="fit">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="left ml10 selectpicker" data-width="fit">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
 
-                        </select>
-                    </td>
-                    <td>
-                        <select class="left ml10 selectpicker " data-width="fit">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="left ml10 selectpicker " data-width="fit">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
 
-                        </select>
-                    </td>
-                    <td>
-                        <select class="left ml10 selectpicker " data-width="fit">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                        </select>
-                    </td>
-                    <td>
-                        <select class="left ml10 selectpicker" data-width="fit">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                        </select>
-                    </td>
-                    <td>
-                        <select class="left ml10 selectpicker" data-width="fit">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                        </select>
-                    </td>
-                    <td>
-                        <textarea></textarea>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Bob</td>
-                    <td>Loblaw</td>
-                    <td>
-                        <select class="left ml10 selectpicker" data-width="fit">
-                            <option>Yes</option>
-                            <option>No</option>
-                        </select>
-                    </td>
-                    <td>
-                        <select class="left ml10 selectpicker " data-width="fit">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="left ml10 selectpicker " data-width="fit">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="left ml10 selectpicker" data-width="fit">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="left ml10 selectpicker" data-width="fit">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                            </select>
+                        </td>
+                        <td>
+                            <textarea></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Bob</td>
+                        <td>Loblaw</td>
+                        <td>
+                            <select class="left ml10 selectpicker" data-width="fit">
+                                <option>Yes</option>
+                                <option>No</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="left ml10 selectpicker " data-width="fit">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
 
-                        </select>
-                    </td>
-                    <td>
-                        <select class="left ml10 selectpicker " data-width="fit">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="left ml10 selectpicker " data-width="fit">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
 
-                        </select>
-                    </td>
-                    <td>
-                        <select class="left ml10 selectpicker " data-width="fit">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="left ml10 selectpicker " data-width="fit">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
 
-                        </select>
-                    </td>
-                    <td>
-                        <select class="left ml10 selectpicker " data-width="fit">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="left ml10 selectpicker " data-width="fit">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
 
-                        </select>
-                    </td>
-                    <td>
-                        <select class="left ml10 selectpicker " data-width="fit">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="left ml10 selectpicker " data-width="fit">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
 
-                        </select>
-                    </td>
-                    <td>
-                        <select class="left ml10 selectpicker " data-width="fit">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class="left ml10 selectpicker " data-width="fit">
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>1</option>
+                                <option>2</option>
+                                <option>3</option>
 
-                        </select>
-                    </td>
-                    <td>
-                        <textarea></textarea>
-                    </td>
-                </tr>
-                
-            </tbody>
-        </table>
+                            </select>
+                        </td>
+                        <td>
+                            <textarea></textarea>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
         </div>
     </div>
     <div class="row row bgBar br5 m5 p5">
@@ -276,5 +284,4 @@
         </div>
         <div class="col-md-4"></div>
     </div>
-
-  
+</div>

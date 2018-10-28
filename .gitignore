@@ -261,8 +261,8 @@ __pycache__/
 *.pyc
 
 # Angular dist folder
-/CTSWebApp/wwwroot/ClientApp/dist/
-/CTSWebApp/wwwroot/ClientApp/out-tsc/
+CTSWebApp/wwwroot/ClientApp/dist/
+CTSWebApp/wwwroot/ClientApp/out-tsc/
 
 # Ignoring config.json file
-/CTSWebApp/config.json
+CTSWebApp/config.json
