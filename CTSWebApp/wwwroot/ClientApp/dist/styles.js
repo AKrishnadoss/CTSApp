@@ -539,7 +539,7 @@ if(false) {}
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\Data\Akila\code\CTSApp\CTSApp\CTSWebApp\ClientApp\styles.css */"./styles.css");
+module.exports = __webpack_require__(/*! C:\Data\Code\CTSApp\CTSWebApp\ClientApp\styles.css */"./styles.css");
 
 
 /***/ })

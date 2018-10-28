@@ -22,12 +22,12 @@ var LoggerService = /** @class */ (function () {
             console.log(message);
         }
     };
-    var LoggerService_1;
     LoggerService = LoggerService_1 = __decorate([
         Injectable(),
         __metadata("design:paramtypes", [])
     ], LoggerService);
     return LoggerService;
+    var LoggerService_1;
 }());
 export { LoggerService };
 //# sourceMappingURL=LoggerService.js.map
