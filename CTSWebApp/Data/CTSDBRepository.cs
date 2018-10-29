@@ -261,15 +261,15 @@ namespace CTSWebApp.Data
                 SqlValue = weekId
             });
 
-            string sql = "SELECT ISNULL(SWG.ID,0) ID, S.ID STUDENTID, CW.ID CALENDARWEEKID, SE.TEACHERID, S.FIRSTNAME FIRSTNAME, S.LASTNAME LASTNAME, S.ACTIVE ACTIVE, "
+            string sql = "SELECT ISNULL(SWG.ID,0) ID, S.ID STUDENTID, ISNULL(CW.ID,@weekId) AS CALENDARWEEKID, SE.TEACHERID, S.FIRSTNAME FIRSTNAME, S.LASTNAME LASTNAME, S.ACTIVE ACTIVE, "
                     + " SE.CTSGRADE CTSGRADE, SE.COUNTYGRADE COUNTYGRADE, SE.ENROLLMENTDATE, SE.DATEOFLEAVING, "
                     + "SWG.ATTENDANCE, SWG.HOMEWORK, SWG.READING, SWG.WRITING, SWG.SPEAKING, SWG.BEHAVIOR, SWG.QUIZ, SWG.NOTES "
                     + "FROM STUDENTENROLLMENT SE "
                     + "JOIN STUDENT S ON S.ID = SE.STUDENTID "
-                    + "JOIN CALENDARYEAR CY ON CY.ID = SE.CALENDARYEARID "
+                    //+ "JOIN CALENDARYEAR CY ON CY.ID = SE.CALENDARYEARID "
                     + "LEFT OUTER JOIN STUDENTWEEKGRADE SWG ON SWG.StudentID = S.ID "
-                    + "LEFT OUTER JOIN CALENDARWEEK CW ON CW.CalendarYearID = CY.ID "
-                    + "AND CY.ACTIVEYEAR = 'Y' "
+                    + "LEFT OUTER JOIN CALENDARWEEK CW ON CW.ID = SWG.CalendarWeekID "
+                    //+ "AND CY.ACTIVEYEAR = 'Y' "
                     + "AND SE.TEACHERID = @teacherId "
                     + "AND CW.ID = @weekId ";
 
