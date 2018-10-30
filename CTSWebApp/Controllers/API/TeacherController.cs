@@ -121,17 +121,39 @@ namespace CTSWebApp.Controllers.API
         }
 
         [HttpGet]
+        [Route("teacherByGrade/{grade}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public ActionResult<IEnumerable<TeacherViewModel>> GetAssignedTeacher(string grade)
+        {
+            try
+            {
+                var result = _teacherBLL.GetAssignedTeacher(grade);
+                if (result != null && result.Count() > 0)
+                {
+                    return Ok(_mapper.Map<IEnumerable<Teacher>, IEnumerable<TeacherViewModel>>(result));
+                }
+                return NotFound();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError($"Exception occurred in GetAssignedTeacher() => {exception}");
+                return BadRequest("Exception occurred in TeacherController.GetAssignedTeacher()");
+            }
+        }
+
+        [HttpGet]
         [Route("teacherById/{teacherId:int}/studentgrades/{weekId:int}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public ActionResult<IEnumerable<StudentEnrollmentViewModel>> GetAssignedStudentsWeekGrade(int teacherId,int weekId)
+        public ActionResult<IEnumerable<StudentWeekGradeViewModel>> GetAssignedStudentsWeekGrade(int teacherId,int weekId)
         {
             try
             {
                 var result = _teacherBLL.GetAssignedStudentsWeekGrade(teacherId, weekId);
                 if (result != null && result.Count() > 0)
                 {
-                    return Ok(result);// _mapper.Map<IEnumerable<StudentEnrollment>, IEnumerable<StudentEnrollmentViewModel>>(result));
+                    return Ok(_mapper.Map<IEnumerable<StudentWeekGrade>, IEnumerable<StudentWeekGradeViewModel>>(result));
                 }
                 return NotFound();
             }

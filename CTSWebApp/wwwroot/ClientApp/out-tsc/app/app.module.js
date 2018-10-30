@@ -12,6 +12,7 @@ import { LoggerService } from '../services/LoggerService';
 import { AuthService } from '../services/AuthService';
 import { CalendarService } from '../services/CalendarService';
 import { GradeService } from '../services/GradeService';
+import { TeacherService } from '../services/TeacherService';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from '../routes';
 import { HomeComponent } from '../components/home/Home';
@@ -34,7 +35,7 @@ var AppModule = /** @class */ (function () {
                 HttpClientModule,
                 AppRoutingModule
             ],
-            providers: [AuthService, LoggerService, CalendarService, GradeService],
+            providers: [AuthService, LoggerService, CalendarService, GradeService, TeacherService],
             bootstrap: [AppComponent]
         })
     ], AppModule);

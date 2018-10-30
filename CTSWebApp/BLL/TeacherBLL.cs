@@ -40,6 +40,11 @@ namespace CTSWebApp.BLL
             return _ctsDBRepository.GetTeacherAssignment(teacherID);
         }
 
+        public IEnumerable<Teacher> GetAssignedTeacher(string grade)
+        {
+            return _ctsDBRepository.GetAssignedTeacher(grade);
+        }
+
         public IEnumerable<StudentEnrollment> GetAssignedStudents(int teacherID)
         {
             return _ctsDBRepository.GetAssignedStudents(teacherID);

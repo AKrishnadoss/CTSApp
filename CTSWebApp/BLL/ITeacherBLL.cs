@@ -11,7 +11,7 @@ namespace CTSWebApp.BLL
         IEnumerable<CTSUser> GetAllTeachers();
         CTSUser GetCTSUserById(int id);
         TeacherAssignment GetTeacherAssignment(int teacherID);
-
+        IEnumerable<Teacher> GetAssignedTeacher(string grade);
         IEnumerable<StudentEnrollment> GetAssignedStudents(int teacherID);
         IEnumerable<StudentWeekGrade> GetAssignedStudentsWeekGrade(int teacherID, int weekId);
     }

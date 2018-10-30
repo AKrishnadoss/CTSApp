@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CTSWebApp.Data.Entities
+namespace CTSWebApp.ViewModels
 {
-    public class StudentWeekGrade
+    public class StudentWeekGradeViewModel
     {
-        [Key]
         public int ID { get; set; }
         public int StudentID { get; set; }
         public int CalendarWeekID { get; set; }

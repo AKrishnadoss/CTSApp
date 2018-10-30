@@ -242,6 +242,34 @@ namespace CTSWebApp.Data
             return null;
         }
 
+
+        public IEnumerable<Teacher> GetAssignedTeacher(string grade)
+        {
+            string sql = "SELECT TA.TEACHERID ID, U.FIRSTNAME, U.LASTNAME, U.EMAIL, U.PHONE "
+                        + "FROM CTSUSER U "
+                        + "JOIN TEACHERASSIGNMENT TA ON U.ID = TA.TeacherID "
+                        + "JOIN CALENDARYEAR CY ON CY.ID = TA.CalendarYearID "
+                        + "AND CY.ACTIVEYEAR = 'Y' "
+                        + "AND TA.CTSGRADE = @ctsGrade ";
+
+            List<SqlParameter> paramList = new List<SqlParameter>();
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@ctsGrade",
+                SqlDbType = System.Data.SqlDbType.VarChar,
+                SqlValue = grade
+            });
+
+            var result = _dbContext.Teachers.FromSql(sql, paramList.ToArray());
+
+            if (result != null)
+            {
+                return result.ToList();
+            }
+            return null;
+        }
+
+
         public IEnumerable<StudentWeekGrade> GetAssignedStudentsWeekGrade(int teacherId, int weekId)
         {
             _logger.LogInformation("CTSDBRepository.GetAssignedStudentsWeekGrade() called");
@@ -263,7 +291,7 @@ namespace CTSWebApp.Data
 
             string sql = "SELECT ISNULL(SWG.ID,0) ID, S.ID STUDENTID, ISNULL(CW.ID,@weekId) AS CALENDARWEEKID, SE.TEACHERID, S.FIRSTNAME FIRSTNAME, S.LASTNAME LASTNAME, S.ACTIVE ACTIVE, "
                     + " SE.CTSGRADE CTSGRADE, SE.COUNTYGRADE COUNTYGRADE, SE.ENROLLMENTDATE, SE.DATEOFLEAVING, "
-                    + "SWG.ATTENDANCE, SWG.HOMEWORK, SWG.READING, SWG.WRITING, SWG.SPEAKING, SWG.BEHAVIOR, SWG.QUIZ, SWG.NOTES "
+                    + "SWG.ATTENDANCE, ISNULL(SWG.HOMEWORK,0) HOMEWORK, ISNULL(SWG.READING,0) READING, ISNULL(SWG.WRITING,0) WRITING, ISNULL(SWG.SPEAKING,0) SPEAKING, ISNULL(SWG.BEHAVIOR,0) BEHAVIOR, ISNULL(SWG.QUIZ,0) QUIZ, SWG.NOTES "
                     + "FROM STUDENTENROLLMENT SE "
                     + "JOIN STUDENT S ON S.ID = SE.STUDENTID "
                     //+ "JOIN CALENDARYEAR CY ON CY.ID = SE.CALENDARYEARID "

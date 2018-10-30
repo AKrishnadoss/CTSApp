@@ -23,7 +23,8 @@
         <div class="col-md-4">
             <div class="input-group">
                 <label for="selectCalenderWeek" class="mt5">Week</label>
-                <select name="selectCalenderWeek" class="ml10 selectpicker form-control selectWidth" (change)="onSelectCalendarWeek($event.target.value)">
+                <img *ngIf="isSelectCalendarWeekLoading" src="/img/Loading.gif" height="40" width="40" />
+                <select *ngIf="!isSelectCalendarWeekLoading" name="selectCalenderWeek" class="ml10 selectpicker form-control selectWidth" (change)="onSelectCalendarWeek($event.target.value)">
                     <option value="0">--Select Week--</option>
                     <option *ngFor="let week of CalendarWeeks" value={{week.weekNo}}>
                         {{week.description}} - {{week.weekDate | date: 'MM/dd/yyyy'}}
@@ -34,7 +35,8 @@
         <div class="col-md-2">
             <div class="input-group">
                 <label for="selectGrade" class="mt5">Grade</label>
-                <select name="selectGrade" class="ml10 selectpicker form-control selectWidth" (change)="onSelectGrade($event.target.value)">
+                <img *ngIf="isSelectGradeLoading" src="/img/Loading.gif" height="40" width="40" />
+                <select *ngIf="!isSelectGradeLoading" name="selectGrade" class="ml10 selectpicker form-control selectWidth" (change)="onSelectGrade($event.target.value)">
                     <option value="0">--Select Grade--</option>
                     <option *ngFor="let grade of Grades" value={{grade.ctsGrade}}>
                         {{grade.ctsGrade}}
@@ -46,11 +48,12 @@
         <div class="col-md-4">
             <div class="input-group">
                 <label for="selectTeacher" class="mt5">Teacher</label>
-                <select name="selectTeacher" class="ml10 selectpicker form-control selectWidth">
+                <img *ngIf="isSelectTeacherLoading" src="/img/Loading.gif" height="40" width="40" />
+                <select *ngIf="!isSelectTeacherLoading" name="selectTeacher" class="ml10 selectpicker form-control selectWidth" (change)="onSelectTeacher($event.target.value)">
                     <option value="0">--Select Teacher--</option>
-                    <option>Uthami</option>
-                    <option>Latha</option>
-                    <option>Niranjan</option>
+                    <option *ngFor="let teacher of Teachers" value={{teacher.id}}>
+                        {{teacher.firstName}} {{teacher.lastName}} 
+                    </option>
                 </select>
             </div>
         </div>
@@ -58,7 +61,7 @@
             <button class="btn btn-primary btn-sm right mt5"><strong><i class="fa fa-list-ul"></i> List Students</strong></button>
         </div>
     </div>
-    <div class="row">
+    <div class="row" *ngIf="showStudentWeekGradeGrid">
         <div class="col-md-12">
             <table class="table table-hover table-bordered table-sm font-small" id="dev-table">
                 <thead class="bgTableHead">
@@ -276,7 +279,7 @@
             </table>
         </div>
     </div>
-    <div class="row row bgBar br5 m5 p5">
+    <div class="row row bgBar br5 m5 p5" *ngIf="showStudentWeekGradeGrid">
         <div class="col-md-4"></div>
         <div class="col-md-4 ">
             <button class="btn btn-warning btn-sm"><strong><i class="fa fa-times-circle"></i> Cancel</strong></button>
