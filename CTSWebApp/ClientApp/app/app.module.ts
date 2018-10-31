@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/Router';
 import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import {LoggerService} from '../services/LoggerService';
 import { AuthService } from '../services/AuthService';
@@ -30,7 +31,9 @@ import {AttendanceComponent} from '../components/attendance/Attendance';
       BrowserModule,
       HttpModule,
       HttpClientModule,
-	AppRoutingModule
+	  FormsModule, 
+	  ReactiveFormsModule,
+	  AppRoutingModule
   ],
     providers: [AuthService, LoggerService, CalendarService, GradeService, TeacherService],
   bootstrap: [AppComponent]

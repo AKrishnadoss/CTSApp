@@ -294,11 +294,12 @@ namespace CTSWebApp.Data
                     + "SWG.ATTENDANCE, ISNULL(SWG.HOMEWORK,0) HOMEWORK, ISNULL(SWG.READING,0) READING, ISNULL(SWG.WRITING,0) WRITING, ISNULL(SWG.SPEAKING,0) SPEAKING, ISNULL(SWG.BEHAVIOR,0) BEHAVIOR, ISNULL(SWG.QUIZ,0) QUIZ, SWG.NOTES "
                     + "FROM STUDENTENROLLMENT SE "
                     + "JOIN STUDENT S ON S.ID = SE.STUDENTID "
+                    + "AND SE.TEACHERID = @teacherId "
                     //+ "JOIN CALENDARYEAR CY ON CY.ID = SE.CALENDARYEARID "
                     + "LEFT OUTER JOIN STUDENTWEEKGRADE SWG ON SWG.StudentID = S.ID "
                     + "LEFT OUTER JOIN CALENDARWEEK CW ON CW.ID = SWG.CalendarWeekID "
                     //+ "AND CY.ACTIVEYEAR = 'Y' "
-                    + "AND SE.TEACHERID = @teacherId "
+                    //+ "AND SE.TEACHERID = @teacherId "
                     + "AND CW.ID = @weekId ";
 
             var result = _dbContext.StudentWeekGrade.FromSql(sql, paramList.ToArray());

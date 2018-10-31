@@ -10,6 +10,7 @@
     <None Remove="ClientApp\components\home\home.ts" />
     <None Remove="ClientApp\model\CalendarWeek.ts" />
     <None Remove="ClientApp\model\Grade.ts" />
+    <None Remove="ClientApp\model\StudentWeekGrade.ts" />
     <None Remove="ClientApp\model\Teacher.ts" />
     <None Remove="ClientApp\routes.ts" />
     <None Remove="ClientApp\services\AuthService.ts" />
@@ -38,6 +39,7 @@
     <TypeScriptCompile Include="ClientApp\components\home\home.ts" />
     <TypeScriptCompile Include="ClientApp\model\CalendarWeek.ts" />
     <TypeScriptCompile Include="ClientApp\model\Grade.ts" />
+    <TypeScriptCompile Include="ClientApp\model\StudentWeekGrade.ts" />
     <TypeScriptCompile Include="ClientApp\model\Teacher.ts" />
     <TypeScriptCompile Include="ClientApp\routes.ts" />
     <TypeScriptCompile Include="ClientApp\services\AuthService.ts" />

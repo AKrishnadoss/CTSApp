@@ -155,7 +155,7 @@ namespace CTSWebApp.Controllers.API
                 {
                     return Ok(_mapper.Map<IEnumerable<StudentWeekGrade>, IEnumerable<StudentWeekGradeViewModel>>(result));
                 }
-                return NotFound();
+                return Ok(null);
             }
             catch (Exception exception)
             {

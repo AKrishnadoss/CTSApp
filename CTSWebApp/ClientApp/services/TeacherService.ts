@@ -2,6 +2,7 @@
 import { HttpClient } from '@angular/common/http';
 
 import { Teacher } from '../model/Teacher';
+import { StudentWeekGrade } from '../model/StudentWeekGrade';
 
 
 @Injectable()
@@ -11,4 +12,8 @@ export class TeacherService {
     getTeachersByGrade(grade : string){
         return this._http.get<Teacher[]>('/api/Teacher/teacherbygrade/' + grade);
     }
+
+	getStudentWeekGrades(teacherId : number, weekId : number){
+		return this._http.get<StudentWeekGrade[]>('/api/Teacher/teacherbyid/' + teacherId + '/studentgrades/' + weekId);
+	}
 }

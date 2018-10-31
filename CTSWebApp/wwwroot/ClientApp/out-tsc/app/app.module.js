@@ -8,6 +8,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoggerService } from '../services/LoggerService';
 import { AuthService } from '../services/AuthService';
 import { CalendarService } from '../services/CalendarService';
@@ -33,6 +34,8 @@ var AppModule = /** @class */ (function () {
                 BrowserModule,
                 HttpModule,
                 HttpClientModule,
+                FormsModule,
+                ReactiveFormsModule,
                 AppRoutingModule
             ],
             providers: [AuthService, LoggerService, CalendarService, GradeService, TeacherService],

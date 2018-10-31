@@ -28,11 +28,24 @@ var AttendanceComponent = /** @class */ (function () {
             return;
         }
         this.userName = this._authService.getUserName();
+        this.Scores = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         this.isSelectCalendarWeekLoading = false;
         this.isSelectGradeLoading = false;
         this.isSelectTeacherLoading = false;
+        this.isStudentWeekGradeGridLoading = false;
+        this.showStudentWeekGradeGrid = false;
+        this.showStudentGridServerMessage = false;
+        this.calendarWeekId = 0;
+        this.ctsGrade = "";
+        this.teacherId = 0;
         this.getCalendarWeeks();
         this.getGrades();
+    };
+    AttendanceComponent.prototype.populateScores = function () {
+        this.Scores.push(0);
+        this.Scores.push(1);
+        this.Scores.push(2);
+        this.Scores.push(3);
     };
     AttendanceComponent.prototype.getGrades = function () {
         var _this = this;
@@ -68,29 +81,115 @@ var AttendanceComponent = /** @class */ (function () {
     };
     AttendanceComponent.prototype.onSelectCalendarWeek = function (value) {
         this.calendarWeekId = value;
+        //console.log("selected calendarWeekId = " + value);
+        this.displayStudentWeekGradeGrid();
     };
     AttendanceComponent.prototype.onSelectGrade = function (value) {
-        console.log(value);
+        //console.log("selected grade = " + value);
         this.Teachers = null;
         this.ctsGrade = value;
         if (value != "0") {
-            this.isSelectTeacherLoading = true;
             this.getTeachersByGrade(this.ctsGrade);
-            this.isSelectTeacherLoading = false;
         }
+        this.displayStudentWeekGradeGrid();
+    };
+    AttendanceComponent.prototype.onSelectTeacher = function (value) {
+        this.teacherId = value;
+        //console.log("selected teacherId = " + value);
+        this.displayStudentWeekGradeGrid();
     };
     AttendanceComponent.prototype.getTeachersByGrade = function (grade) {
         var _this = this;
+        this.isSelectTeacherLoading = true;
         this._teacherService.getTeachersByGrade(grade)
             .subscribe(function (result) {
+            _this.isSelectTeacherLoading = false;
             _this.Teachers = result;
         }, function (err) {
+            _this.isSelectTeacherLoading = false;
             console.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
             if (err.status == "404") {
                 // data not found
                 _this.Teachers = null;
             }
         });
+    };
+    AttendanceComponent.prototype.displayStudentWeekGradeGrid = function () {
+        console.log(this.calendarWeekId);
+        console.log(this.teacherId);
+        if (this.calendarWeekId != 0 && this.teacherId != 0) {
+            this.showStudentWeekGradeGrid = true;
+            this.getStudentWeekGrades();
+        }
+        else {
+            this.showStudentWeekGradeGrid = false;
+        }
+    };
+    AttendanceComponent.prototype.getStudentWeekGrades = function () {
+        var _this = this;
+        this.isStudentWeekGradeGridLoading = true;
+        this.showStudentWeekGradeGrid = false;
+        this.studentGridServerMessage = "";
+        this.showStudentGridServerMessage = false;
+        this._teacherService.getStudentWeekGrades(this.teacherId, this.calendarWeekId)
+            .subscribe(function (result) {
+            _this.isStudentWeekGradeGridLoading = false;
+            _this.StudentWeekGrades = result;
+            if (_this.StudentWeekGrades == null) {
+                _this.showStudentGridServerMessage = true;
+                _this.showStudentWeekGradeGrid = false;
+                _this.studentGridServerMessage = "No Students assigned to selected teacher !";
+            }
+            else {
+                _this.showStudentGridServerMessage = false;
+                _this.showStudentWeekGradeGrid = true;
+            }
+        }, function (err) {
+            _this.isStudentWeekGradeGridLoading = false;
+            console.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+            _this.StudentWeekGrades = null;
+            _this.studentGridServerMessage = "Error Occured while retrieving information : " + err.statusText;
+            _this.showStudentGridServerMessage = true;
+            _this.showStudentWeekGradeGrid = false;
+        });
+    };
+    AttendanceComponent.prototype.selectScore = function (weekGrade, type, value) {
+        switch (type) {
+            case 'homework':
+                weekGrade.homework = value;
+                break;
+            case 'reading':
+                weekGrade.reading = value;
+                break;
+            case 'writing':
+                weekGrade.writing = value;
+                break;
+            case 'speaking':
+                weekGrade.speaking = value;
+                break;
+            case 'behavior':
+                weekGrade.behavior = value;
+                break;
+            case 'quiz':
+                weekGrade.quiz = value;
+                break;
+        }
+    };
+    AttendanceComponent.prototype.cancelClick = function () {
+        this.showStudentWeekGradeGrid = false;
+        this.StudentWeekGrades = null;
+        this.teacherId = 0;
+    };
+    AttendanceComponent.prototype.saveClick = function () {
+        console.log("Save clicked");
+        console.log(this.StudentWeekGrades[0].attendance);
+        console.log(this.StudentWeekGrades[0].homework);
+        console.log(this.StudentWeekGrades[0].reading);
+        console.log(this.StudentWeekGrades[0].writing);
+        console.log(this.StudentWeekGrades[0].speaking);
+        console.log(this.StudentWeekGrades[0].behavior);
+        console.log(this.StudentWeekGrades[0].quiz);
+        console.log(this.StudentWeekGrades[0].notes);
     };
     AttendanceComponent = __decorate([
         Component({

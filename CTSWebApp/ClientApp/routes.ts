@@ -8,8 +8,8 @@ import {ContactComponent} from './components/contact/Contact';
 export const AppRoutes = [
 	{ path : "", redirectTo : 'home', pathMatch : 'full'},
 	{ path : "attendance",component: AttendanceComponent},
-	{ path : "home", component: HomeComponent},
-	{ path : "contactus", component: ContactComponent}
+	{ path : "home", component: HomeComponent}
+	//{ path : "contactus", component: ContactComponent}
 ]
 
 @NgModule ({
