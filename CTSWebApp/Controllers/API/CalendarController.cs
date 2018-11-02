@@ -2,6 +2,7 @@
 using CTSWebApp.BLL;
 using CTSWebApp.Data;
 using CTSWebApp.Data.Entities;
+using CTSWebApp.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -32,11 +33,11 @@ namespace CTSWebApp.Controllers.API
         [Route("weeks")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public ActionResult<IEnumerable<CalendarWeek>> GetWeeks(bool includeInactive=false)
+        public ActionResult<IEnumerable<CalendarWeekViewModel>> GetWeeks(bool includeInactive=false)
         {
             try
             {
-                var result = _calendarBLL.GetCalendarWeeks(includeInactive);
+                var result = _mapper.Map<IEnumerable<CalendarWeek>, IEnumerable<CalendarWeekViewModel>>(_calendarBLL.GetCalendarWeeks(includeInactive));
                 if (result != null)
                 {
                     return Ok(result);
@@ -46,7 +47,7 @@ namespace CTSWebApp.Controllers.API
             catch (Exception exception)
             {
                 _logger.LogError($"Exception occurred in GetCalendarWeeks() => {exception}");
-                return BadRequest("Exception occurred in CalendarController.GetCalendarWeeks()");
+                return BadRequest("Exception occurred in calendar/weeks");
             }
         }
     }

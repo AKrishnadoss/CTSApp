@@ -8,6 +8,7 @@ import { Grade } from '../../model/Grade';
 import { TeacherService } from '../../services/TeacherService';
 import { Teacher } from '../../model/Teacher';
 import { StudentWeekGrade } from '../../model/StudentWeekGrade';
+import { StudentService } from '../../services/StudentService';
 
 @Component ({
 	templateUrl : './attendance.html'
@@ -28,8 +29,10 @@ export class AttendanceComponent  implements OnInit {
 	isSelectTeacherLoading : boolean;
 	isStudentWeekGradeGridLoading :boolean;
 	showStudentWeekGradeGrid : boolean;
-	showStudentGridServerMessage : boolean;
-	studentGridServerMessage : string;
+	showStudentGridServerErrorMessage : boolean;
+	studentGridServerErrorMessage : string;
+	isStudentWeekGradeGridSaving : boolean;
+	showStudentGridServerSuccessMessage : boolean;
 
     // Search criteria
     calendarWeekId: number;
@@ -39,7 +42,8 @@ export class AttendanceComponent  implements OnInit {
     constructor(private _authService: AuthService,
         private _calendarService: CalendarService,
         private _gradeService: GradeService,
-		private _teacherService: TeacherService) {
+		private _teacherService: TeacherService,
+		private _studentService: StudentService) {
 	}
 
 	ngOnInit(){
@@ -58,7 +62,9 @@ export class AttendanceComponent  implements OnInit {
 		this.isSelectTeacherLoading = false;
 		this.isStudentWeekGradeGridLoading = false;
 		this.showStudentWeekGradeGrid = false;
-		this.showStudentGridServerMessage = false;
+		this.showStudentGridServerErrorMessage = false;
+		this.isStudentWeekGradeGridSaving = false;
+		this.showStudentGridServerSuccessMessage = false;
 
 		this.calendarWeekId = 0;
 		this.ctsGrade = "";
@@ -119,8 +125,8 @@ export class AttendanceComponent  implements OnInit {
 
     onSelectGrade(value: any) {
         //console.log("selected grade = " + value);
-		this.studentGridServerMessage = "";
-		this.showStudentGridServerMessage = false;
+		this.studentGridServerErrorMessage = "";
+		this.showStudentGridServerErrorMessage = false;
 		this.Teachers = null;
 		this.teacherId = 0;
         this.ctsGrade = value;
@@ -155,9 +161,10 @@ export class AttendanceComponent  implements OnInit {
     }
 
 	displayStudentWeekGradeGrid(){
+		this.showStudentGridServerSuccessMessage = false;
 		if ( this.calendarWeekId != 0 && this.teacherId != 0){
-			this.studentGridServerMessage = "";
-			this.showStudentGridServerMessage = false;
+			this.studentGridServerErrorMessage = "";
+			this.showStudentGridServerErrorMessage = false;
 			this.showStudentWeekGradeGrid = true;
 			this.getStudentWeekGrades();
 		}
@@ -169,20 +176,20 @@ export class AttendanceComponent  implements OnInit {
 	getStudentWeekGrades(){
 		this.isStudentWeekGradeGridLoading = true;
 		this.showStudentWeekGradeGrid = false;
-		this.studentGridServerMessage = "";
-		this.showStudentGridServerMessage = false;
+		this.studentGridServerErrorMessage = "";
+		this.showStudentGridServerErrorMessage = false;
 		this._teacherService.getStudentWeekGrades(this.teacherId, this.calendarWeekId)
             .subscribe(result => {
 				this.isStudentWeekGradeGridLoading = false;
                 this.StudentWeekGrades = result;
 				
 				if ( this.StudentWeekGrades == null ){
-					this.showStudentGridServerMessage = true;
+					this.showStudentGridServerErrorMessage = true;
 					this.showStudentWeekGradeGrid = false;
-					this.studentGridServerMessage = "No Students assigned to selected teacher !";
+					this.studentGridServerErrorMessage = "No Students assigned to selected teacher !";
 				}
 				else {
-					this.showStudentGridServerMessage = false;
+					this.showStudentGridServerErrorMessage = false;
 					this.showStudentWeekGradeGrid = true;
 				}
 
@@ -191,8 +198,8 @@ export class AttendanceComponent  implements OnInit {
 				this.isStudentWeekGradeGridLoading = false;
 				console.log("Error occurred : Code=" + err.status + ",Error="+err.statusText);
 				this.StudentWeekGrades = null;
-				this.studentGridServerMessage = "Error Occured while retrieving information : " + err.statusText;
-				this.showStudentGridServerMessage = true;
+				this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.statusText;
+				this.showStudentGridServerErrorMessage = true;
 				this.showStudentWeekGradeGrid = false;
             });
 	}
@@ -236,19 +243,28 @@ export class AttendanceComponent  implements OnInit {
 
 	cancelClick(){
 		this.showStudentWeekGradeGrid = false;
+		this.showStudentGridServerSuccessMessage = false;
 		this.StudentWeekGrades = null;
 		this.teacherId = 0;
 	}
 
 	saveClick(){
-		console.log("Save clicked");
-		console.log(this.StudentWeekGrades[0].attendance);
-		console.log(this.StudentWeekGrades[0].homework);
-		console.log(this.StudentWeekGrades[0].reading);
-		console.log(this.StudentWeekGrades[0].writing);
-		console.log(this.StudentWeekGrades[0].speaking);
-		console.log(this.StudentWeekGrades[0].behavior);
-		console.log(this.StudentWeekGrades[0].quiz);
-		console.log(this.StudentWeekGrades[0].notes);
+		this.isStudentWeekGradeGridSaving = true;
+		this.showStudentGridServerErrorMessage = false;
+		this.studentGridServerErrorMessage = "";
+		this.showStudentGridServerSuccessMessage = false;
+		this._studentService.saveStudentWeekGrades(this.StudentWeekGrades)
+			.subscribe(result=> {
+				this.isStudentWeekGradeGridSaving = false;
+				this.showStudentGridServerSuccessMessage = true;
+			},
+			err=> {
+				console.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+				this.isStudentWeekGradeGridSaving = false;
+				this.showStudentGridServerErrorMessage = true;
+				this.showStudentGridServerSuccessMessage = false;
+				this.studentGridServerErrorMessage = "Save failed. " + err.statusText;
+			});
+
 	}
  }

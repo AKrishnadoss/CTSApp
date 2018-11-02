@@ -14,6 +14,7 @@ import { AuthService } from '../services/AuthService';
 import { CalendarService } from '../services/CalendarService';
 import { GradeService } from '../services/GradeService';
 import { TeacherService } from '../services/TeacherService';
+import { StudentService } from '../services/StudentService';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from '../routes';
 import { HomeComponent } from '../components/home/Home';
@@ -38,7 +39,7 @@ var AppModule = /** @class */ (function () {
                 ReactiveFormsModule,
                 AppRoutingModule
             ],
-            providers: [AuthService, LoggerService, CalendarService, GradeService, TeacherService],
+            providers: [AuthService, LoggerService, CalendarService, GradeService, TeacherService, StudentService],
             bootstrap: [AppComponent]
         })
     ], AppModule);

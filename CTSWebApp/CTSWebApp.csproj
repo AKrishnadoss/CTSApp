@@ -17,6 +17,7 @@
     <None Remove="ClientApp\services\CalendarService.ts" />
     <None Remove="ClientApp\services\GradeService.ts" />
     <None Remove="ClientApp\services\LoggerService.ts" />
+    <None Remove="ClientApp\services\StudentService.ts" />
     <None Remove="ClientApp\services\TeacherService.ts" />
   </ItemGroup>
 
@@ -46,6 +47,7 @@
     <TypeScriptCompile Include="ClientApp\services\CalendarService.ts" />
     <TypeScriptCompile Include="ClientApp\services\GradeService.ts" />
     <TypeScriptCompile Include="ClientApp\services\LoggerService.ts" />
+    <TypeScriptCompile Include="ClientApp\services\StudentService.ts" />
     <TypeScriptCompile Include="ClientApp\services\TeacherService.ts" />
   </ItemGroup>
 

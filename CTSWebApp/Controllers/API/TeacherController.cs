@@ -150,6 +150,7 @@ namespace CTSWebApp.Controllers.API
         {
             try
             {
+                System.Threading.Thread.Sleep(2000);
                 var result = _teacherBLL.GetAssignedStudentsWeekGrade(teacherId, weekId);
                 if (result != null && result.Count() > 0)
                 {

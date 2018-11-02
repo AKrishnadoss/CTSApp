@@ -231,10 +231,11 @@ namespace CTSWebApp.Data
                     + "AND SE.TEACHERID = @teacherId "
                     //+ "JOIN CALENDARYEAR CY ON CY.ID = SE.CALENDARYEARID "
                     + "LEFT OUTER JOIN STUDENTWEEKGRADE SWG ON SWG.StudentID = S.ID "
-                    + "LEFT OUTER JOIN CALENDARWEEK CW ON CW.ID = SWG.CalendarWeekID "
+                    + "AND SWG.CalendarWeekID = @weekId "
+                    + "LEFT OUTER JOIN CALENDARWEEK CW ON CW.ID = SWG.CalendarWeekID ";
                     //+ "AND CY.ACTIVEYEAR = 'Y' "
                     //+ "AND SE.TEACHERID = @teacherId "
-                    + "AND CW.ID = @weekId ";
+                    //+ "AND CW.ID = @weekId ";
 
             var result = _dbContext.StudentWeekGrade.FromSql(sql, paramList.ToArray());
 
@@ -294,6 +295,149 @@ namespace CTSWebApp.Data
                     .ToList();
                  
             return result;
+        }
+
+        public StudentWeekGradeResult SaveStudentWeekGrades(IEnumerable<StudentWeekGrade> studentWeekGrades)
+        {
+            _logger.LogInformation("CTSDBRepository.SaveStudentWeekGrades() called");
+            StudentWeekGradeResult studentWeekGradeResult = new StudentWeekGradeResult(true, "Sucess", new List<StudentWeekGradeError>());
+            try
+            {
+                _dbContext.Database.BeginTransaction();
+
+                foreach ( StudentWeekGrade swg in studentWeekGrades)
+                {
+                    StudentWeekGradeError result = SaveStudentWeekGrade(swg);
+                    if ( result != null)
+                    {
+                        studentWeekGradeResult.Result = false;
+                        studentWeekGradeResult.ErrorMessage = "Failed to Save data";
+                        studentWeekGradeResult.StudentWeekGradeErrors.Add(result);
+                    }
+                }
+
+                if (studentWeekGradeResult.Result == true)
+                {
+                    _dbContext.Database.CommitTransaction();
+                    studentWeekGradeResult.StudentWeekGradeErrors = null;
+                }
+                else
+                {
+                    _dbContext.Database.RollbackTransaction();
+                }
+
+                return studentWeekGradeResult;
+            }
+            catch (Exception exception )
+            {
+                _dbContext.Database.RollbackTransaction();
+                throw exception;
+            }
+        }
+
+        private StudentWeekGradeError SaveStudentWeekGrade(StudentWeekGrade swg)
+        {
+            List<SqlParameter> paramList = new List<SqlParameter>();
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@StudentID",
+                SqlDbType = System.Data.SqlDbType.Int,
+                SqlValue = swg.StudentID
+            });
+
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@CalendarWeekID",
+                SqlDbType = System.Data.SqlDbType.Int,
+                SqlValue = swg.CalendarWeekID
+            });
+
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@Attendance",
+                SqlDbType = System.Data.SqlDbType.VarChar,
+                Size = 1,
+                SqlValue = swg.Attendance
+            });
+
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@Homework",
+                SqlDbType = System.Data.SqlDbType.SmallInt,
+                SqlValue = swg.Homework
+            });
+
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@Reading",
+                SqlDbType = System.Data.SqlDbType.SmallInt,
+                SqlValue = swg.Reading
+            });
+
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@Writing",
+                SqlDbType = System.Data.SqlDbType.SmallInt,
+                SqlValue = swg.Writing
+            });
+
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@Speaking",
+                SqlDbType = System.Data.SqlDbType.SmallInt,
+                SqlValue = swg.Speaking
+            });
+
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@Behavior",
+                SqlDbType = System.Data.SqlDbType.SmallInt,
+                SqlValue = swg.Behavior
+            });
+
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@Quiz",
+                SqlDbType = System.Data.SqlDbType.SmallInt,
+                SqlValue = swg.Quiz
+            });
+
+            
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@Notes",
+                SqlDbType = System.Data.SqlDbType.VarChar,
+                Size = 100,
+                SqlValue = string.IsNullOrEmpty(swg.Notes) ? "" : swg.Notes
+            });
+
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@Result",
+                SqlDbType = System.Data.SqlDbType.Int,
+                Direction = System.Data.ParameterDirection.Output
+            });
+
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@ErrorMessage",
+                SqlDbType = System.Data.SqlDbType.VarChar,
+                Direction = System.Data.ParameterDirection.Output,
+                Size = 100
+            });
+
+            var result = _dbContext.Database.ExecuteSqlCommand("EXEC SAVE_STUDENTWEEKGRADE @StudentID, @CalendarWeekID, @Attendance, " +
+                "@Homework, @Reading, @Writing, @Speaking, @Behavior , @Quiz, @Notes, @Result OUT, @ErrorMessage OUT", paramList.ToArray());
+
+            int returnCode = paramList[10].SqlValue != null ? int.Parse(paramList[10].SqlValue.ToString()) : 0;
+            if (returnCode != 1)
+            {
+                string errorMessage = paramList[11].SqlValue != null ? paramList[11].SqlValue.ToString() : "Error Occurred";
+                _logger.LogError("CTSDBRepository.SaveStudentWeekGrade() failed. Error Message = " + errorMessage);
+                return new StudentWeekGradeError(swg.StudentID, errorMessage);
+            }
+
+            return null;
         }
     }
 }

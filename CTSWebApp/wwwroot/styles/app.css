@@ -71,6 +71,16 @@
     width: auto;
 }
 
+.errorText {
+    color:red;
+    font-weight:bold;
+}
+
+.successText {
+    color: #28a745;
+    font-weight: bold;
+}
+
 /*styling for radio button*/
 /* Custom Radio Button Start*/
 

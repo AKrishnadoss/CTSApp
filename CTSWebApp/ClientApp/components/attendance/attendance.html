@@ -62,15 +62,16 @@
         </div>-->
     </div>
     <div *ngIf="isStudentWeekGradeGridLoading">Loading Student Grades. Please wait.<img src="/img/Loading.gif" height="40" width="40" class="ml10" /></div>
-    <div *ngIf="showStudentGridServerMessage" class="mt10 ml10" ><i class="fa fa-exclamation-triangle"></i> {{studentGridServerMessage}} </div>
+    <div *ngIf="showStudentGridServerErrorMessage" class="mt10 ml10 errorText" ><i class="fa fa-exclamation-triangle"></i> {{studentGridServerErrorMessage}} </div>
+    <div *ngIf="showStudentGridServerSuccessMessage" class="mt10 ml10 successText"><i class="fa fa-check-circle"></i> Student Week Grades saved successfully ! </div>
     <div class="row" *ngIf="showStudentWeekGradeGrid">
         <div class="col-md-12">
             <table class="table table-hover table-bordered table-sm font-small" id="dev-table">
                 <thead class="bgTableHead">
                     <tr>
                         <th class="fw">ID</th>
-                        <th class="fw w200">First Name</th>
-                        <th class="fw w200">Last Name</th>
+                        <th class="fw w150">First Name</th>
+                        <th class="fw w150">Last Name</th>
                         <th class="fw">Attendance</th>
                         <th class="fw">Homework</th>
                         <th class="fw">Reading</th>
@@ -142,12 +143,16 @@
             </table>
         </div>
     </div>
-    <div class="row row bgBar br5 m5 p5" *ngIf="showStudentWeekGradeGrid">
-        <div class="col-md-4"></div>
-        <div class="col-md-4 ">
+    <div class="row bgBar br5 m5 p5" *ngIf="isStudentWeekGradeGridSaving">
+        <div class="col-md-12">Saving Student Grades. Please wait.<img src="/img/Loading.gif" height="40" width="40" class="ml10" /></div>
+    </div>
+    <div class="row bgBar br5 m5 p5" *ngIf="showStudentWeekGradeGrid && !isStudentWeekGradeGridSaving">
+        
+        <div class="col-md-4" ></div>
+        <div class="col-md-4 " >
             <button class="btn btn-primary btn-sm" type="button" (click)="cancelClick()"><strong><i class="fa fa-times-circle"></i> Cancel</strong></button>
             <button class="btn btn-primary btn-sm ml10" (click)="saveClick()" type="submit"><strong><i class="fa fa-save" ></i> Save</strong></button>
         </div>
-        <div class="col-md-4"></div>
+        <div class="col-md-4" ></div>
     </div>
 </div>

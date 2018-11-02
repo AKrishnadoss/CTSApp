@@ -26,6 +26,8 @@ namespace CTSWebApp.Data
             CreateMap<StudentEnrollment, StudentEnrollmentViewModel>()
                 .ReverseMap();
 
+            CreateMap<CalendarWeek, CalendarWeekViewModel>()
+                .ReverseMap();
 
             CreateMap<Grade, GradeViewModel>()
                 .ReverseMap();

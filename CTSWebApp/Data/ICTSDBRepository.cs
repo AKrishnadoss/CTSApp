@@ -24,5 +24,7 @@ namespace CTSWebApp.Data
         IEnumerable<CalendarWeek> GetCalendarWeeks(bool includeInActive = false);
         IEnumerable<Grade> GetGrades();
         IEnumerable<Teacher> GetAssignedTeacher(string grade);
+
+        StudentWeekGradeResult SaveStudentWeekGrades(IEnumerable<StudentWeekGrade> studentWeekGrades);
     }
 }
