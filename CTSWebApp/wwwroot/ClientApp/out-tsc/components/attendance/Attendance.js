@@ -86,7 +86,10 @@ var AttendanceComponent = /** @class */ (function () {
     };
     AttendanceComponent.prototype.onSelectGrade = function (value) {
         //console.log("selected grade = " + value);
+        this.studentGridServerMessage = "";
+        this.showStudentGridServerMessage = false;
         this.Teachers = null;
+        this.teacherId = 0;
         this.ctsGrade = value;
         if (value != "0") {
             this.getTeachersByGrade(this.ctsGrade);
@@ -115,9 +118,9 @@ var AttendanceComponent = /** @class */ (function () {
         });
     };
     AttendanceComponent.prototype.displayStudentWeekGradeGrid = function () {
-        console.log(this.calendarWeekId);
-        console.log(this.teacherId);
         if (this.calendarWeekId != 0 && this.teacherId != 0) {
+            this.studentGridServerMessage = "";
+            this.showStudentGridServerMessage = false;
             this.showStudentWeekGradeGrid = true;
             this.getStudentWeekGrades();
         }
@@ -173,6 +176,17 @@ var AttendanceComponent = /** @class */ (function () {
             case 'quiz':
                 weekGrade.quiz = value;
                 break;
+        }
+    };
+    AttendanceComponent.prototype.selectAttendance = function (weekGrade, value) {
+        if (value == 'N') {
+            weekGrade.homework = 0;
+            weekGrade.reading = 0;
+            weekGrade.writing = 0;
+            weekGrade.speaking = 0;
+            weekGrade.behavior = 0;
+            weekGrade.quiz = 0;
+            weekGrade.notes = null;
         }
     };
     AttendanceComponent.prototype.cancelClick = function () {

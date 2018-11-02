@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -8,8 +9,10 @@ namespace CTSWebApp.Data.Entities
 {
     public class StudentWeekGrade
     {
+
         [Key]
         public int ID { get; set; }
+        [Key]
         public int StudentID { get; set; }
         public int CalendarWeekID { get; set; }
         public int TeacherID { get; set; }

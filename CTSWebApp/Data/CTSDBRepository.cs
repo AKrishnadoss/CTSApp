@@ -66,74 +66,12 @@ namespace CTSWebApp.Data
         public UserIdentity GetUserIdentity(string email, string password)
         {
             _logger.LogInformation("CTSDBRepository.GetUserIdentity() called");
-
             List<SqlParameter> paramList = new List<SqlParameter>();
             paramList.Add(new SqlParameter
             {
                 ParameterName = "@Email",
                 SqlDbType = System.Data.SqlDbType.VarChar,
                 SqlValue = email
-            });
-
-            paramList.Add(new SqlParameter
-            {
-                ParameterName = "@CTSUserId",
-                SqlDbType = System.Data.SqlDbType.Int,
-                Direction = System.Data.ParameterDirection.Output
-            });
-
-            paramList.Add(new SqlParameter
-            {
-                ParameterName = "@UserName",
-                SqlDbType = System.Data.SqlDbType.VarChar,
-                Direction = System.Data.ParameterDirection.Output,
-                Size = 61
-            });
-
-            paramList.Add(new SqlParameter
-            {
-                ParameterName = "@Password",
-                SqlDbType = System.Data.SqlDbType.VarChar,
-                Direction = System.Data.ParameterDirection.Output,
-                Size = 250
-            });
-
-            paramList.Add(new SqlParameter
-            {
-                ParameterName = "@Hash",
-                SqlDbType = System.Data.SqlDbType.VarChar,
-                Direction = System.Data.ParameterDirection.Output,
-                Size = 50
-            });
-
-            paramList.Add(new SqlParameter
-            {
-                ParameterName = "@Locked",
-                SqlDbType = System.Data.SqlDbType.VarChar,
-                Direction = System.Data.ParameterDirection.Output,
-                Size = 1
-            });
-
-            paramList.Add(new SqlParameter
-            {
-                ParameterName = "@LastLogin",
-                SqlDbType = System.Data.SqlDbType.DateTime,
-                Direction = System.Data.ParameterDirection.Output
-            });
-
-            paramList.Add(new SqlParameter
-            {
-                ParameterName = "@ResetPassword",
-                SqlDbType = System.Data.SqlDbType.VarChar,
-                Direction = System.Data.ParameterDirection.Output,
-                Size = 1
-            });
-
-            paramList.Add(new SqlParameter
-            {
-                ParameterName = "@LogonCount",
-                SqlDbType = System.Data.SqlDbType.Int,
-                Direction = System.Data.ParameterDirection.Output
             });
 
             paramList.Add(new SqlParameter
@@ -151,37 +89,33 @@ namespace CTSWebApp.Data
                 Size = 100
             });
 
-            _dbContext.Database.ExecuteSqlCommand("EXEC VALIDATE_CTSUSERCRED @Email, @CTSUserId OUT, @UserName OUT, @Password OUT, @Hash OUT, @Locked OUT, @LastLogin OUT, @ResetPassword OUT, @LogonCount OUT, @Result OUT, @ErrorMessage OUT", paramList.ToArray());
 
-            int result = paramList[9].SqlValue != null ? int.Parse(paramList[9].SqlValue.ToString()) : 0;
-            if ( result != 1 )
+            var result = _dbContext.UserIdentity.FromSql("EXEC VALIDATE_CTSUSERCRED @Email, @Result OUT, @ErrorMessage OUT", paramList.ToArray());
+            UserIdentity userIdentity = null;
+            if (result != null && result.ToList().Count > 0)
             {
-                // TODO: Log the error
-                string errorMessage = paramList[10].SqlValue != null ? paramList[10].SqlValue.ToString() : "Error Occurred";
-                return null;
+                userIdentity = result.ToList()[0];
             }
+            else {
 
-            UserIdentity userIdentity = new UserIdentity
-            {
-                Email = email,
-                CTSUserID = (paramList[1].SqlValue != null ? int.Parse(paramList[1].SqlValue.ToString()) : 0),
-                UserName = (paramList[2].Value != null ? paramList[2].Value.ToString() : null),
-                Password = (paramList[3].Value != null ? paramList[3].Value.ToString() : null),
-                Hash = (paramList[4].Value != null ? paramList[4].Value.ToString() : null),
-                Locked = (paramList[5].Value != null && paramList[5].Value.ToString().ToLower() == "y" ? true : false),
-                ResetPassword = (paramList[7].Value != null && paramList[7].Value.ToString().ToLower() == "y" ? true : false),
-                LogonCount = (paramList[8].Value != null ? int.Parse(paramList[8].Value.ToString()) : 0)
-
-            };
-
-            DateTime tempDate;
-            if (paramList[6].Value != null && DateTime.TryParse(paramList[6].Value.ToString(), out tempDate))
-            {
-                userIdentity.LastLogin = tempDate;
+                int returnCode = paramList[1].SqlValue != null ? int.Parse(paramList[1].SqlValue.ToString()) : 0;
+                if (returnCode != 1)
+                {
+                    string errorMessage = paramList[2].SqlValue != null ? paramList[2].SqlValue.ToString() : "Error Occurred";
+                    _logger.LogError("CTSDBRepository.GetUserIdentity() failed. Error Message = " + errorMessage);
+                    return null;
+                }
             }
-
+            /*
+            UserIdentity userIdentity = null;
+            if (result != null && result.ToList().Count > 0)
+            {
+                userIdentity = result.ToList()[0];
+            }
+            */
             return userIdentity;
         }
+
 
         public TeacherAssignment GetTeacherAssignment(int teacherID)
         {

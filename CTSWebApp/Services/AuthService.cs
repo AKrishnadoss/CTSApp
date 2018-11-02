@@ -52,8 +52,15 @@ namespace CTSWebApp.Services
             };
 
             var userIdentity = _idenityBLL.ValidateUser(email, password);
-            if (userIdentity != null && userIdentity.Locked == false)
+            if (userIdentity != null )
             {
+                bool acctLocked = (string.IsNullOrEmpty(userIdentity.Locked) || (userIdentity.Locked.ToUpper()) == "Y") ? true : false;
+
+                if ( acctLocked)
+                {
+                    return errorResult;
+                }
+
                 // Validate the password 
                 if ( ! PasswordValid(password, userIdentity))
                 {
@@ -84,8 +91,8 @@ namespace CTSWebApp.Services
                     Expires = jwtSecToken.ValidTo,
                     UserName = userIdentity.UserName,
                     Email = userIdentity.Email,
-                    Locked = userIdentity.Locked,
-                    ResetPassword = userIdentity.ResetPassword,
+                    Locked = acctLocked,
+                    ResetPassword = (!string.IsNullOrEmpty(userIdentity.ResetPassword) && userIdentity.ResetPassword.ToUpper() == "Y") ? true : false,
                     IsSucceeded = true,
                     ErrorMessage = string.Empty
                 };

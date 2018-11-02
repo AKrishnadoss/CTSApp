@@ -14,6 +14,13 @@ namespace CTSWebApp.Data
 
         }
 
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<StudentWeekGrade>().HasKey(table => new { table.ID, table.StudentID });
+        }
+
+        public DbSet<UserIdentity> UserIdentity { get; set; }
+
         public DbSet<CTSUser> CTSUsers { get; set; }
         public DbSet<TeacherAssignment> TeacherAssignment { get; set; }
         public DbSet<Student> Students { get; set; }
