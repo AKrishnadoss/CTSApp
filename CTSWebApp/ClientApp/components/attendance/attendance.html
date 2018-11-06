@@ -61,13 +61,15 @@
             <button class="btn btn-primary btn-sm right mt5"><strong><i class="fa fa-list-ul"></i> List Students</strong></button>
         </div>-->
     </div>
-    <div *ngIf="isStudentWeekGradeGridLoading">Loading Student Grades. Please wait.<img src="/img/Loading.gif" height="40" width="40" class="ml10" /></div>
-    <div *ngIf="showStudentGridServerErrorMessage" class="mt10 ml10 errorText" ><i class="fa fa-exclamation-triangle"></i> {{studentGridServerErrorMessage}} </div>
-    <div *ngIf="showStudentGridServerSuccessMessage" class="mt10 ml10 successText"><i class="fa fa-check-circle"></i> Student Week Grades saved successfully ! </div>
+    <div class="row">
+        <div *ngIf="isStudentWeekGradeGridLoading" class="col-md-12">Loading Student Grades. Please wait.<img src="/img/Loading.gif" height="40" width="40" class="ml10" /></div>
+        <div *ngIf="showStudentGridServerErrorMessage" class="col-md-12 mt10 ml10 errorText"><i class="fa fa-exclamation-triangle"></i> {{studentGridServerErrorMessage}} </div>
+        <div *ngIf="showStudentGridServerSuccessMessage" class="col-md-12 mt10 ml10 successText"><i class="fa fa-check-circle"></i> Student Week Grades saved successfully ! </div>
+    </div>
     <div class="row" *ngIf="showStudentWeekGradeGrid">
-        <div class="col-md-12">
-            <table class="table table-hover table-bordered table-sm font-small" id="dev-table">
-                <thead class="bgTableHead">
+        <div class="col-md-12" id="no-more-tables">
+            <table class="table-bordered table-condensed cf"  id="dev-table">
+                <thead class="bgTableHead cf">
                     <tr>
                         <th class="fw">ID</th>
                         <th class="fw w150">First Name</th>
@@ -86,62 +88,66 @@
                 <tbody>
                     
                     <tr *ngFor="let weekGrade of StudentWeekGrades">
-                        <td>{{weekGrade.studentID}}</td>
-                        <td>{{weekGrade.firstName}}</td>
-                        <td>{{weekGrade.lastName}}</td>
-                        <td>
-                            <select class="left ml10 selectpicker" (change)="selectAttendance(weekGrade, $event.target.value)" [(ngModel)]="weekGrade.attendance" required>
+                        <td data-title="Student ID" >{{weekGrade.studentID}}</td>
+                        <td data-title="First Name">{{weekGrade.firstName}}</td>
+                        <td data-title="Last Name" >{{weekGrade.lastName}}</td>
+                        <td data-title="Attendance" >
+                            <select class="selectpicker form-control" (change)="selectAttendance(weekGrade, $event.target.value)" [(ngModel)]="weekGrade.attendance" required>
                                 <option value="Y">Yes</option>
                                 <option value="N">No</option>
                             </select>
                         </td>
-                        <td>
-                            <select class="left ml10 selectpicker" (change)="selectScore(weekGrade, 'homework', $event.target.value)" [(ngModel)]="weekGrade.homework">
+                        <td data-title="Homework">
+                            <select class="selectpicker form-control"  (change)="selectScore(weekGrade, 'homework', $event.target.value)" [(ngModel)]="weekGrade.homework">
                                 <option *ngFor="let score of Scores" value={{score}}>
                                     {{score}}
                                 </option>
                             </select>
                         </td>
-                        <td>
-                            <select class="left ml10 selectpicker" (change)="selectScore(weekGrade, 'reading', $event.target.value)" [(ngModel)]="weekGrade.reading">
+                        <td data-title="Reading">
+                            <select class="selectpicker form-control" (change)="selectScore(weekGrade, 'reading', $event.target.value)" [(ngModel)]="weekGrade.reading">
                                 <option *ngFor="let score of Scores" value={{score}}>
                                     {{score}}
                                 </option>
                             </select>
                         </td>
-                        <td>
-                            <select class="left ml10 selectpicker" (change)="selectScore(weekGrade, 'writing', $event.target.value)" [(ngModel)]="weekGrade.writing">
+                        <td data-title="Writing">
+                            <select class="selectpicker form-control" (change)="selectScore(weekGrade, 'writing', $event.target.value)" [(ngModel)]="weekGrade.writing">
                                 <option *ngFor="let score of Scores" value={{score}}>
                                     {{score}}
                                 </option>
                             </select>
                         </td>
-                        <td>
-                            <select class="left ml10 selectpicker" (change)="selectScore(weekGrade, 'speaking', $event.target.value)" [(ngModel)]="weekGrade.speaking">
+                        <td data-title="Speaking">
+                            <select class="selectpicker form-control" (change)="selectScore(weekGrade, 'speaking', $event.target.value)" [(ngModel)]="weekGrade.speaking">
                                 <option *ngFor="let score of Scores" value={{score}}>
                                     {{score}}
                                 </option>
                             </select>
                         </td>
-                        <td>
-                            <select class="left ml10 selectpicker" (change)="selectScore(weekGrade, 'behavior', $event.target.value)" [(ngModel)]="weekGrade.behavior">
+                        <td data-title="Behavior" >
+                            <select class="selectpicker form-control" (change)="selectScore(weekGrade, 'behavior', $event.target.value)" [(ngModel)]="weekGrade.behavior">
                                 <option *ngFor="let score of Scores" value={{score}}>
                                     {{score}}
                                 </option>
                             </select>
                         </td>
-                        <td>
-                            <select class="left ml10 selectpicker" (change)="selectScore(weekGrade, 'quiz', $event.target.value)" [(ngModel)]="weekGrade.quiz">
+                        <td data-title="Quiz" >
+                            <select class="selectpicker form-control" (change)="selectScore(weekGrade, 'quiz', $event.target.value)" [(ngModel)]="weekGrade.quiz">
                                 <option *ngFor="let score of Scores" value={{score}}>
                                     {{score}}
                                 </option>
                             </select>
                         </td>
-                        <td><textarea [(ngModel)]="weekGrade.notes" >{{weekGrade.notes}}</textarea></td>
+                        <td data-title="Notes" ><textarea class="form-control rounded-3" rows="1" [(ngModel)]="weekGrade.notes" >{{weekGrade.notes}}</textarea></td>
                     </tr>
                 </tbody>
             </table>
         </div>
+    </div>
+    <div class="row">
+        <div *ngIf="showStudentGridServerErrorMessage" class="col-md-12 mt10 ml10 errorText"><i class="fa fa-exclamation-triangle"></i> {{studentGridServerErrorMessage}} </div>
+        <div *ngIf="showStudentGridServerSuccessMessage" class="col-md-12 mt10 ml10 successText"><i class="fa fa-check-circle"></i> Student Week Grades saved successfully ! </div>
     </div>
     <div class="row bgBar br5 m5 p5" *ngIf="isStudentWeekGradeGridSaving">
         <div class="col-md-12">Saving Student Grades. Please wait.<img src="/img/Loading.gif" height="40" width="40" class="ml10" /></div>

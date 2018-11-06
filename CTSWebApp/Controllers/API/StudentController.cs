@@ -81,7 +81,7 @@ namespace CTSWebApp.Controllers.API
             {
                 if (ModelState.IsValid)
                 {
-                    System.Threading.Thread.Sleep(2000);
+                    //System.Threading.Thread.Sleep(2000);
                     var result = _studentBLL.SaveStudentWeekGrades(_mapper.Map<IEnumerable<StudentWeekGradeViewModel>, IEnumerable<StudentWeekGrade>>(viewModel));
                     if (result.Result == true)
                     {

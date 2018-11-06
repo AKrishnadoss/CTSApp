@@ -7,9 +7,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpModule } from '@angular/http';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoggerService } from '../services/LoggerService';
+import { AuthInterceptor } from '../interceps/AuthInterceptor';
 import { AuthService } from '../services/AuthService';
 import { CalendarService } from '../services/CalendarService';
 import { GradeService } from '../services/GradeService';
@@ -39,7 +40,9 @@ var AppModule = /** @class */ (function () {
                 ReactiveFormsModule,
                 AppRoutingModule
             ],
-            providers: [AuthService, LoggerService, CalendarService, GradeService, TeacherService, StudentService],
+            providers: [AuthService, LoggerService, CalendarService, GradeService, TeacherService, StudentService,
+                { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
+            ],
             bootstrap: [AppComponent]
         })
     ], AppModule);

@@ -116,6 +116,57 @@ namespace CTSWebApp.Data
             return userIdentity;
         }
 
+        public bool UpdatePassword(int ctsUserId, string email, byte[] hash, string hashedPassword)
+        {
+            SqlParameter[] sqlParams = new SqlParameter[7];
+
+            sqlParams[0] = new SqlParameter();
+            sqlParams[0].SqlDbType = System.Data.SqlDbType.Int;
+            sqlParams[0].ParameterName = "@CTSUserID";
+            sqlParams[0].Value = ctsUserId;
+
+            sqlParams[1] = new SqlParameter();
+            sqlParams[1].SqlDbType = System.Data.SqlDbType.VarChar;
+            sqlParams[1].ParameterName = "@Password";
+            sqlParams[1].Value = hashedPassword;
+
+            sqlParams[2] = new SqlParameter();
+            sqlParams[1].SqlDbType = System.Data.SqlDbType.VarChar;
+            sqlParams[2].ParameterName = "@Hash";
+            sqlParams[2].Value = Convert.ToBase64String(hash);
+
+            sqlParams[3] = new SqlParameter();
+            sqlParams[1].SqlDbType = System.Data.SqlDbType.VarChar;
+            sqlParams[3].ParameterName = "@Locked";
+            sqlParams[3].Value = "N";
+
+            sqlParams[4] = new SqlParameter();
+            sqlParams[4].SqlDbType = System.Data.SqlDbType.DateTime;
+            sqlParams[4].ParameterName = "@LastLogin";
+            sqlParams[4].Value = DateTime.Now;
+
+            sqlParams[5] = new SqlParameter();
+            sqlParams[5].SqlDbType = System.Data.SqlDbType.Int;
+            sqlParams[5].ParameterName = "@Result";
+            sqlParams[5].Direction = System.Data.ParameterDirection.Output;
+
+            sqlParams[6] = new SqlParameter();
+            sqlParams[1].SqlDbType = System.Data.SqlDbType.VarChar;
+            sqlParams[6].ParameterName = "@Error";
+            sqlParams[6].Size = 100;
+            sqlParams[6].Direction = System.Data.ParameterDirection.Output;
+
+            int rowsAffected = _dbContext.Database.ExecuteSqlCommand("EXEC SAVE_CTSUSERCRED @CTSUserID, @Password, @Hash, @Locked, @LastLogin, @Result OUT, @Error OUT", sqlParams.ToArray());
+            int returnCode = sqlParams[5].SqlValue != null ? int.Parse(sqlParams[5].SqlValue.ToString()) : 0;
+            if (returnCode != 1)
+            {
+                string errorMessage = sqlParams[6].SqlValue != null ? sqlParams[6].SqlValue.ToString() : "Error Occurred";
+                _logger.LogError("CTSDBRepository.UpdatePassword() failed. Error Message = " + errorMessage);
+                return false;
+            }
+            return true;
+        }
+
 
         public TeacherAssignment GetTeacherAssignment(int teacherID)
         {

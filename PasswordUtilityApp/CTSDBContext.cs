@@ -9,7 +9,7 @@ namespace PasswordUtilityApp
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=NIRANJANAKILA\SQLEXPRESS;Database=CTSDB;User=SA;Pwd=admin123;MultipleActiveResultSets=true");
+            optionsBuilder.UseSqlServer(@"Server=.\SQLEXPRESS;Database=CTSDB;Integrated Security=true;MultipleActiveResultSets=true");
         }
 
         public DbSet<CTSUser> CTSUsers { get; set; }

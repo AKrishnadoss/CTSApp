@@ -33,5 +33,10 @@ namespace CTSWebApp.BLL
 
             return userIdentity;
         }
+
+        public bool UpdatePassword(int ctsUserId, string email, byte[] hash, string hashedPassword)
+        {
+            return _ctsDBRepository.UpdatePassword(ctsUserId, email, hash, hashedPassword);
+        }
     }
 }

@@ -8,6 +8,7 @@
   <ItemGroup>
     <None Remove="ClientApp\components\contact\contact.ts" />
     <None Remove="ClientApp\components\home\home.ts" />
+    <None Remove="ClientApp\interceps\AuthInterceptor.ts" />
     <None Remove="ClientApp\model\CalendarWeek.ts" />
     <None Remove="ClientApp\model\Grade.ts" />
     <None Remove="ClientApp\model\StudentWeekGrade.ts" />
@@ -38,6 +39,7 @@
     <TypeScriptCompile Include="ClientApp\components\attendance\attendance.ts" />
     <TypeScriptCompile Include="ClientApp\components\contact\contact.ts" />
     <TypeScriptCompile Include="ClientApp\components\home\home.ts" />
+    <TypeScriptCompile Include="ClientApp\interceps\AuthInterceptor.ts" />
     <TypeScriptCompile Include="ClientApp\model\CalendarWeek.ts" />
     <TypeScriptCompile Include="ClientApp\model\Grade.ts" />
     <TypeScriptCompile Include="ClientApp\model\StudentWeekGrade.ts" />

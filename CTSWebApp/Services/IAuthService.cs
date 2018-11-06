@@ -9,5 +9,6 @@ namespace CTSWebApp.Services
     public interface IAuthService
     {
         Task<AuthServiceAuthorizeResult> AuthorizeAsync(UserIdentityViewModel model);
+        Task<AuthServiceAuthorizeResult> AuthorizeAsync(ResetPasswordViewModel model);
     }
 }

@@ -21,13 +21,12 @@ namespace PasswordUtilityApp
         {
             Console.WriteLine("Encrypting Password");
 
-            
             List<CTSUser> users = _dbContext.CTSUsers.ToList();
             foreach ( CTSUser user in users)
             {
                 Console.WriteLine(user.Id);
                 byte[] hash = GetHash();
-                string hashedPassword = GetPassword("Pass123", hash);
+                string hashedPassword = GetPassword("velkome@1", hash);
                 Console.WriteLine($"Hashed Password {hashedPassword}");
                 SqlParameter[] sqlParams = GetParameters(user.Id, hashedPassword, hash);
                 _dbContext.Database.ExecuteSqlCommand("EXEC SAVE_CTSUSERCRED @CTSUserID, @Password, @Hash, @Locked, @LastLogin, @Result, @Error", sqlParams);

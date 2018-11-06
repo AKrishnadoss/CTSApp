@@ -8,9 +8,14 @@ namespace CTSWebApp.ViewModels
 {
     public class UserIdentityViewModel
     {
-        [Required]
+        [Required(ErrorMessage = "Email cannot be empty")]
+        [EmailAddress(ErrorMessage="Invalid Email")]
+        [MinLength(5, ErrorMessage = "Invalid Email")]
+        [MaxLength(250, ErrorMessage = "Invalid Email")]
         public string Email { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Password cannot be empty")]
+        [MinLength(8, ErrorMessage = "Invalid Email or wrong password")]
+        [MaxLength(25, ErrorMessage = "Invalid Email or wrong password")]
         public string Password { get; set; }
         public string UserName { get; set; }
         public string ErrorMessage { get; set; }

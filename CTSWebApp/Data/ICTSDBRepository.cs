@@ -13,6 +13,7 @@ namespace CTSWebApp.Data
 
         UserIdentity GetUserIdentity(string email, string password);
         //UserIdentity ValidateUser(string email, string password);
+        bool UpdatePassword(int ctsUserId, string email, byte[] hash, string hashedPassword);
 
         TeacherAssignment GetTeacherAssignment(int teacherID);
         IEnumerable<StudentEnrollment> GetAssignedStudents(int teacherID);

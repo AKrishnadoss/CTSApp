@@ -57,6 +57,8 @@ namespace CTSWebApp.Controllers
                     else if (result.ResetPassword)
                     {
                         model.ErrorMessage = "TODO: Redirect to Reset Password";
+                        ResetPasswordViewModel resetViewModel = CreateResetPasswordViewModel(result);
+                        return View("reset", resetViewModel);
                     }
                     else
                     {
@@ -78,6 +80,58 @@ namespace CTSWebApp.Controllers
             }
             ViewBag.AppName = "Cary Tamil School";
             return View(model);
+        }
+
+
+        [HttpPost]
+        [ActionName("resetlogin")]
+        public async Task<IActionResult> ResetLogin(ResetPasswordViewModel model)
+        {
+            model.ErrorMessage = string.Empty;
+            if (ModelState.IsValid)
+            {
+                var result = await _authService.AuthorizeAsync(model);
+                if (result != null && result.IsSucceeded)
+                {
+                    if (result.Locked)
+                    {
+                        model.ErrorMessage = "Account locked out, Please contact system administrator !";
+                    }
+                    else
+                    {
+                        // Set result in session 
+                        var serializedData = JsonConvert.SerializeObject(result);
+                        HttpContext.Session.SetString("identity", serializedData);
+                        // Redirect to Index page
+                        return RedirectToAction("Index", "App");
+                    }
+                }
+                else
+                {
+                    model.ErrorMessage = "Password Reset failed. Please try again.";
+                }
+            }
+            else
+            {
+                model.ErrorMessage = "Invalid logon data";
+            }
+            ViewBag.AppName = "Cary Tamil School";
+            return View(model);
+        }
+
+
+        private ResetPasswordViewModel CreateResetPasswordViewModel(AuthServiceAuthorizeResult result)
+        {
+            ResetPasswordViewModel viewModel = new ResetPasswordViewModel()
+            {
+                UserName = result.UserName,
+                Email = result.Email,
+                NewPassword = string.Empty,
+                ConfirmNewPassword = string.Empty,
+                ErrorMessage = string.Empty
+            };
+
+            return viewModel;
         }
     }
 }
