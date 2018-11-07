@@ -217,10 +217,43 @@
    color:white;
 }
 
+@media only screen and (min-width: 320px) and (max-width: 768px) {
+    .nav {
+        width: 100%;
+    }
+
+    .nav-item {
+        width: 100%;
+        float: none;
+    }
+}
+@media only screen and (min-width: 320px) and (max-width: 768px) {
+    .nav-mobile {
+        display: block;
+    }
+}
+.nav-mobile {
+    display: none; /* Hide from browsers that don't support media queries */
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: #34495E url(../img/nav.svg) no-repeat center center;
+    height: 40px;
+    width: 40px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+}
+
 
 
 @media only screen and (max-width: 800px) {
-
+   
+    nav ul:first-child
+    {
+        float:right;
+    }
     /* Force table to not be like tables anymore */
     #no-more-tables table,
     #no-more-tables thead,
