@@ -53,4 +53,9 @@
     <TypeScriptCompile Include="ClientApp\services\TeacherService.ts" />
   </ItemGroup>
 
+  <!--<Target Name="MyPublishTarget" BeforeTargets="BeforePublish">
+    <Exec Command="npm install" />
+    <Exec Command="gulp" />
+    <Exec Command="ng build" />
+  </Target>-->
 </Project>

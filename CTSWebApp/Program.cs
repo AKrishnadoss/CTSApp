@@ -20,7 +20,8 @@ namespace CTSWebApp
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration(SetupConfiguration)
-                .UseStartup<Startup>();
+                .UseStartup<Startup>()
+                .CaptureStartupErrors(true);
 
         private static void SetupConfiguration(WebHostBuilderContext context, IConfigurationBuilder builder)
         {
