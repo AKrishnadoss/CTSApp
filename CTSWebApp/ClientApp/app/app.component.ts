@@ -1,5 +1,6 @@
 import { Component,OnInit } from '@angular/core';
 import {AuthService} from '../services/AuthService';
+import {LoggerService} from '../services/LoggerService';
 
 
 @Component({
@@ -12,11 +13,12 @@ export class AppComponent  implements OnInit {
   token: string;
   userName : string;
   email: string;
+  expiresBy : Date;
   
   isLogonSuccessful : boolean
 
-  constructor(private _authService: AuthService)
-  {
+  constructor(private _authService: AuthService, 
+	private _loggerService: LoggerService){
   
   }
 
@@ -37,18 +39,28 @@ export class AppComponent  implements OnInit {
 		this.userName = userNameElement.innerText;
 	}
 
+	var expiresByElement = document.getElementById("hdnExpires");
+	if ( expiresByElement != null){
+		this.expiresBy = new Date(expiresByElement.innerText);
+	}
+
 	var loginLinkElement = document.getElementById("loginLink");
 	var logoutLinkElement = document.getElementById("logoutLink");
 	var loggedinElement = document.getElementById("loggedInAs");
 
 	if ( this.token == null ){
-		console.log('token is null, getting from localStorage');
+		this._loggerService.log('token is null, getting from localStorage');
 		this.token = localStorage.getItem('token');
 		this.userName = localStorage.getItem('userName');
 		this.email = localStorage.getItem('email');
+		let temp = localStorage.getItem('expiresBy');
+
+		if ( temp != null){
+			this.expiresBy = new Date(temp);
+		}
 
 		if ( this.token != null ){
-		console.log('localStorage is NOT null');
+			this._loggerService.log('localStorage is NOT null');
 			if ( loggedinElement != null){
 				loggedinElement.innerText = this.email;
 			}
@@ -66,24 +78,27 @@ export class AppComponent  implements OnInit {
 			this._authService.setAuthToken(this.token);
 			this._authService.setEmail(this.email);
 			this._authService.setUserName(this.userName);
-			this._authService.setIsLoggedOn(true);
+			//this._authService.setIsLoggedOn(true);
+			this._authService.setExpiresBy(this.expiresBy);
 		}
 		else {
-		console.log('localStorage is null');
+			this._loggerService.log('localStorage is null');
 			this.isLogonSuccessful = false;
 			this._authService.setAuthToken('');
 			this._authService.setEmail('');
 			this._authService.setUserName('');
-			this._authService.setIsLoggedOn(false);
+			//this._authService.setIsLoggedOn(false);
+			this._authService.setExpiresBy(null);
 		}
 
 	}
 	else {
-		console.log('token is NOT null, setting into localStorage');
+		this._loggerService.log('token is NOT null, setting into localStorage');
 
 		localStorage.setItem('token', this.token);
 		localStorage.setItem('userName', this.userName);
 		localStorage.setItem('email', this.email);
+		localStorage.setItem('expiresBy', this.expiresBy.toLocaleString());
 
 		if ( loggedinElement != null){
 			loggedinElement.innerText = this.email;
@@ -101,7 +116,7 @@ export class AppComponent  implements OnInit {
 		this._authService.setAuthToken(this.token);
 		this._authService.setEmail(this.email);
 		this._authService.setUserName(this.userName);
-		this._authService.setIsLoggedOn(true);
+		this._authService.setExpiresBy(this.expiresBy);
 	}
   }
 }

@@ -23,7 +23,8 @@
   "Token": {
     "Key": "6H9VDcyL5mLvVaIRRgFyteOVQZHQgvK5HgSzkcoVA347IF6m0V4hvHzxzGL3tVV12ocInlbUzABRNYOZ6NimbQ==",
     "Issuer": "CTSApp.com",
-    "Audience": "CTSUsers"
+    "Audience": "CTSUsers",
+    "expiryDays" :"30"
   }
 
 }

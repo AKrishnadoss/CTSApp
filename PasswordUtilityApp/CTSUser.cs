@@ -9,5 +9,6 @@ namespace PasswordUtilityApp
     public class CTSUser
     {
         public int Id { get; set; }
+        public string LogonAccess { get; set; }
     }
 }

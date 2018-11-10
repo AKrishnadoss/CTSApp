@@ -21,7 +21,10 @@ namespace PasswordUtilityApp
         {
             Console.WriteLine("Encrypting Password");
 
-            List<CTSUser> users = _dbContext.CTSUsers.ToList();
+            List<CTSUser> users = _dbContext.CTSUsers
+                    .Where(x=> x.LogonAccess == "Y")
+                    .ToList();
+
             foreach ( CTSUser user in users)
             {
                 Console.WriteLine(user.Id);

@@ -11,6 +11,8 @@ function onLogoutClick(){
     emailElement.text("");
     var userNameElement = $("#hdnUserName");
     userNameElement.text("");
+    var expiresByElement = $("#hdnExpires");
+    expiresByElement.text("");
 
     var loggedInAs = $("#loggedInAs");
     loggedInAs.text("");
@@ -20,11 +22,3 @@ function onLogoutClick(){
     localStorage.clear();
     window.location = "/";
 }
-
-/*
-$('#menuBar .navbar-nav a').on('click', function () {
-    $('#menuBar .navbar-nav').find('li.active').removeClass('active');
-    $(this).parent('li').addClass('active');
-});
-
-*/

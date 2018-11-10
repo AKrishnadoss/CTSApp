@@ -71,7 +71,7 @@ namespace CTSWebApp.Data
             {
                 ParameterName = "@Email",
                 SqlDbType = System.Data.SqlDbType.VarChar,
-                SqlValue = email
+                SqlValue = email.ToLower()
             });
 
             paramList.Add(new SqlParameter
@@ -320,6 +320,7 @@ namespace CTSWebApp.Data
 
         public IEnumerable<CalendarWeek> GetCalendarWeeks(bool includeInActive = false)
         {
+            _logger.LogInformation("CTSDBRepository.GetCalendarWeeks() called");
             IEnumerable<CalendarWeek> result = null;
             if (includeInActive == true)
             {
@@ -340,6 +341,7 @@ namespace CTSWebApp.Data
 
         public IEnumerable<Grade> GetGrades()
         {
+            _logger.LogInformation("CTSDBRepository.GetGrades() called");
             IEnumerable<Grade> result = null;
                // return all CalendarWeek
                 result = _dbContext.Grades

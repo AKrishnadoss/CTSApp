@@ -1,3 +1,42 @@
 ﻿@page
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Cary Tamil School</title>
 
-<h2>Sorry Exception Occurred !</h2>
+    <link href="~/node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/styles/app.css" rel="stylesheet" />
+
+</head>
+<body>
+    <header class="container-fluid p0">
+        <nav class="navbar navbar-default navbar-fixed-top navbar-expand-md">
+            <img src="~/img/logo.png" class="py-0" height="40" width="40" alt="Cary Tamil School" />
+            <h4 class="pl10 py-0 white">Cary Tamil School</h4>
+        </nav>
+    </header>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-4">
+                <h4>System Exception Occurred !</h4>
+                <p>Something went wrong. We apologize for the error. Please try again. If the problem persists, contact system adminstrator !</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-md-offset-4">
+                <div>Click <button id="btnCancel" type="reset" class="btn btn-primary btn-sm"><i class="fa fa-home" aria-hidden="true"></i> Here</button> to navigate to Home Page</div>
+            </div>
+        </div>
+    </div>
+    <footer class="container-fluid p0">
+        <hr />
+        <div class="text-center font-small"><strong>Cary Tamil School</strong></div>
+    </footer>
+
+    <script src="~/node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="~/node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/scripts/login.js"></script>
+</body>
+</html>

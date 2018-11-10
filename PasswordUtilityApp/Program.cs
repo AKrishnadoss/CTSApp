@@ -6,8 +6,8 @@ namespace PasswordUtilityApp
     {
         static void Main(string[] args)
         {
-            EncryptPassword instance = new EncryptPassword();
-            //TokenKeyGenerator instance = new TokenKeyGenerator();
+            //EncryptPassword instance = new EncryptPassword();
+            TokenKeyGenerator instance = new TokenKeyGenerator();
             instance.DoWork();
         }
     }

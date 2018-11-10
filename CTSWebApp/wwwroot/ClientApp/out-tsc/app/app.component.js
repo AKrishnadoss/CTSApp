@@ -9,9 +9,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 import { Component } from '@angular/core';
 import { AuthService } from '../services/AuthService';
+import { LoggerService } from '../services/LoggerService';
 var AppComponent = /** @class */ (function () {
-    function AppComponent(_authService) {
+    function AppComponent(_authService, _loggerService) {
         this._authService = _authService;
+        this._loggerService = _loggerService;
         this.pageTitle = 'Home Page';
     }
     AppComponent.prototype.ngOnInit = function () {
@@ -27,16 +29,24 @@ var AppComponent = /** @class */ (function () {
         if (userNameElement != null) {
             this.userName = userNameElement.innerText;
         }
+        var expiresByElement = document.getElementById("hdnExpires");
+        if (expiresByElement != null) {
+            this.expiresBy = new Date(expiresByElement.innerText);
+        }
         var loginLinkElement = document.getElementById("loginLink");
         var logoutLinkElement = document.getElementById("logoutLink");
         var loggedinElement = document.getElementById("loggedInAs");
         if (this.token == null) {
-            console.log('token is null, getting from localStorage');
+            this._loggerService.log('token is null, getting from localStorage');
             this.token = localStorage.getItem('token');
             this.userName = localStorage.getItem('userName');
             this.email = localStorage.getItem('email');
+            var temp = localStorage.getItem('expiresBy');
+            if (temp != null) {
+                this.expiresBy = new Date(temp);
+            }
             if (this.token != null) {
-                console.log('localStorage is NOT null');
+                this._loggerService.log('localStorage is NOT null');
                 if (loggedinElement != null) {
                     loggedinElement.innerText = this.email;
                 }
@@ -50,22 +60,25 @@ var AppComponent = /** @class */ (function () {
                 this._authService.setAuthToken(this.token);
                 this._authService.setEmail(this.email);
                 this._authService.setUserName(this.userName);
-                this._authService.setIsLoggedOn(true);
+                //this._authService.setIsLoggedOn(true);
+                this._authService.setExpiresBy(this.expiresBy);
             }
             else {
-                console.log('localStorage is null');
+                this._loggerService.log('localStorage is null');
                 this.isLogonSuccessful = false;
                 this._authService.setAuthToken('');
                 this._authService.setEmail('');
                 this._authService.setUserName('');
-                this._authService.setIsLoggedOn(false);
+                //this._authService.setIsLoggedOn(false);
+                this._authService.setExpiresBy(null);
             }
         }
         else {
-            console.log('token is NOT null, setting into localStorage');
+            this._loggerService.log('token is NOT null, setting into localStorage');
             localStorage.setItem('token', this.token);
             localStorage.setItem('userName', this.userName);
             localStorage.setItem('email', this.email);
+            localStorage.setItem('expiresBy', this.expiresBy.toLocaleString());
             if (loggedinElement != null) {
                 loggedinElement.innerText = this.email;
             }
@@ -79,7 +92,7 @@ var AppComponent = /** @class */ (function () {
             this._authService.setAuthToken(this.token);
             this._authService.setEmail(this.email);
             this._authService.setUserName(this.userName);
-            this._authService.setIsLoggedOn(true);
+            this._authService.setExpiresBy(this.expiresBy);
         }
     };
     AppComponent = __decorate([
@@ -87,7 +100,8 @@ var AppComponent = /** @class */ (function () {
             selector: 'ctsApp',
             templateUrl: 'app.component.html'
         }),
-        __metadata("design:paramtypes", [AuthService])
+        __metadata("design:paramtypes", [AuthService,
+            LoggerService])
     ], AppComponent);
     return AppComponent;
 }());

@@ -2,6 +2,8 @@
 using CTSWebApp.BLL;
 using CTSWebApp.Data.Entities;
 using CTSWebApp.ViewModels;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -15,6 +17,8 @@ namespace CTSWebApp.Controllers.API
     [Route("api/[Controller]")]
     [ApiController]
     [Produces("application/json")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(Policy = "JwtTokenValidationPolicy")]
     public class GradeController : Controller
     {
         private readonly ILogger<GradeController> _logger;
@@ -36,7 +40,7 @@ namespace CTSWebApp.Controllers.API
         {
             try
             {
-                var result=_gradeBLL.GetGrades();
+                var result = _gradeBLL.GetGrades();
                 if (result != null)
                 {
                     return Ok(_mapper.Map<IEnumerable<Grade>, IEnumerable<GradeViewModel>>(result));

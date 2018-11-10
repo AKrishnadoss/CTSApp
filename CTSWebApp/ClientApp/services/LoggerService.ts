@@ -12,7 +12,7 @@ export class LoggerService {
 		return LoggerService.instance;
 	}
 
-	logMessage(message : string){
+	log(message : string){
 		if ( ! environment.production){
 			console.log(message);
 		}

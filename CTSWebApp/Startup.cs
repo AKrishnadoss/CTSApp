@@ -14,6 +14,8 @@ using AutoMapper;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using CTSWebApp.BLL;
+using CTSWebApp.Security;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CTSWebApp
 {
@@ -40,12 +42,21 @@ namespace CTSWebApp
                     };
                 });
 
+            services.AddAuthorization(config =>
+            {
+                config.AddPolicy("JwtTokenValidationPolicy", policy => policy.Requirements.Add(new JwtTokenAuthRequirement()));
+            });
+
+
             services.AddDbContext<CTSDBContext>(config =>
             {
                 config.UseSqlServer(_config.GetConnectionString("CTSDBConnectionString"));
             });
 
             services.AddAutoMapper();
+
+            services.AddSingleton<IAuthorizationHandler, JwtTokenAuthHandler>();
+
 
             services.AddScoped<ICTSDBRepository, CTSDBRepository>();
 
@@ -56,6 +67,8 @@ namespace CTSWebApp
             services.AddTransient<IStudentBLL, StudentBLL>();
             services.AddTransient<IMailService, MailService>();
             services.AddTransient<IAuthService, AuthService>();
+
+            services.AddMemoryCache();
 
             services.AddMvc()
                 .SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_1);

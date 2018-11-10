@@ -24,7 +24,8 @@
             <div class="input-group">
                 <label for="selectCalenderWeek" class="mt5">Week</label>
                 <img *ngIf="isSelectCalendarWeekLoading" src="/img/Loading.gif" height="40" width="40" class="ml10"/>
-                <select *ngIf="!isSelectCalendarWeekLoading" name="selectCalenderWeek" class="ml10 selectpicker form-control selectWidth" (change)="onSelectCalendarWeek($event.target.value)">
+                <i *ngIf="calendarWeekLoadError" class="fa fa-exclamation-triangle form-control errorText"> {{calendarWeekLoadError}}</i>
+                <select *ngIf="!isSelectCalendarWeekLoading && !calendarWeekLoadError" name="selectCalenderWeek" class="ml10 selectpicker form-control selectWidth" (change)="onSelectCalendarWeek($event.target.value)">
                     <option value="0">--Select Week--</option>
                     <option *ngFor="let week of CalendarWeeks" value={{week.weekNo}}>
                         {{week.description}} - {{week.weekDate | date: 'MM/dd/yyyy'}}
@@ -36,7 +37,8 @@
             <div class="input-group">
                 <label for="selectGrade" class="mt5">Grade</label>
                 <img *ngIf="isSelectGradeLoading" src="/img/Loading.gif" height="40" width="40" class="ml10"/>
-                <select *ngIf="!isSelectGradeLoading" name="selectGrade" class="ml10 selectpicker form-control selectWidth" (change)="onSelectGrade($event.target.value)">
+                <i *ngIf="gradeLoadError" class="fa fa-exclamation-triangle form-control errorText"> {{gradeLoadError}}</i>
+                <select *ngIf="!isSelectGradeLoading && !gradeLoadError" name="selectGrade" class="ml10 selectpicker form-control selectWidth" (change)="onSelectGrade($event.target.value)">
                     <option value="0">--Select Grade--</option>
                     <option *ngFor="let grade of Grades" value={{grade.ctsGrade}}>
                         {{grade.ctsGrade}}
@@ -63,8 +65,8 @@
     </div>
     <div class="row">
         <div *ngIf="isStudentWeekGradeGridLoading" class="col-md-12">Loading Student Grades. Please wait.<img src="/img/Loading.gif" height="40" width="40" class="ml10" /></div>
-        <div *ngIf="showStudentGridServerErrorMessage" class="col-md-12 mt10 ml10 errorText"><i class="fa fa-exclamation-triangle"></i> {{studentGridServerErrorMessage}} </div>
-        <div *ngIf="showStudentGridServerSuccessMessage" class="col-md-12 mt10 ml10 successText"><i class="fa fa-check-circle"></i> Student Week Grades saved successfully ! </div>
+        <!--<div *ngIf="showStudentGridServerErrorMessage" class="col-md-12 mt10 ml10 errorText"><i class="fa fa-exclamation-triangle"></i> {{studentGridServerErrorMessage}} </div>
+        <div *ngIf="showStudentGridServerSuccessMessage" class="col-md-12 mt10 ml10 successText"><i class="fa fa-check-circle"></i> Student Week Grades saved successfully ! </div>-->
     </div>
     <div class="row" *ngIf="showStudentWeekGradeGrid">
         <div class="col-md-12" id="no-more-tables">
@@ -146,8 +148,8 @@
         </div>
     </div>
     <div class="row">
-        <div *ngIf="showStudentGridServerErrorMessage" class="col-md-12 mt10 ml10 errorText"><i class="fa fa-exclamation-triangle"></i> {{studentGridServerErrorMessage}} </div>
-        <div *ngIf="showStudentGridServerSuccessMessage" class="col-md-12 mt10 ml10 successText"><i class="fa fa-check-circle"></i> Student Week Grades saved successfully ! </div>
+        <div *ngIf="studentGridServerErrorMessage" class="col-md-12 mt10 ml10 errorText"><i class="fa fa-exclamation-triangle"></i> {{studentGridServerErrorMessage}} </div>
+        <div *ngIf="studentGridServerSuccessMessage" class="col-md-12 mt10 ml10 successText"><i class="fa fa-check-circle"></i>  {{studentGridServerSuccessMessage}}</div>
     </div>
     <div class="row bgBar br5 m5 p5" *ngIf="isStudentWeekGradeGridSaving">
         <div class="col-md-12">Saving Student Grades. Please wait.<img src="/img/Loading.gif" height="40" width="40" class="ml10" /></div>

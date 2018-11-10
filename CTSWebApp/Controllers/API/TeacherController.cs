@@ -9,6 +9,9 @@ using AutoMapper;
 using CTSWebApp.Data.Entities;
 using CTSWebApp.ViewModels;
 using CTSWebApp.BLL;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Net;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -17,6 +20,8 @@ namespace CTSWebApp.Controllers.API
     [Route("api/[Controller]")]
     [ApiController]
     [Produces("application/json")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(Policy = "JwtTokenValidationPolicy")]
     public class TeacherController : Controller
     {
         private readonly ILogger<TeacherController> _logger;

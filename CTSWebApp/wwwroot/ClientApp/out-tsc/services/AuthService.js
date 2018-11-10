@@ -8,8 +8,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Injectable } from '@angular/core';
+import { LoggerService } from './LoggerService';
 var AuthService = /** @class */ (function () {
-    function AuthService() {
+    function AuthService(_loggerService) {
+        this._loggerService = _loggerService;
         if (AuthService_1.instance == null) {
             AuthService_1.instance = this;
         }
@@ -34,15 +36,26 @@ var AuthService = /** @class */ (function () {
     AuthService.prototype.getUserName = function () {
         return this.userName;
     };
-    AuthService.prototype.setIsLoggedOn = function (isLoggedOn) {
-        this.isLoggedOn = isLoggedOn;
-    };
+    //setIsLoggedOn(isLoggedOn : boolean){
+    //	this.isLoggedOn = isLoggedOn;
+    //}
     AuthService.prototype.getIsLoggedOn = function () {
-        return this.isLoggedOn;
+        if (this.authToken != null && this.authToken.length > 0 && this.expiresBy >= new Date()) {
+            this._loggerService.log("getIsLoggedOn() = true");
+            return true;
+        }
+        this._loggerService.log("getIsLoggedOn() = false");
+        return false;
+    };
+    AuthService.prototype.setExpiresBy = function (expiresBy) {
+        this.expiresBy = expiresBy;
+    };
+    AuthService.prototype.getExpiresBy = function () {
+        return this.expiresBy;
     };
     AuthService = AuthService_1 = __decorate([
         Injectable(),
-        __metadata("design:paramtypes", [])
+        __metadata("design:paramtypes", [LoggerService])
     ], AuthService);
     return AuthService;
     var AuthService_1;

@@ -116,7 +116,7 @@ namespace CTSWebApp.Controllers
                 model.ErrorMessage = "Invalid logon data";
             }
             ViewBag.AppName = "Cary Tamil School";
-            return View(model);
+            return View("reset", model);
         }
 
 

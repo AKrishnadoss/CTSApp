@@ -1,5 +1,6 @@
 ﻿import {Injectable, OnInit} from '@angular/core';
 import {Http, Response } from '@angular/http';
+import {LoggerService} from './LoggerService';
 
 @Injectable()
 export class AuthService {
@@ -8,8 +9,9 @@ export class AuthService {
 	email : string;
 	userName :string;
 	isLoggedOn : boolean;
+	expiresBy : Date;
 
-	constructor(){
+	constructor(private _loggerService: LoggerService){
 		if ( AuthService.instance == null){
 			AuthService.instance = this;
 		}
@@ -43,13 +45,27 @@ export class AuthService {
 		return this.userName;
 	}
 
-	setIsLoggedOn(isLoggedOn : boolean){
-		this.isLoggedOn = isLoggedOn;
+	//setIsLoggedOn(isLoggedOn : boolean){
+	//	this.isLoggedOn = isLoggedOn;
+	//}
+
+	getIsLoggedOn() : boolean
+	{
+		if (this.authToken != null && this.authToken.length > 0 && this.expiresBy >= new Date())
+		{
+			this._loggerService.log("getIsLoggedOn() = true");
+			return true;
+		}
+		this._loggerService.log("getIsLoggedOn() = false");
+		return false;
 	}
 
-	getIsLoggedOn()
-	{
-		return this.isLoggedOn;
+	setExpiresBy(expiresBy: Date){
+		this.expiresBy = expiresBy;
+	}
+
+	getExpiresBy(){
+		return this.expiresBy;
 	}
 
 }

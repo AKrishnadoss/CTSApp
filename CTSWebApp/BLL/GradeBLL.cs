@@ -1,5 +1,6 @@
 ﻿using CTSWebApp.Data;
 using CTSWebApp.Data.Entities;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -12,17 +13,33 @@ namespace CTSWebApp.BLL
     {
         private readonly ILogger<GradeBLL> _logger;
         private readonly ICTSDBRepository _ctsDBRepository;
+        private IMemoryCache _memoryCache;
 
         public GradeBLL(ICTSDBRepository ctsDBRepository,
-            ILogger<GradeBLL> logger)
+            ILogger<GradeBLL> logger,
+            IMemoryCache memoryCache)
         {
             _logger = logger;
             this._ctsDBRepository = ctsDBRepository;
+            this._memoryCache = memoryCache;
         }
 
         public IEnumerable<Grade> GetGrades()
         {
-            return this._ctsDBRepository.GetGrades();
+            IEnumerable<Grade> dataFromCache = null;
+            if (!_memoryCache.TryGetValue("Grades", out dataFromCache))
+            {
+                var grades = this._ctsDBRepository.GetGrades();
+
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromHours(1));
+
+                _memoryCache.Set("Grades", grades, cacheEntryOptions);
+
+                dataFromCache = grades;
+            }
+            return dataFromCache;
+            //return this._ctsDBRepository.GetGrades();
         }
     }
 }

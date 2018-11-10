@@ -3,6 +3,8 @@ using CTSWebApp.BLL;
 using CTSWebApp.Data;
 using CTSWebApp.Data.Entities;
 using CTSWebApp.ViewModels;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -15,6 +17,8 @@ namespace CTSWebApp.Controllers.API
     [Route("api/[Controller]")]
     [ApiController]
     [Produces("application/json")]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(Policy = "JwtTokenValidationPolicy")]
     public class CalendarController : Controller
     {
         private readonly ILogger<CalendarController> _logger;

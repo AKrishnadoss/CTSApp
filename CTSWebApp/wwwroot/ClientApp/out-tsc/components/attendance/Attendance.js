@@ -13,13 +13,15 @@ import { CalendarService } from '../../services/CalendarService';
 import { GradeService } from '../../services/GradeService';
 import { TeacherService } from '../../services/TeacherService';
 import { StudentService } from '../../services/StudentService';
+import { LoggerService } from '../../services/LoggerService';
 var AttendanceComponent = /** @class */ (function () {
-    function AttendanceComponent(_authService, _calendarService, _gradeService, _teacherService, _studentService) {
+    function AttendanceComponent(_authService, _calendarService, _gradeService, _teacherService, _studentService, _loggerService) {
         this._authService = _authService;
         this._calendarService = _calendarService;
         this._gradeService = _gradeService;
         this._teacherService = _teacherService;
         this._studentService = _studentService;
+        this._loggerService = _loggerService;
         this.pageTitle = "Attendance";
         this.userName = '';
     }
@@ -38,10 +40,12 @@ var AttendanceComponent = /** @class */ (function () {
         this.showStudentWeekGradeGrid = false;
         this.showStudentGridServerErrorMessage = false;
         this.isStudentWeekGradeGridSaving = false;
-        this.showStudentGridServerSuccessMessage = false;
+        this.studentGridServerSuccessMessage = "";
         this.calendarWeekId = 0;
         this.ctsGrade = "";
         this.teacherId = 0;
+        this.calendarWeekLoadError = "";
+        this.gradeLoadError = "";
         this.getCalendarWeeks();
         this.getGrades();
     };
@@ -54,33 +58,37 @@ var AttendanceComponent = /** @class */ (function () {
     AttendanceComponent.prototype.getGrades = function () {
         var _this = this;
         this.isSelectGradeLoading = true;
+        this.gradeLoadError = "";
         this._gradeService.getGrades()
             .subscribe(function (result) {
             _this.isSelectGradeLoading = false;
             _this.Grades = result;
         }, function (err) {
             _this.isSelectGradeLoading = false;
-            console.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+            _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
             if (err.status == "404") {
                 // data not found
                 _this.Grades = null;
             }
+            _this.gradeLoadError = "Error Occured";
         });
     };
     AttendanceComponent.prototype.getCalendarWeeks = function () {
         var _this = this;
         this.isSelectCalendarWeekLoading = true;
+        this.calendarWeekLoadError = "";
         this._calendarService.getCalendarWeeks()
             .subscribe(function (result) {
             _this.isSelectCalendarWeekLoading = false;
             _this.CalendarWeeks = result;
         }, function (err) {
             _this.isSelectCalendarWeekLoading = false;
-            console.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+            _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
             if (err.status == "404") {
                 // data not found
                 _this.CalendarWeeks = null;
             }
+            _this.calendarWeekLoadError = "Error Occured";
         });
     };
     AttendanceComponent.prototype.onSelectCalendarWeek = function (value) {
@@ -114,7 +122,7 @@ var AttendanceComponent = /** @class */ (function () {
             _this.Teachers = result;
         }, function (err) {
             _this.isSelectTeacherLoading = false;
-            console.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+            _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
             if (err.status == "404") {
                 // data not found
                 _this.Teachers = null;
@@ -122,7 +130,7 @@ var AttendanceComponent = /** @class */ (function () {
         });
     };
     AttendanceComponent.prototype.displayStudentWeekGradeGrid = function () {
-        this.showStudentGridServerSuccessMessage = false;
+        this.studentGridServerSuccessMessage = "";
         if (this.calendarWeekId != 0 && this.teacherId != 0) {
             this.studentGridServerErrorMessage = "";
             this.showStudentGridServerErrorMessage = false;
@@ -146,7 +154,7 @@ var AttendanceComponent = /** @class */ (function () {
             if (_this.StudentWeekGrades == null) {
                 _this.showStudentGridServerErrorMessage = true;
                 _this.showStudentWeekGradeGrid = false;
-                _this.studentGridServerErrorMessage = "No Students assigned to selected teacher !";
+                _this.studentGridServerErrorMessage = "No Student(s) assigned to selected teacher.";
             }
             else {
                 _this.showStudentGridServerErrorMessage = false;
@@ -196,7 +204,8 @@ var AttendanceComponent = /** @class */ (function () {
     };
     AttendanceComponent.prototype.cancelClick = function () {
         this.showStudentWeekGradeGrid = false;
-        this.showStudentGridServerSuccessMessage = false;
+        this.studentGridServerSuccessMessage = "";
+        this.studentGridServerErrorMessage = "";
         this.StudentWeekGrades = null;
         this.teacherId = 0;
     };
@@ -205,16 +214,16 @@ var AttendanceComponent = /** @class */ (function () {
         this.isStudentWeekGradeGridSaving = true;
         this.showStudentGridServerErrorMessage = false;
         this.studentGridServerErrorMessage = "";
-        this.showStudentGridServerSuccessMessage = false;
+        this.studentGridServerSuccessMessage = "";
         this._studentService.saveStudentWeekGrades(this.StudentWeekGrades)
             .subscribe(function (result) {
             _this.isStudentWeekGradeGridSaving = false;
-            _this.showStudentGridServerSuccessMessage = true;
+            _this.studentGridServerSuccessMessage = "Student Week Grades saved successfully !";
         }, function (err) {
             console.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
             _this.isStudentWeekGradeGridSaving = false;
             _this.showStudentGridServerErrorMessage = true;
-            _this.showStudentGridServerSuccessMessage = false;
+            _this.studentGridServerSuccessMessage = "";
             _this.studentGridServerErrorMessage = "Save failed. " + err.statusText;
         });
     };
@@ -226,7 +235,8 @@ var AttendanceComponent = /** @class */ (function () {
             CalendarService,
             GradeService,
             TeacherService,
-            StudentService])
+            StudentService,
+            LoggerService])
     ], AttendanceComponent);
     return AttendanceComponent;
 }());

@@ -17,7 +17,7 @@ var LoggerService = /** @class */ (function () {
         return LoggerService_1.instance;
     }
     LoggerService_1 = LoggerService;
-    LoggerService.prototype.logMessage = function (message) {
+    LoggerService.prototype.log = function (message) {
         if (!environment.production) {
             console.log(message);
         }

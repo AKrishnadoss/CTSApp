@@ -16,7 +16,8 @@ namespace CTSWebApp.Controllers.API
     [Route("api/[Controller]")]
     [ApiController]
     [Produces("application/json")]
-    [Authorize(AuthenticationSchemes =JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize(Policy = "JwtTokenValidationPolicy")]
     public class CTSUserController : ControllerBase
     {
         private readonly ICTSDBRepository _ctsDBRepository;

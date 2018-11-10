@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CTSWebApp.Data;
 using CTSWebApp.Data.Entities;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace CTSWebApp.BLL
 {
@@ -12,16 +13,45 @@ namespace CTSWebApp.BLL
     {
         private readonly ILogger<CalendarBLL> _logger;
         private readonly ICTSDBRepository _ctsDBRepository;
+        private IMemoryCache _memoryCache;
 
         public CalendarBLL(ICTSDBRepository ctsDBRepository,
-            ILogger<CalendarBLL> logger)
+            ILogger<CalendarBLL> logger,
+            IMemoryCache memoryCache)
         {
             _logger = logger;
             this._ctsDBRepository = ctsDBRepository;
+            this._memoryCache = memoryCache;
         }
         public IEnumerable<CalendarWeek> GetCalendarWeeks(bool includeInactive)
         {
-            return this._ctsDBRepository.GetCalendarWeeks(includeInactive);
+            IEnumerable<CalendarWeek> dataFromCache = null;
+            if ( !_memoryCache.TryGetValue("CalendarWeek",out dataFromCache))
+            {
+                var calendarWeeks = this._ctsDBRepository.GetCalendarWeeks(true);
+
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromHours(1));
+
+                _memoryCache.Set("CalendarWeek", calendarWeeks, cacheEntryOptions);
+
+                dataFromCache = calendarWeeks;
+            }
+
+            if (includeInactive == true)
+            {
+                // return all CalendarWeek
+                return dataFromCache.ToList();
+            }
+            else
+            {
+                // return only 'Active' CalendarWeek
+                return dataFromCache
+                    .Where(s => s.Active == "Y")
+                    .ToList();
+            }
+
+            //return this._ctsDBRepository.GetCalendarWeeks(includeInactive);
         }
     }
 }

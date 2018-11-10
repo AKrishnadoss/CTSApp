@@ -80,28 +80,30 @@ namespace CTSWebApp.Services
                 // Create Claims
                 var claims = new[]
                     {
-                    new Claim(JwtRegisteredClaimNames.Sub, userIdentity.CTSUserID.ToString()),
-                    new Claim(JwtRegisteredClaimNames.UniqueName, userIdentity.UserName),
-                    new Claim(JwtRegisteredClaimNames.Email, userIdentity.Email),
+                    new Claim("CTSUserID", userIdentity.CTSUserID.ToString()),
+                    new Claim("UserName", userIdentity.UserName),
+                    new Claim("Email", userIdentity.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 };
 
                 // Create JWT
                 var secret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Token:Key"]));
                 var cred = new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
+                int days = int.Parse(_configuration["Token:expiryDays"]);
+                var expiryDate = DateTime.Now.AddDays(days);
 
                 JwtSecurityToken jwtSecToken = new JwtSecurityToken(
                     _configuration["Token:Issuer"],
                     _configuration["Token:Audience"],
                     claims,
-                    expires: DateTime.UtcNow.AddMinutes(10),
+                    expires: expiryDate,
                     signingCredentials: cred);
 
                 // Create Result object
                 AuthServiceAuthorizeResult result = new AuthServiceAuthorizeResult
                 {
                     Token = new JwtSecurityTokenHandler().WriteToken(jwtSecToken),
-                    Expires = jwtSecToken.ValidTo,
+                    Expires = expiryDate,
                     UserName = userIdentity.UserName,
                     Email = userIdentity.Email,
                     Locked = acctLocked,
@@ -148,33 +150,35 @@ namespace CTSWebApp.Services
                 {
                     return errorResult;
                 }
-                
+
 
                 // Create Claims
                 var claims = new[]
                     {
-                    new Claim(JwtRegisteredClaimNames.Sub, userIdentity.CTSUserID.ToString()),
-                    new Claim(JwtRegisteredClaimNames.UniqueName, userIdentity.UserName),
-                    new Claim(JwtRegisteredClaimNames.Email, userIdentity.Email),
+                    new Claim("CTSUserID", userIdentity.CTSUserID.ToString()),
+                    new Claim("UserName", userIdentity.UserName),
+                    new Claim("Email", userIdentity.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 };
 
                 // Create JWT
                 var secret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Token:Key"]));
                 var cred = new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
+                int days = int.Parse(_configuration["Token:expiryDays"]);
+                var expiryDate = DateTime.Now.AddDays(days);
 
                 JwtSecurityToken jwtSecToken = new JwtSecurityToken(
                     _configuration["Token:Issuer"],
                     _configuration["Token:Audience"],
                     claims,
-                    expires: DateTime.UtcNow.AddMinutes(10),
+                    expires: expiryDate,
                     signingCredentials: cred);
 
                 // Create Result object
                 AuthServiceAuthorizeResult result = new AuthServiceAuthorizeResult
                 {
                     Token = new JwtSecurityTokenHandler().WriteToken(jwtSecToken),
-                    Expires = jwtSecToken.ValidTo,
+                    Expires = expiryDate,
                     UserName = userIdentity.UserName,
                     Email = userIdentity.Email,
                     Locked = acctLocked,
@@ -230,43 +234,5 @@ namespace CTSWebApp.Services
             return hashed;
         }
 
-        /*
-        private AuthServiceAuthorizeResult AuthorizeInternalAsync_old(UserIdentity ui)
-        {
-            // Check user in DB
-            var userIdentity = _ctsDBRepository.ValidateUser(ui.Email, ui.Password);
-            if (userIdentity != null && userIdentity.Locked == false)
-            {
-                var claims = new[]
-                    {
-                    new Claim(JwtRegisteredClaimNames.Sub, userIdentity.UserName),
-                    new Claim(JwtRegisteredClaimNames.UniqueName, userIdentity.UserName),
-                    new Claim(JwtRegisteredClaimNames.Email, userIdentity.Email),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-                };
-
-                var secret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Token:Key"]));
-                var cred = new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
-
-                JwtSecurityToken jwtSecToken = new JwtSecurityToken(
-                    _configuration["Token:Issuer"],
-                    _configuration["Token:Audience"],
-                    claims,
-                    expires: DateTime.UtcNow.AddMinutes(10),
-                    signingCredentials: cred);
-
-                AuthServiceAuthorizeResult result = new AuthServiceAuthorizeResult
-                {
-                    Token = new JwtSecurityTokenHandler().WriteToken(jwtSecToken),
-                    Expires = jwtSecToken.ValidTo,
-                    UserName = userIdentity.UserName,
-                    Email = userIdentity.Email
-                };
-
-                return result;
-            }
-            return null;
-        }
-        */
     }
 }
