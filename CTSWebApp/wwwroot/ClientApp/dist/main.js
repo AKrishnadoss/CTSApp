@@ -354,6 +354,8 @@ var AttendanceComponent = /** @class */ (function () {
     AttendanceComponent.prototype.onSelectCalendarWeek = function (value) {
         this.calendarWeekId = value;
         //console.log("selected calendarWeekId = " + value);
+        this.ctsGrade = "0";
+        this.teacherId = 0;
         this.displayStudentWeekGradeGrid();
     };
     AttendanceComponent.prototype.onSelectGrade = function (value) {
@@ -363,8 +365,8 @@ var AttendanceComponent = /** @class */ (function () {
         this.Teachers = null;
         this.teacherId = 0;
         this.ctsGrade = value;
-        if (value != "0") {
-            this.getTeachersByGrade(this.ctsGrade);
+        if (value != "0" && this.calendarWeekId != 0) {
+            this.getTeachersByGrade(this.ctsGrade, this.calendarWeekId);
         }
         this.displayStudentWeekGradeGrid();
     };
@@ -373,10 +375,10 @@ var AttendanceComponent = /** @class */ (function () {
         //console.log("selected teacherId = " + value);
         this.displayStudentWeekGradeGrid();
     };
-    AttendanceComponent.prototype.getTeachersByGrade = function (grade) {
+    AttendanceComponent.prototype.getTeachersByGrade = function (grade, weekId) {
         var _this = this;
         this.isSelectTeacherLoading = true;
-        this._teacherService.getTeachersByGrade(grade)
+        this._teacherService.getTeachersByGrade(grade, weekId)
             .subscribe(function (result) {
             _this.isSelectTeacherLoading = false;
             _this.Teachers = result;
@@ -1080,8 +1082,8 @@ var TeacherService = /** @class */ (function () {
     function TeacherService(_http) {
         this._http = _http;
     }
-    TeacherService.prototype.getTeachersByGrade = function (grade) {
-        return this._http.get('/api/Teacher/teacherbygrade/' + grade);
+    TeacherService.prototype.getTeachersByGrade = function (grade, weekId) {
+        return this._http.get('/api/Teacher/teacherbygrade/' + grade + '/' + weekId);
     };
     TeacherService.prototype.getStudentWeekGrades = function (teacherId, weekId) {
         return this._http.get('/api/Teacher/teacherbyid/' + teacherId + '/studentgrades/' + weekId);

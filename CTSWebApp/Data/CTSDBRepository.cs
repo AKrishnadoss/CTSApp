@@ -228,16 +228,35 @@ namespace CTSWebApp.Data
         }
 
 
-        public IEnumerable<Teacher> GetAssignedTeacher(string grade)
+        public IEnumerable<Teacher> GetAssignedTeacher(string grade, int weekId)
         {
-            string sql = "SELECT TA.TEACHERID ID, U.FIRSTNAME, U.LASTNAME, U.EMAIL, U.PHONE "
+            /*string sql = "SELECT TA.TEACHERID ID, U.FIRSTNAME, U.LASTNAME, U.EMAIL, U.PHONE "
                         + "FROM CTSUSER U "
                         + "JOIN TEACHERASSIGNMENT TA ON U.ID = TA.TeacherID "
                         + "JOIN CALENDARYEAR CY ON CY.ID = TA.CalendarYearID "
                         + "AND CY.ACTIVEYEAR = 'Y' "
-                        + "AND TA.CTSGRADE = @ctsGrade ";
+                        + "AND TA.CTSGRADE = @ctsGrade ";*/
 
+
+            string sql = "SELECT TA.TEACHERID ID, U.FIRSTNAME, U.LASTNAME, U.EMAIL, U.PHONE , TA.StartDate, TA.ENDDATE, CW.WEEKDATE "
+                    + " FROM CTSUSER U "
+                    + " JOIN TEACHERASSIGNMENT TA ON U.ID = TA.TeacherID "
+                    + " JOIN CALENDARYEAR CY ON CY.ID = TA.CalendarYearID "
+                    + " AND CY.ACTIVEYEAR = 'Y' "
+                    + " JOIN CALENDARWEEK CW ON CY.ID = CW.CalendarYearID"
+                    + " AND CW.ID = @weekId "
+                    + " AND TA.StartDate <= CW.WeekDate "
+                    + " AND (TA.ENDDATE IS NULL OR TA.ENDDATE >= CW.WEEKDATE) "
+                    + " AND TA.CTSGRADE = @ctsGrade ";
+            
             List<SqlParameter> paramList = new List<SqlParameter>();
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@weekId",
+                SqlDbType = System.Data.SqlDbType.Int,
+                SqlValue = weekId
+            });
+
             paramList.Add(new SqlParameter
             {
                 ParameterName = "@ctsGrade",

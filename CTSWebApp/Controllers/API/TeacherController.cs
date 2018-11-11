@@ -126,14 +126,14 @@ namespace CTSWebApp.Controllers.API
         }
 
         [HttpGet]
-        [Route("teacherByGrade/{grade}")]
+        [Route("teacherByGrade/{grade}/{weekId:int}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public ActionResult<IEnumerable<TeacherViewModel>> GetAssignedTeacher(string grade)
+        public ActionResult<IEnumerable<TeacherViewModel>> GetAssignedTeacher(string grade, int weekId)
         {
             try
             {
-                var result = _teacherBLL.GetAssignedTeacher(grade);
+                var result = _teacherBLL.GetAssignedTeacher(grade, weekId);
                 if (result != null && result.Count() > 0)
                 {
                     return Ok(_mapper.Map<IEnumerable<Teacher>, IEnumerable<TeacherViewModel>>(result));

@@ -9,8 +9,8 @@ import { StudentWeekGrade } from '../model/StudentWeekGrade';
 export class TeacherService {
     constructor(private _http:HttpClient) { }
 
-    getTeachersByGrade(grade : string){
-        return this._http.get<Teacher[]>('/api/Teacher/teacherbygrade/' + grade);
+    getTeachersByGrade(grade : string, weekId : number){
+        return this._http.get<Teacher[]>('/api/Teacher/teacherbygrade/' + grade + '/' + weekId);
     }
 
 	getStudentWeekGrades(teacherId : number, weekId : number){

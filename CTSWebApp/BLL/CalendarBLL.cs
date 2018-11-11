@@ -47,7 +47,7 @@ namespace CTSWebApp.BLL
             {
                 // return only 'Active' CalendarWeek
                 return dataFromCache
-                    .Where(s => s.Active == "Y")
+                    .Where(s => s.Active == "Y" && s.WeekDate <= DateTime.Today)
                     .ToList();
             }
 

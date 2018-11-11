@@ -132,6 +132,8 @@ export class AttendanceComponent  implements OnInit {
     onSelectCalendarWeek(value : any) {
         this.calendarWeekId = value;
 		//console.log("selected calendarWeekId = " + value);
+		this.ctsGrade = "0";
+		this.teacherId = 0;
 		this.displayStudentWeekGradeGrid();
     }
 
@@ -142,8 +144,9 @@ export class AttendanceComponent  implements OnInit {
 		this.Teachers = null;
 		this.teacherId = 0;
         this.ctsGrade = value;
-		if ( value != "0"){
-			this.getTeachersByGrade(this.ctsGrade);
+		
+		if ( value != "0" && this.calendarWeekId != 0){
+			this.getTeachersByGrade(this.ctsGrade, this.calendarWeekId);
 		}
 		this.displayStudentWeekGradeGrid();
     }
@@ -154,9 +157,9 @@ export class AttendanceComponent  implements OnInit {
 		this.displayStudentWeekGradeGrid();
 	}
 
-	getTeachersByGrade(grade : string) {
+	getTeachersByGrade(grade : string, weekId : number) {
 		this.isSelectTeacherLoading = true;
-        this._teacherService.getTeachersByGrade(grade)
+        this._teacherService.getTeachersByGrade(grade, weekId)
             .subscribe(result => {
 				this.isSelectTeacherLoading = false;
                 this.Teachers = result;
