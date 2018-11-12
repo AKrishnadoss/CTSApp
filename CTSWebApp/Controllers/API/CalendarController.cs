@@ -54,5 +54,27 @@ namespace CTSWebApp.Controllers.API
                 return BadRequest("Exception occurred in calendar/weeks");
             }
         }
+
+        [HttpGet]
+        [Route("testweeks")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public ActionResult<IEnumerable<CalendarWeekViewModel>> GetTestWeeks()
+        {
+            try
+            {
+                var result = _mapper.Map<IEnumerable<CalendarWeek>, IEnumerable<CalendarWeekViewModel>>(_calendarBLL.GetCalendarTestWeeks());
+                if (result != null)
+                {
+                    return Ok(result);
+                }
+                return NotFound();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError($"Exception occurred in GetTestWeeks() => {exception}");
+                return BadRequest("Exception occurred in calendar/testweeks");
+            }
+        }
     }
 }

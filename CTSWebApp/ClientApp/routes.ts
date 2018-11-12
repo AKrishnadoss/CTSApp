@@ -3,12 +3,15 @@ import {RouterModule} from '@angular/router';
 
 import {HomeComponent} from './components/home/Home';
 import {AttendanceComponent} from './components/attendance/Attendance';
-import {ContactComponent} from './components/contact/Contact';
+import { ContactComponent } from './components/contact/Contact';
+import { ScoresComponent } from './components/score/Scores';
+
 
 export const AppRoutes = [
 	{ path : "", redirectTo : 'home', pathMatch : 'full'},
 	{ path : "attendance",component: AttendanceComponent},
-	{ path : "home", component: HomeComponent}
+    { path: "home", component: HomeComponent },
+    { path: "scores", component: ScoresComponent }
 	//{ path : "contactus", component: ContactComponent}
 ]
 

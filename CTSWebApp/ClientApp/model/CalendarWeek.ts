@@ -1,6 +1,6 @@
 ﻿export class CalendarWeek {
 
-    Id: number;
+    id: number;
     CalendarYearId: number;
     weekNo: number;
     description: string;

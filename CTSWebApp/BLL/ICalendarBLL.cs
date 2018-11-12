@@ -9,5 +9,6 @@ namespace CTSWebApp.BLL
     public interface ICalendarBLL
     {
         IEnumerable<CalendarWeek> GetCalendarWeeks(bool includeInactive=false);
+        IEnumerable<CalendarWeek> GetCalendarTestWeeks();
     }
 }

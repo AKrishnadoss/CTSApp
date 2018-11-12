@@ -53,5 +53,24 @@ namespace CTSWebApp.BLL
 
             //return this._ctsDBRepository.GetCalendarWeeks(includeInactive);
         }
+
+        public IEnumerable<CalendarWeek> GetCalendarTestWeeks()
+        {
+            IEnumerable<CalendarWeek> dataFromCache = null;
+            if (!_memoryCache.TryGetValue("CalendarTestWeek", out dataFromCache))
+            {
+                var calendarTestWeeks = this._ctsDBRepository.GetCalendarWeeks(true);
+
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromHours(1));
+
+                _memoryCache.Set("CalendarTestWeek", calendarTestWeeks, cacheEntryOptions);
+
+                dataFromCache = calendarTestWeeks;
+            }
+
+            // return all Calendar Test Week
+            return dataFromCache.ToList();
+        }
     }
 }
