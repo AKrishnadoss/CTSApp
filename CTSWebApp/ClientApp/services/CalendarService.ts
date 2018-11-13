@@ -12,4 +12,8 @@ export class CalendarService {
     getCalendarWeeks(){
         return this._http.get<CalendarWeek[]>('/api/calendar/weeks');
     }
+
+	getCalendarTestWeeks(){
+        return this._http.get<CalendarWeek[]>('/api/calendar/testweeks');
+    }
 }

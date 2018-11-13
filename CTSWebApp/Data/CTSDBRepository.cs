@@ -358,6 +358,22 @@ namespace CTSWebApp.Data
             return result;
         }
 
+        public IEnumerable<CalendarWeek> GetCalendarTestWeeks(bool includeInActive = false)
+        {
+            _logger.LogInformation("CTSDBRepository.GetCalendarTestWeeks() called");
+            string sql = "SELECT ID,CALENDARYEARID,WEEKNO, 'Term ' + CONVERT(VARCHAR, TERMNO) AS DESCRIPTION, WEEKDATE, TERMNO, ACTIVE "
+                        + " FROM CALENDARWEEK WHERE ID IN (SELECT MAX(ID) FROM CALENDARWEEK GROUP BY TERMNO)";
+
+            var result = _dbContext.CalendarWeeks.FromSql(sql);
+            if (result != null)
+            {
+                return result.ToList();
+            }
+
+            return null;
+
+        }
+
         public IEnumerable<Grade> GetGrades()
         {
             _logger.LogInformation("CTSDBRepository.GetGrades() called");

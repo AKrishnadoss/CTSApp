@@ -1,10 +1,10 @@
 ﻿export class CalendarWeek {
 
     id: number;
-    CalendarYearId: number;
+    calendarYearID: number;
     weekNo: number;
     description: string;
     weekDate: any;
     TermNo: number;
-    Active: string;
+    active: string;
 }

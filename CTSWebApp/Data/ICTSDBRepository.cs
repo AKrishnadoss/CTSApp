@@ -23,6 +23,8 @@ namespace CTSWebApp.Data
 
         IEnumerable<Student> GetAllStudents(bool includeInActive = false);
         IEnumerable<CalendarWeek> GetCalendarWeeks(bool includeInActive = false);
+        IEnumerable<CalendarWeek> GetCalendarTestWeeks(bool includeInActive = false);
+
         IEnumerable<Grade> GetGrades();
         IEnumerable<Teacher> GetAssignedTeacher(string grade, int weekId);
 

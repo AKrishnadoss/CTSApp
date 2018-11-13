@@ -59,7 +59,7 @@ namespace CTSWebApp.BLL
             IEnumerable<CalendarWeek> dataFromCache = null;
             if (!_memoryCache.TryGetValue("CalendarTestWeek", out dataFromCache))
             {
-                var calendarTestWeeks = this._ctsDBRepository.GetCalendarWeeks(true);
+                var calendarTestWeeks = this._ctsDBRepository.GetCalendarTestWeeks();
 
                 var cacheEntryOptions = new MemoryCacheEntryOptions()
                     .SetSlidingExpiration(TimeSpan.FromHours(1));

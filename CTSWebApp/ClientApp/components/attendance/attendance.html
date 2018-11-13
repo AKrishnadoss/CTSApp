@@ -39,7 +39,7 @@
                 <label for="selectGrade" class="mt5">Grade</label>
                 <img *ngIf="isSelectGradeLoading" src="/img/Loading.gif" height="40" width="40" class="ml10"/>
                 <i *ngIf="gradeLoadError" class="fa fa-exclamation-triangle form-control errorText"> {{gradeLoadError}}</i>
-                <select *ngIf="!isSelectGradeLoading && !gradeLoadError" name="selectGrade" class="ml10 selectpicker form-control selectWidth" (change)="onSelectGrade($event.target.value)">
+                <select *ngIf="!isSelectGradeLoading && !gradeLoadError" name="selectGrade" class="ml10 selectpicker form-control selectWidth" (change)="onSelectGrade($event.target.value)" [(ngModel)]="ctsGrade">
                     <option value="0">--Select Grade--</option>
                     <option *ngFor="let grade of Grades" value={{grade.ctsGrade}}>
                         {{grade.ctsGrade}}
@@ -91,7 +91,7 @@
                 <tbody>
                     
                     <tr *ngFor="let weekGrade of StudentWeekGrades">
-                        <td data-title="Student ID" >{{weekGrade.studentID}}</td>
+                        <td data-title="ID" >{{weekGrade.studentID}}</td>
                         <td data-title="First Name">{{weekGrade.firstName}}</td>
                         <td data-title="Last Name" >{{weekGrade.lastName}}</td>
                         <td data-title="Attendance" >

@@ -72,7 +72,7 @@ export class AttendanceComponent  implements OnInit {
 		this.studentGridServerSuccessMessage = "";
 
 		this.calendarWeekId = 0;
-		this.ctsGrade = "";
+		this.ctsGrade = "0";
 		this.teacherId = 0;
 
 		this.calendarWeekLoadError = "";

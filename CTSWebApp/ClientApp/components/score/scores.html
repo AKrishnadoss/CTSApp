@@ -24,11 +24,12 @@
         <div class="col-md-4">
             <div class="input-group">
                 <label for="selectTerm" class="mt5">Term</label>
-                
-                <select name="selectTerm" class="ml10 selectpicker form-control selectWidth" (change)="onSelectTerm($event.target.value)">
+                <img *ngIf="isSelectTermLoading" src="/img/Loading.gif" height="40" width="40" class="ml10" />
+                <i *ngIf="termLoadError" class="fa fa-exclamation-triangle form-control errorText"> {{termLoadError}}</i>
+                <select *ngIf="!isSelectTermLoading && !termLoadError" name="selectTerm" class="ml10 selectpicker form-control selectWidth" (change)="onSelectTerm($event.target.value)">
                     <option value="0">--Select Term--</option>
-                    <option *ngFor="let term of Terms" value={{term.id}}>
-                        {{term.description}} 
+                    <option *ngFor="let week of CalendarWeeks" value={{week.id}}>
+                        {{week.description}} 
                     </option>
                 </select>
             </div>
@@ -47,19 +48,49 @@
             </div>
 
         </div>
-            <!--
         <div class="col-md-4">
             <div class="input-group">
                 <label for="selectTeacher" class="mt5">Teacher</label>
                 <img *ngIf="isSelectTeacherLoading" src="/img/Loading.gif" height="40" width="40" class="ml10" />
-                <select *ngIf="!isSelectTeacherLoading" name="selectTeacher" class="ml10 selectpicker form-control selectWidth" (change)="onSelectTeacher($event.target.value)" [(ngModel)]="teacherId">
+                <i *ngIf="teacherLoadError" class="fa fa-exclamation-triangle form-control errorText"> {{teacherLoadError}}</i>
+                <select *ngIf="!isSelectTeacherLoading && !teacherLoadError" name="selectTeacher" class="ml10 selectpicker form-control selectWidth" (change)="onSelectTeacher($event.target.value)" [(ngModel)]="selectedTeacherId">
                     <option value="0">--Select Teacher--</option>
                     <option *ngFor="let teacher of Teachers" value={{teacher.id}}>
                         {{teacher.firstName}} {{teacher.lastName}}
                     </option>
                 </select>
             </div>
-        </div>-->
+        </div>
+    </div>
+    
+    <div class="row">
+        <div *ngIf="isStudentTestScoreGridLoading" class="col-md-12">Loading Student Scores. Please wait.<img src="/img/Loading.gif" height="40" width="40" class="ml10" /></div>
+    </div>
+
+    <div class="row" *ngIf="!isStudentTestScoreGridLoading">
+        <div class="col-md-3"></div>
+        <div class="col-md-6" id="no-more-tables">
+            <label *ngIf="testScoreGridErrorMessage">{{testScoreGridErrorMessage}}</label>
+            <table class="table-bordered table-condensed cf" id="dev-table">
+                <thead class="bgTableHead cf">
+                    <tr>
+                        <th class="fw">ID</th>
+                        <th class="fw w150">First Name</th>
+                        <th class="fw w150">Last Name</th>
+                        <th class="fw">Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    <tr *ngFor="let testScore of StudentTestScores">
+                        <td data-title="ID">{{testScore.studentID}}</td>
+                        <td data-title="First Name">{{testScore.firstName}}</td>
+                        <td data-title="Last Name">{{testScore.lastName}}</td>
+                        <td data-title="Score"><input class="form-control" [(ngModel)]="testScore.score" value="{{testScore.score}}" /></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
