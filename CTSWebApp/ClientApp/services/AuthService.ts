@@ -1,6 +1,9 @@
 ﻿import {Injectable, OnInit} from '@angular/core';
 import {Http, Response } from '@angular/http';
 import {LoggerService} from './LoggerService';
+import { HttpClient } from '@angular/common/http';
+
+import { AuthFunctions } from '../model/AuthFunctions';
 
 @Injectable()
 export class AuthService {
@@ -9,9 +12,12 @@ export class AuthService {
 	email : string;
 	userName :string;
 	isLoggedOn : boolean;
-	expiresBy : Date;
+    expiresBy: Date;
+    roles: string;
+    authFunctions: AuthFunctions;
 
-	constructor(private _loggerService: LoggerService){
+    constructor(private _loggerService: LoggerService,
+        private _http: HttpClient) {
 		if ( AuthService.instance == null){
 			AuthService.instance = this;
 		}
@@ -45,10 +51,6 @@ export class AuthService {
 		return this.userName;
 	}
 
-	//setIsLoggedOn(isLoggedOn : boolean){
-	//	this.isLoggedOn = isLoggedOn;
-	//}
-
 	getIsLoggedOn() : boolean
 	{
 		if (this.authToken != null && this.authToken.length > 0 && this.expiresBy >= new Date())
@@ -66,6 +68,73 @@ export class AuthService {
 
 	getExpiresBy(){
 		return this.expiresBy;
-	}
+    }
+
+
+    hasAccess(fnName: string): boolean {
+        let allowed = false;
+        if (this.authFunctions != null && this.authFunctions.functions != null && this.authFunctions.functions.length > 0) {
+            var item  = this.authFunctions.functions.find(x => x == fnName);
+            if (item != null) {
+                allowed = true;
+            }
+        }
+        return allowed;
+    }
+
+    getAuthFunctions() {
+        if (this.authFunctions == null) {
+            this.callAuthFunctionsService()
+                .subscribe(result => {
+                    //this._loggerService.log(JSON.stringify(result));
+                    this.authFunctions = result;
+                },
+                    err => {
+                        this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+                        // Redirect to error page
+                    });
+        }
+    }
+
+    callAuthFunctionsService() {
+        return this._http.get<AuthFunctions>('/api/ctsuser/authfunctions');
+    }
+
+    //isAdmin(): boolean{
+    //    console.log(this.roles);
+    //    if (this.roles != null && this.roles.indexOf("Admin") > -1) {
+    //        console.log("Admin.isAdmin()=true");
+    //        return true;
+    //    }
+    //    console.log("Admin.isAdmin()=false");
+    //    return false;
+    //}
+
+
+    //isTeacher(): boolean {
+    //    console.log(this.roles);
+    //    if (this.roles != null && this.roles.indexOf("Teacher") > -1) {
+    //        console.log("Admin.isTeacher()=true");
+    //        return true;
+    //    }
+    //    console.log("Admin.isTeacher()=false");
+    //    return false;
+    //}
+
+    //isAuthorized(accessName): boolean {
+    //    let access: boolean;
+    //    access = false;
+    //    switch (accessName) {
+    //        case "attendance":
+    //            if (this.isAdmin() || this.isTeacher()) {
+    //                access = true;
+    //            }
+    //            break;
+    //        default:
+    //            access = false;
+    //            break;
+    //    }
+    //    return access;
+    //}
 
 }

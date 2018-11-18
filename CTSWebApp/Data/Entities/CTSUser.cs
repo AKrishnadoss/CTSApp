@@ -15,13 +15,16 @@ namespace CTSWebApp.Data.Entities
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
-        public string Phone { get; set; }
+        public string PrimaryPhone { get; set; }
+        public string SecondaryPhone { get; set; }
         public string Active { get; set; }
         public string Gender { get; set; }
         public string Admin { get; set; }
         public string Teacher { get; set; }
+        public string LeadTeacher { get; set; }
+        public string SubTeacher { get; set; }
         public string Volunteer { get; set; }
-        public int FamilyId { get; set; }
+        public string FamilyId { get; set; }
         public string LogonAccess { get; set; }
         //public string Password { get; set; }
         //public string Hash { get; set; }

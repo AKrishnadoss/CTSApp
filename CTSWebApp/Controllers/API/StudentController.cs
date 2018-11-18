@@ -36,6 +36,7 @@ namespace CTSWebApp.Controllers.API
         [ActionName("students")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
+        [NonAction]
         public ActionResult<IEnumerable<StudentViewModel>> GetAllStudents(bool includeInActive = false)
         {
             try
@@ -56,6 +57,7 @@ namespace CTSWebApp.Controllers.API
 
         [HttpPost]
         [ActionName("SaveStudent")]
+        [NonAction]
         public ActionResult<bool> SaveStudent([FromBody]StudentViewModel viewModel)
         {
             try

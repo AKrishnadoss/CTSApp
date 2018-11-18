@@ -21,6 +21,7 @@ import { AppRoutingModule } from '../routes';
 import { HomeComponent } from '../components/home/Home';
 import { ContactComponent } from '../components/contact/Contact';
 import { AttendanceComponent } from '../components/attendance/Attendance';
+import { ScoresComponent } from '../components/score/Scores';
 var AppModule = /** @class */ (function () {
     function AppModule() {
     }
@@ -30,7 +31,8 @@ var AppModule = /** @class */ (function () {
                 AppComponent,
                 HomeComponent,
                 AttendanceComponent,
-                ContactComponent
+                ContactComponent,
+                ScoresComponent
             ],
             imports: [
                 BrowserModule,

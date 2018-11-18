@@ -12,6 +12,7 @@ using CTSWebApp.BLL;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Net;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -40,6 +41,7 @@ namespace CTSWebApp.Controllers.API
         [Route("teachers")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
+        [NonAction]
         public ActionResult<IEnumerable<CTSUserViewModel>> GetAllTeachers()
         {
             try
@@ -62,6 +64,7 @@ namespace CTSWebApp.Controllers.API
         [Route("teacherById/{teacherId:int}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
+        [NonAction]
         public ActionResult<CTSUserViewModel> GetTeacherById(int teacherId)
         {
             try
@@ -85,6 +88,7 @@ namespace CTSWebApp.Controllers.API
         [Route("assignment/{id:int}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
+        [NonAction]
         public ActionResult<TeacherAssignmentViewModel> GetTeacherAssignment(int id)
         {
             try
@@ -107,6 +111,7 @@ namespace CTSWebApp.Controllers.API
         [Route("teacherById/{teacherId:int}/students")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
+        [NonAction]
         public ActionResult<IEnumerable<StudentEnrollmentViewModel>> GetAssignedStudents(int teacherId)
         {
             try
@@ -126,7 +131,7 @@ namespace CTSWebApp.Controllers.API
         }
 
         [HttpGet]
-        [Route("teacherByGrade/{grade}/{weekId:int}")]
+        [Route("assignment/{grade}/{weekId:int}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         public ActionResult<IEnumerable<TeacherViewModel>> GetAssignedTeacher(string grade, int weekId)
@@ -142,13 +147,39 @@ namespace CTSWebApp.Controllers.API
             }
             catch (Exception exception)
             {
-                _logger.LogError($"Exception occurred in GetAssignedTeacher() => {exception}");
-                return BadRequest("Exception occurred in TeacherController.GetAssignedTeacher()");
+                _logger.LogError($"Exception occurred in GetAssignedTeacher(grade,weekId) => {exception}");
+                return BadRequest("Exception occurred in teacher/assignment/grade/weekId");
             }
         }
 
         [HttpGet]
-        [Route("teacherById/{teacherId:int}/studentgrades/{weekId:int}")]
+        [Route("assignmentByWeekId/{weekId:int}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public ActionResult<IEnumerable<TeacherViewModel>> GetAssignedTeacher(int weekId)
+        {
+            try
+            {
+                int teacherId = GetLoggedOnCTSUserID();
+                if (teacherId > 0)
+                {
+                    var result = _teacherBLL.GetAssignedTeacher(teacherId, weekId);
+                    if (result != null)
+                    {
+                        return Ok(_mapper.Map<IEnumerable<Teacher>, IEnumerable<TeacherViewModel>>(result));
+                    }
+                }
+                return NotFound();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError($"Exception occurred in GetAssignedTeacher(weekId) => {exception}");
+                return BadRequest("Exception occurred in teacher/assignmentByWeekId/weekId");
+            }
+        }
+
+        [HttpGet]
+        [Route("assignmentById/{teacherId:int}/studentgrades/{weekId:int}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         public ActionResult<IEnumerable<StudentWeekGradeViewModel>> GetAssignedStudentsWeekGrade(int teacherId,int weekId)
@@ -165,9 +196,44 @@ namespace CTSWebApp.Controllers.API
             }
             catch (Exception exception)
             {
-                _logger.LogError($"Exception occurred in GetAssignedStudentsWeekGrade() => {exception}");
-                return BadRequest("Exception occurred in TeacherController.GetAssignedStudents()");
+                _logger.LogError($"Exception occurred in GetAssignedStudentsWeekGrade(teacherId, weekId) => {exception}");
+                return BadRequest("Exception occurred in teacher/assignmentById/teacherId/studentgrades/weekId");
             }
+        }
+
+        [HttpGet]
+        [Route("assignmentById/{teacherId:int}/studentscores/{weekId:int}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public ActionResult<IEnumerable<StudentTermScore>> GetAssignedStudentsTermScore(int teacherId, int weekId)
+        {
+            try
+            {
+                //System.Threading.Thread.Sleep(2000);
+                var result = _teacherBLL.GetAssignedStudentsTermScore(teacherId, weekId);
+                if (result != null && result.Count() > 0)
+                {
+                    return Ok(result);// _mapper.Map<IEnumerable<StudentWeekGrade>, IEnumerable<StudentWeekGradeViewModel>>(result));
+                }
+                return Ok(null);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError($"Exception occurred in GetAssignedStudentsTermScore(teacherId, weekId) => {exception}");
+                return BadRequest("Exception occurred in teacher/assignmentById/teacherId/studentscores/weekId");
+            }
+        }
+
+        private int GetLoggedOnCTSUserID()
+        {
+            int ctsUserID = -1;
+            List<Claim> claims = HttpContext.User.Claims.ToList();
+            Claim claim = claims.Where(x => x.Type == "CTSUserID").FirstOrDefault();
+            if (claim != null && !string.IsNullOrEmpty(claim.Value))
+            {
+                ctsUserID = int.Parse(claim.Value);
+            }
+            return ctsUserID;
         }
     }
 }

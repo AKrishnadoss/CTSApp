@@ -13,7 +13,7 @@ export class AppComponent  implements OnInit {
   token: string;
   userName : string;
   email: string;
-  expiresBy : Date;
+    expiresBy: Date;
   
   isLogonSuccessful : boolean
 
@@ -41,26 +41,25 @@ export class AppComponent  implements OnInit {
 
 	var expiresByElement = document.getElementById("hdnExpires");
 	if ( expiresByElement != null){
-		this.expiresBy = new Date(expiresByElement.innerText);
-	}
+	    this.expiresBy = new Date(expiresByElement.innerText);
+    }
+
 
 	var loginLinkElement = document.getElementById("loginLink");
 	var logoutLinkElement = document.getElementById("logoutLink");
 	var loggedinElement = document.getElementById("loggedInAs");
 
 	if ( this.token == null ){
-		this._loggerService.log('token is null, getting from localStorage');
+		this._loggerService.log('Getting from localStorage');
 		this.token = localStorage.getItem('token');
 		this.userName = localStorage.getItem('userName');
 		this.email = localStorage.getItem('email');
-		let temp = localStorage.getItem('expiresBy');
-
+        let temp = localStorage.getItem('expiresBy');
 		if ( temp != null){
 			this.expiresBy = new Date(temp);
-		}
+        }
 
 		if ( this.token != null ){
-			this._loggerService.log('localStorage is NOT null');
 			if ( loggedinElement != null){
 				loggedinElement.innerText = this.email;
 			}
@@ -78,8 +77,7 @@ export class AppComponent  implements OnInit {
 			this._authService.setAuthToken(this.token);
 			this._authService.setEmail(this.email);
 			this._authService.setUserName(this.userName);
-			//this._authService.setIsLoggedOn(true);
-			this._authService.setExpiresBy(this.expiresBy);
+            this._authService.setExpiresBy(this.expiresBy);
 		}
 		else {
 			this._loggerService.log('localStorage is null');
@@ -87,13 +85,12 @@ export class AppComponent  implements OnInit {
 			this._authService.setAuthToken('');
 			this._authService.setEmail('');
 			this._authService.setUserName('');
-			//this._authService.setIsLoggedOn(false);
-			this._authService.setExpiresBy(null);
+            this._authService.setExpiresBy(null);
 		}
 
 	}
 	else {
-		this._loggerService.log('token is NOT null, setting into localStorage');
+		this._loggerService.log('Setting localStorage');
 
 		localStorage.setItem('token', this.token);
 		localStorage.setItem('userName', this.userName);
@@ -116,7 +113,7 @@ export class AppComponent  implements OnInit {
 		this._authService.setAuthToken(this.token);
 		this._authService.setEmail(this.email);
 		this._authService.setUserName(this.userName);
-		this._authService.setExpiresBy(this.expiresBy);
+        this._authService.setExpiresBy(this.expiresBy);
 	}
   }
 }

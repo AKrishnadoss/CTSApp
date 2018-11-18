@@ -37,7 +37,7 @@ var AppComponent = /** @class */ (function () {
         var logoutLinkElement = document.getElementById("logoutLink");
         var loggedinElement = document.getElementById("loggedInAs");
         if (this.token == null) {
-            this._loggerService.log('token is null, getting from localStorage');
+            this._loggerService.log('Getting from localStorage');
             this.token = localStorage.getItem('token');
             this.userName = localStorage.getItem('userName');
             this.email = localStorage.getItem('email');
@@ -46,7 +46,6 @@ var AppComponent = /** @class */ (function () {
                 this.expiresBy = new Date(temp);
             }
             if (this.token != null) {
-                this._loggerService.log('localStorage is NOT null');
                 if (loggedinElement != null) {
                     loggedinElement.innerText = this.email;
                 }
@@ -60,7 +59,6 @@ var AppComponent = /** @class */ (function () {
                 this._authService.setAuthToken(this.token);
                 this._authService.setEmail(this.email);
                 this._authService.setUserName(this.userName);
-                //this._authService.setIsLoggedOn(true);
                 this._authService.setExpiresBy(this.expiresBy);
             }
             else {
@@ -69,12 +67,11 @@ var AppComponent = /** @class */ (function () {
                 this._authService.setAuthToken('');
                 this._authService.setEmail('');
                 this._authService.setUserName('');
-                //this._authService.setIsLoggedOn(false);
                 this._authService.setExpiresBy(null);
             }
         }
         else {
-            this._loggerService.log('token is NOT null, setting into localStorage');
+            this._loggerService.log('Setting localStorage');
             localStorage.setItem('token', this.token);
             localStorage.setItem('userName', this.userName);
             localStorage.setItem('email', this.email);

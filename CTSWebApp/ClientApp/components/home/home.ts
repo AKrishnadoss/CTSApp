@@ -1,4 +1,4 @@
-﻿import { Component,OnInit } from '@angular/core';
+﻿import { Component,OnInit, PACKAGE_ROOT_URL } from '@angular/core';
 import {AuthService} from '../../services/AuthService';
 
 @Component({
@@ -19,9 +19,13 @@ export class HomeComponent  implements OnInit {
 	this.isLoggedOn = this._authService.getIsLoggedOn();
 	this.userName = this._authService.getUserName();
 
-	if ( this.isLoggedOn == false){
-		this.resetLoginControls();
-	}
+      if (this.isLoggedOn == false) {
+          this.resetLoginControls();
+      }
+
+      else {
+          this._authService.getAuthFunctions();
+      }
 
 	this.CarouselImages = [
 		{src :"/img/Carousel-1.jpg", alt :'First', slideTo:"0"},

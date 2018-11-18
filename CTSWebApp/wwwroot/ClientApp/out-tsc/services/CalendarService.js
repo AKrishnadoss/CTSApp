@@ -16,6 +16,9 @@ var CalendarService = /** @class */ (function () {
     CalendarService.prototype.getCalendarWeeks = function () {
         return this._http.get('/api/calendar/weeks');
     };
+    CalendarService.prototype.getCalendarTestWeeks = function () {
+        return this._http.get('/api/calendar/testweeks');
+    };
     CalendarService = __decorate([
         Injectable(),
         __metadata("design:paramtypes", [HttpClient])

@@ -17,6 +17,7 @@ namespace CTSWebApp.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<StudentWeekGrade>().HasKey(table => new { table.ID, table.StudentID });
+            builder.Entity<StudentTermScore>().HasKey(table => new { table.ID, table.StudentID });
         }
 
         public DbSet<UserIdentity> UserIdentity { get; set; }
@@ -28,6 +29,7 @@ namespace CTSWebApp.Data
         public DbSet<StudentEnrollment> StudentEnrollment { get; set; }
 
         public DbSet<StudentWeekGrade> StudentWeekGrade { get; set; }
+        public DbSet<StudentTermScore> StudentTermScore { get; set; }
         public DbSet<CalendarWeek> CalendarWeeks { get; set; }
         public DbSet<Grade> Grades { get; set; }
 

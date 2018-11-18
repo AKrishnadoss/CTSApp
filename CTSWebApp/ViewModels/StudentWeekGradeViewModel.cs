@@ -10,7 +10,7 @@ namespace CTSWebApp.ViewModels
     {
         public int ID { get; set; }
         [Required]
-        public int StudentID { get; set; }
+        public string StudentID { get; set; }
         [Required]
         public int CalendarWeekID { get; set; }
         [Required]
@@ -18,14 +18,12 @@ namespace CTSWebApp.ViewModels
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Active { get; set; }
-        public string CTSGrade { get; set; }
-        public string CountyGrade { get; set; }
-        public DateTime EnrollmentDate { get; set; }
-        public DateTime? DateOfLeaving { get; set; }
+        //public string CTSGrade { get; set; }
+        //public string CountyGrade { get; set; }
+        //public DateTime StartDate { get; set; }
+        //public DateTime? EndDate { get; set; }
         [Required]
-        [RegularExpression("[YN]", ErrorMessage = "Attendance must be either 'Y' or 'N'")]
-        [MaxLength(1, ErrorMessage = "Invalid attendance")]
-        public string Attendance { get; set; }
+        public short? Attendance { get; set; }
         [Required]
         public short? Homework { get; set; }
         [Required]
@@ -38,10 +36,10 @@ namespace CTSWebApp.ViewModels
         public short? Behavior { get; set; }
         [Required]
         public short? Quiz { get; set; }
-
         [MinLength(0)]
         [MaxLength(100, ErrorMessage = "Notes cannot exceed 100 characters")]
         //[RegularExpression("[@#$%^&*(),?:{}|<>]", ErrorMessage = "Notes cannot contain special characters @#$%^&*(),?:{}|<>")]
         public string Notes { get; set; }
+        public string DataFreeze { get; set; }
     }
 }

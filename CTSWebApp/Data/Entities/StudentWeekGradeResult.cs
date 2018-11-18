@@ -40,13 +40,13 @@ namespace CTSWebApp.Data.Entities
         {
 
         }
-        public StudentWeekGradeError(int studentID, string errorMessage)
+        public StudentWeekGradeError(string studentID, string errorMessage)
         {
             this.StudentID = studentID;
             this.ErrorMessage = errorMessage;
         }
 
-        public int StudentID { get; set; }
+        public string StudentID { get; set; }
         public string ErrorMessage { get; set; }
     }
 }

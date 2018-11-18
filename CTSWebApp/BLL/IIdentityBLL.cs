@@ -10,5 +10,6 @@ namespace CTSWebApp.BLL
     {
         UserIdentity ValidateUser(string email, string password);
         bool UpdatePassword(int ctsUserId, string email, byte[] hash, string hashedPassword);
+        IEnumerable<string> GetUserRoles(int ctsUserId);
     }
 }

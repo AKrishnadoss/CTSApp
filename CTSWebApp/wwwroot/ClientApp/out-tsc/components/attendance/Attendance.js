@@ -11,6 +11,7 @@ import { Component } from '@angular/core';
 import { AuthService } from '../../services/AuthService';
 import { CalendarService } from '../../services/CalendarService';
 import { GradeService } from '../../services/GradeService';
+import { Grade } from '../../model/Grade';
 import { TeacherService } from '../../services/TeacherService';
 import { StudentService } from '../../services/StudentService';
 import { LoggerService } from '../../services/LoggerService';
@@ -31,6 +32,12 @@ var AttendanceComponent = /** @class */ (function () {
             window.location.href = "/logon/login";
             return;
         }
+        if (!this._authService.hasAccess("Attendance")) {
+            // TODO: navigate to unauthorized page
+            this._loggerService.log("Unauthorized access");
+            window.location.href = "/error";
+        }
+        this._loggerService.log("Access is authorized");
         this.userName = this._authService.getUserName();
         this.Scores = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         this.isSelectCalendarWeekLoading = false;
@@ -42,21 +49,23 @@ var AttendanceComponent = /** @class */ (function () {
         this.isStudentWeekGradeGridSaving = false;
         this.studentGridServerSuccessMessage = "";
         this.calendarWeekId = 0;
-        this.ctsGrade = "";
-        this.teacherId = 0;
+        this.selectedGrade = "0";
+        this.selectedTeacherId = 0;
         this.calendarWeekLoadError = "";
         this.gradeLoadError = "";
+        this.selectGradeEnabled = true;
+        this.selectTeachedEnabled = true;
         this.getCalendarWeeks();
-        this.getGrades();
-    };
-    AttendanceComponent.prototype.populateScores = function () {
-        this.Scores.push(0);
-        this.Scores.push(1);
-        this.Scores.push(2);
-        this.Scores.push(3);
+        if (this._authService.hasAccess("Attendance.GradeSelection")) {
+            this.getGrades();
+        }
+        else {
+            this.getGradeAndTeacherDetails();
+        }
     };
     AttendanceComponent.prototype.getGrades = function () {
         var _this = this;
+        console.log('Loading grades');
         this.isSelectGradeLoading = true;
         this.gradeLoadError = "";
         this._gradeService.getGrades()
@@ -91,34 +100,71 @@ var AttendanceComponent = /** @class */ (function () {
             _this.calendarWeekLoadError = "Error Occured";
         });
     };
+    AttendanceComponent.prototype.getGradeAndTeacherDetails = function () {
+        var _this = this;
+        if (this.calendarWeekId != 0) {
+            this._teacherService.getAssignedTeacherByWeek(this.calendarWeekId)
+                .subscribe(function (result) {
+                _this.isSelectTeacherLoading = false;
+                _this.Teachers = result;
+                //populate grade from result
+                var gr = new Array();
+                gr.push(new Grade(_this.Teachers[0].ctsGrade, _this.Teachers[0].ctsGrade));
+                _this.Grades = gr;
+                _this.selectedGrade = _this.Teachers[0].ctsGrade;
+                _this.selectGradeEnabled = false;
+                if (_this.Teachers.length > 1) {
+                    _this.selectedTeacherId = 0;
+                }
+                else {
+                    _this.selectedTeacherId = _this.Teachers[0].id;
+                    _this.selectTeachedEnabled = false;
+                    _this.displayStudentWeekGradeGrid();
+                }
+            }, function (err) {
+                _this.isSelectTeacherLoading = false;
+                _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+                if (err.status == "404") {
+                    // data not found
+                    _this.Teachers = null;
+                }
+            });
+        }
+    };
     AttendanceComponent.prototype.onSelectCalendarWeek = function (value) {
         this.calendarWeekId = value;
-        //console.log("selected calendarWeekId = " + value);
-        this.ctsGrade = "0";
-        this.teacherId = 0;
-        this.displayStudentWeekGradeGrid();
-    };
-    AttendanceComponent.prototype.onSelectGrade = function (value) {
-        //console.log("selected grade = " + value);
-        this.studentGridServerErrorMessage = "";
-        this.showStudentGridServerErrorMessage = false;
-        this.Teachers = null;
-        this.teacherId = 0;
-        this.ctsGrade = value;
-        if (value != "0" && this.calendarWeekId != 0) {
-            this.getTeachersByGrade(this.ctsGrade, this.calendarWeekId);
+        if (this._authService.hasAccess("Attendance.GradeSelection")) {
+            this.selectedGrade = "0";
+            this.selectedTeacherId = 0;
+        }
+        else {
+            this.getGradeAndTeacherDetails();
         }
         this.displayStudentWeekGradeGrid();
     };
+    AttendanceComponent.prototype.onSelectGrade = function (value) {
+        if (this._authService.hasAccess("Attendance.TeacherSelection")) {
+            this.studentGridServerErrorMessage = "";
+            this.showStudentGridServerErrorMessage = false;
+            this.studentGridServerWarningMessage = "";
+            this.Teachers = null;
+            this.selectedTeacherId = 0;
+            this.selectedGrade = value;
+            if (value != "0" && this.calendarWeekId != 0) {
+                this.getTeachersByGrade(this.selectedGrade, this.calendarWeekId);
+            }
+            this.displayStudentWeekGradeGrid();
+        }
+    };
     AttendanceComponent.prototype.onSelectTeacher = function (value) {
-        this.teacherId = value;
+        this.selectedTeacherId = value;
         //console.log("selected teacherId = " + value);
         this.displayStudentWeekGradeGrid();
     };
     AttendanceComponent.prototype.getTeachersByGrade = function (grade, weekId) {
         var _this = this;
         this.isSelectTeacherLoading = true;
-        this._teacherService.getTeachersByGrade(grade, weekId)
+        this._teacherService.getAssignedTeacherByGradeAndWeek(grade, weekId)
             .subscribe(function (result) {
             _this.isSelectTeacherLoading = false;
             _this.Teachers = result;
@@ -133,9 +179,10 @@ var AttendanceComponent = /** @class */ (function () {
     };
     AttendanceComponent.prototype.displayStudentWeekGradeGrid = function () {
         this.studentGridServerSuccessMessage = "";
-        if (this.calendarWeekId != 0 && this.teacherId != 0) {
+        if (this.calendarWeekId != 0 && this.selectedTeacherId != 0) {
             this.studentGridServerErrorMessage = "";
             this.showStudentGridServerErrorMessage = false;
+            this.studentGridServerWarningMessage = "";
             this.showStudentWeekGradeGrid = true;
             this.getStudentWeekGrades();
         }
@@ -149,7 +196,8 @@ var AttendanceComponent = /** @class */ (function () {
         this.showStudentWeekGradeGrid = false;
         this.studentGridServerErrorMessage = "";
         this.showStudentGridServerErrorMessage = false;
-        this._teacherService.getStudentWeekGrades(this.teacherId, this.calendarWeekId)
+        this.studentGridServerWarningMessage = "";
+        this._teacherService.getStudentWeekGrades(this.selectedTeacherId, this.calendarWeekId)
             .subscribe(function (result) {
             _this.isStudentWeekGradeGridLoading = false;
             _this.StudentWeekGrades = result;
@@ -159,6 +207,18 @@ var AttendanceComponent = /** @class */ (function () {
                 _this.studentGridServerErrorMessage = "No Student(s) assigned to selected teacher.";
             }
             else {
+                if (result.length > 0) {
+                    if (result[0].dataFreeze == 'Y') {
+                        _this.isStudentWeekGradeGridReadOnly = true;
+                    }
+                    else {
+                        _this.isStudentWeekGradeGridReadOnly = false;
+                    }
+                    if (result[0].id == 0) {
+                        _this.studentGridServerWarningMessage = "Note: Data not entered for this week, showing default entries";
+                        console.log(_this.studentGridServerWarningMessage);
+                    }
+                }
                 _this.showStudentGridServerErrorMessage = false;
                 _this.showStudentWeekGradeGrid = true;
             }
@@ -194,7 +254,7 @@ var AttendanceComponent = /** @class */ (function () {
         }
     };
     AttendanceComponent.prototype.selectAttendance = function (weekGrade, value) {
-        if (value == 'N') {
+        if (value == '0') {
             weekGrade.homework = 0;
             weekGrade.reading = 0;
             weekGrade.writing = 0;
@@ -208,8 +268,9 @@ var AttendanceComponent = /** @class */ (function () {
         this.showStudentWeekGradeGrid = false;
         this.studentGridServerSuccessMessage = "";
         this.studentGridServerErrorMessage = "";
+        this.studentGridServerWarningMessage = "";
         this.StudentWeekGrades = null;
-        this.teacherId = 0;
+        this.selectedTeacherId = 0;
     };
     AttendanceComponent.prototype.saveClick = function () {
         var _this = this;
@@ -217,6 +278,7 @@ var AttendanceComponent = /** @class */ (function () {
         this.showStudentGridServerErrorMessage = false;
         this.studentGridServerErrorMessage = "";
         this.studentGridServerSuccessMessage = "";
+        this.studentGridServerWarningMessage = "";
         this._studentService.saveStudentWeekGrades(this.StudentWeekGrades)
             .subscribe(function (result) {
             _this.isStudentWeekGradeGridSaving = false;

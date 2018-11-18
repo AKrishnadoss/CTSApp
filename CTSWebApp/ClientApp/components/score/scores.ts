@@ -10,7 +10,8 @@ import { CalendarWeek } from '../../model/CalendarWeek';
 import { TeacherService } from '../../services/TeacherService';
 import { Teacher } from '../../model/Teacher';
 import { StudentTestScore } from '../../model/StudentTestScore';
-
+import { StudentTermScore } from '../../model/StudentTermScore';
+import { transformAll } from '@angular/compiler/src/render3/r3_ast';
 
 @Component({
     templateUrl: './scores.html'
@@ -33,10 +34,17 @@ export class ScoresComponent implements OnInit {
 	isSelectTeacherLoading : boolean;
 	teacherLoadError :string;
 
-	isStudentTestScoreGridLoading : boolean;
-	testScoreGridErrorMessage : string;
-	StudentTestScores : Array<StudentTestScore> = new Array<StudentTestScore>();
-	
+    selectGradeEnabled: boolean;
+    selectTeachedEnabled: boolean;
+
+    isStudentTermScoreGridLoading : boolean;
+	termScoreGridErrorMessage : string;
+	//StudentTestScores : Array<StudentTestScore> = new Array<StudentTestScore>();
+    StudentTermScores: StudentTermScore[];
+
+    studentGridServerErrorMessage: string;
+    studentGridServerSuccessMessage: string;
+    isStudentTermScoreGridSaving: boolean;
 
     constructor(private _authService: AuthService,
 		private _calendarService: CalendarService,
@@ -53,6 +61,13 @@ export class ScoresComponent implements OnInit {
             return;
         }
 
+        if (!this._authService.hasAccess("TermScores")) {
+            // TODO: navigate to unauthorized page
+            this._loggerService.log("Unauthorized access");
+            window.location.href = "/error";
+        }
+        this._loggerService.log("Access is authorized");
+
 		this.isSelectTermLoading = false;
 		this.termLoadError = "";
 		this.isSelectGradeLoading = false;
@@ -64,33 +79,53 @@ export class ScoresComponent implements OnInit {
 		this.selectedGrade = "";
 		this.selectedTeacherId = 0;
 
-		this.isStudentTestScoreGridLoading = false;
-		this.testScoreGridErrorMessage = "";
+        this.isStudentTermScoreGridLoading = false;
+		this.termScoreGridErrorMessage = "";
+
+        this.selectGradeEnabled = true;
+        this.selectTeachedEnabled = true;
+
+        this.studentGridServerErrorMessage = "";
+        this.studentGridServerSuccessMessage = "";
+        this.isStudentTermScoreGridSaving = false;
 
         this.populateTerms();
-        this.populateGrades();
+        if (this._authService.hasAccess("TermScores.GradeSelection")) {
+            this.populateGrades();
+        }
+        else {
+            this.populateGradeAndTeacherDetails();
+        }
 
     }
 
 
     onSelectTerm(value: any) {
         this.selectedTermWeekId = value;
-		this.selectedGrade = "0";
-		this.selectedTeacherId = 0;
+        if (this._authService.hasAccess("TermScores.GradeSelection")) {
+            this.selectedGrade = "0";
+            this.selectedTeacherId = 0;
+        }
+        else {
+            this.populateGradeAndTeacherDetails();
+        }
+        this.populateStudentTermScoresGrid();
     }
 
     onSelectGrade(value: any) {
         this.selectedGrade = value;
-		if ( this.selectedGrade != "0"){
-			this.populateTeachers();
-		}
+        if (this._authService.hasAccess("TermScores.TeacherSelection")) {
+            if (this.selectedGrade != "0") {
+                this.populateTeachers();
+            }
+        }
     }
 
 	onSelectTeacher(value:any){
 		this.selectedTeacherId = value;
 
 		if ( this.selectedTeacherId != 0){
-			this.populateStudentScoresGrid();
+            this.populateStudentTermScoresGrid();
 		}
 	}
 
@@ -138,7 +173,7 @@ export class ScoresComponent implements OnInit {
 	populateTeachers(){
 		this.isSelectTeacherLoading = true;
 		this.teacherLoadError = "";
-        this._teacherService.getTeachersByGrade(this.selectedGrade, this.selectedTermWeekId)
+        this._teacherService.getAssignedTeacherByGradeAndWeek(this.selectedGrade, this.selectedTermWeekId)
             .subscribe(result => {
 				this.isSelectTeacherLoading = false;
                 this.Teachers = result;
@@ -153,29 +188,61 @@ export class ScoresComponent implements OnInit {
 					this.teacherLoadError = "Error Occured";
 				}
             });
-	}
+    }
 
-	populateStudentScoresGrid(){
-		let score = new StudentTestScore();
-		score.studentID = 1;
-		score.firstName = "firstName 1";
-		score.lastName = "lastname 1";
-		score.testScore = 95;
-		this.StudentTestScores.push(score);
+    populateGradeAndTeacherDetails() {
+        if (this.selectedTermWeekId != 0) {
+            this._teacherService.getAssignedTeacherByWeek(this.selectedTermWeekId)
+                .subscribe(result => {
+                    this.isSelectTeacherLoading = false;
+                    this.Teachers = result;
 
-		score = new StudentTestScore();
-		score.studentID = 2;
-		score.firstName = "firstName 2";
-		score.lastName = "lastname 2";
-		score.testScore = 95;
-		this.StudentTestScores.push(score);
+                    //populate grade from result
+                    let gr: Array<Grade> = new Array<Grade>();
+                    gr.push(new Grade(this.Teachers[0].ctsGrade, this.Teachers[0].ctsGrade));
+                    this.Grades = gr;
+                    this.selectedGrade = this.Teachers[0].ctsGrade;
+                    this.selectGradeEnabled = false;
 
-		score = new StudentTestScore();
-		score.studentID = 3;
-		score.firstName = "firstName 3";
-		score.lastName = "lastname 3";
-		score.testScore = 95;
-		this.StudentTestScores.push(score);
+                    if (this.Teachers.length > 1) {
+                        this.selectedTeacherId = 0;
+                    } else {
+                        this.selectedTeacherId = this.Teachers[0].id;
+                        this.selectTeachedEnabled = false;
+                        this.populateStudentTermScoresGrid();
+                    }
+                },
+                    err => {
+                        this.isSelectTeacherLoading = false;
+                        this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+                        if (err.status == "404") {
+                            // data not found
+                            this.Teachers = null;
+                        }
+                    });
+        }
+    }
+
+    populateStudentTermScoresGrid() {
+        if (this.selectedTermWeekId != 0 && this.selectedGrade != "0" && this.selectedTeacherId != 0) {
+            this.isStudentTermScoreGridLoading = true;
+            this.termScoreGridErrorMessage = "";
+            this._teacherService.getStudentTermScores(this.selectedTeacherId, this.selectedTermWeekId)
+                .subscribe(result => {
+                    this.StudentTermScores = result;
+                    this.isStudentTermScoreGridLoading = false;
+                },
+                err => {
+                    this.isStudentTermScoreGridLoading = false;
+                    this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+                    if (err.status == "404") {
+                        // data not found
+                        this.StudentTermScores = null;
+                    }
+                    this.termScoreGridErrorMessage = "Error Occured while retrieving information : " + err.statusText;
+                });
+        }
+        
 	}
 
 }

@@ -21,6 +21,9 @@ var HomeComponent = /** @class */ (function () {
         if (this.isLoggedOn == false) {
             this.resetLoginControls();
         }
+        else {
+            this._authService.getAuthFunctions();
+        }
         this.CarouselImages = [
             { src: "/img/Carousel-1.jpg", alt: 'First', slideTo: "0" },
             { src: "/img/Carousel-2.jpg", alt: 'Second', slideTo: "1" },

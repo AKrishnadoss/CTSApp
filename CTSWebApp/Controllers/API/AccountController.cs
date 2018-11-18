@@ -13,12 +13,17 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Net;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CTSWebApp.Controllers.API
 {
-    [Route("api/[Controller]")]
-    [ApiController]
-    [Produces("application/json")]
+    //[Route("api/[Controller]")]
+    //[ApiController]
+    //[Produces("application/json")]
+    //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    //[Authorize(Policy = "JwtTokenValidationPolicy")]
     public class AccountController : ControllerBase
     {
         private readonly ICTSDBRepository _ctsDBRepository;
@@ -38,6 +43,7 @@ namespace CTSWebApp.Controllers.API
         public BinaryReader JwtRegisteredClaims { get; private set; }
 
         [HttpPost]
+        [NonAction]
         public IActionResult Logon([FromBody]UserIdentityViewModel model)
         {
             if ( ModelState.IsValid)
@@ -72,5 +78,7 @@ namespace CTSWebApp.Controllers.API
             }
             return BadRequest();
         }
+
+        
     }
 }

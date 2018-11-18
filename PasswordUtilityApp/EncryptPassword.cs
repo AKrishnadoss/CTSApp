@@ -29,7 +29,7 @@ namespace PasswordUtilityApp
             {
                 Console.WriteLine(user.Id);
                 byte[] hash = GetHash();
-                string hashedPassword = GetPassword("velkome@1", hash);
+                string hashedPassword = GetPassword("welcome@1", hash);
                 Console.WriteLine($"Hashed Password {hashedPassword}");
                 SqlParameter[] sqlParams = GetParameters(user.Id, hashedPassword, hash);
                 _dbContext.Database.ExecuteSqlCommand("EXEC SAVE_CTSUSERCRED @CTSUserID, @Password, @Hash, @Locked, @LastLogin, @Result, @Error", sqlParams);

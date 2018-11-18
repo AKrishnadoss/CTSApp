@@ -80,6 +80,10 @@
     font-weight:bold;
 }
 
+.warningText {
+    color:orange;
+}
+
 .successText {
     color: #28a745;
     font-weight: bold;

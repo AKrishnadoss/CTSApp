@@ -8,7 +8,7 @@
                 <ul class="navbar-nav">
                     <li class="nav-item"><a class="nav-link py-0" routerLink="/home">Home</a></li>
                     <li *ngIf="isLoggedOn" class="nav-item"><a class="nav-link py-0" routerLink="/attendance">Attendance</a></li>
-                    <li *ngIf="isLoggedOn" class="nav-item active"><a class="nav-link py-0" routerLink="/scores">Scores</a></li>
+                    <li *ngIf="isLoggedOn" class="nav-item active"><a class="nav-link py-0" routerLink="/scores">Term Scores</a></li>
                     <!--<li class="nav-item"><a class="nav-link py-0" routerLink="/contactus">Contact Us</a></li>
     <li class="nav-item"><a class="nav-link py-0">About Us</a></li>-->
                 </ul>
@@ -29,7 +29,7 @@
                 <select *ngIf="!isSelectTermLoading && !termLoadError" name="selectTerm" class="ml10 selectpicker form-control selectWidth" (change)="onSelectTerm($event.target.value)">
                     <option value="0">--Select Term--</option>
                     <option *ngFor="let week of CalendarWeeks" value={{week.id}}>
-                        {{week.description}} 
+                        {{week.description}}
                     </option>
                 </select>
             </div>
@@ -39,7 +39,8 @@
                 <label for="selectGrade" class="mt5">Grade</label>
                 <img *ngIf="isSelectGradeLoading" src="/img/Loading.gif" height="40" width="40" class="ml10" />
                 <i *ngIf="gradeLoadError" class="fa fa-exclamation-triangle form-control errorText"> {{gradeLoadError}}</i>
-                <select *ngIf="!isSelectGradeLoading && !gradeLoadError" name="selectGrade" class="ml10 selectpicker form-control selectWidth" (change)="onSelectGrade($event.target.value)">
+                <select *ngIf="!isSelectGradeLoading && !gradeLoadError" name="selectGrade" class="ml10 selectpicker form-control selectWidth"
+                        (change)="onSelectGrade($event.target.value)" [(ngModel)]="selectedGrade" [disabled]="!selectGradeEnabled">
                     <option value="0">--Select Grade--</option>
                     <option *ngFor="let grade of Grades" value={{grade.ctsGrade}}>
                         {{grade.ctsGrade}}
@@ -53,7 +54,8 @@
                 <label for="selectTeacher" class="mt5">Teacher</label>
                 <img *ngIf="isSelectTeacherLoading" src="/img/Loading.gif" height="40" width="40" class="ml10" />
                 <i *ngIf="teacherLoadError" class="fa fa-exclamation-triangle form-control errorText"> {{teacherLoadError}}</i>
-                <select *ngIf="!isSelectTeacherLoading && !teacherLoadError" name="selectTeacher" class="ml10 selectpicker form-control selectWidth" (change)="onSelectTeacher($event.target.value)" [(ngModel)]="selectedTeacherId">
+                <select *ngIf="!isSelectTeacherLoading && !teacherLoadError" name="selectTeacher" class="ml10 selectpicker form-control selectWidth"
+                        (change)="onSelectTeacher($event.target.value)" [(ngModel)]="selectedTeacherId" [disabled]="!selectTeachedEnabled">
                     <option value="0">--Select Teacher--</option>
                     <option *ngFor="let teacher of Teachers" value={{teacher.id}}>
                         {{teacher.firstName}} {{teacher.lastName}}
@@ -62,35 +64,69 @@
             </div>
         </div>
     </div>
-    
+
     <div class="row">
-        <div *ngIf="isStudentTestScoreGridLoading" class="col-md-12">Loading Student Scores. Please wait.<img src="/img/Loading.gif" height="40" width="40" class="ml10" /></div>
+        <div *ngIf="isStudentTermScoreGridLoading" class="col-md-12">Loading Student Term Scores. Please wait.<img src="/img/Loading.gif" height="40" width="40" class="ml10" /></div>
     </div>
 
-    <div class="row" *ngIf="!isStudentTestScoreGridLoading">
-        <div class="col-md-3"></div>
-        <div class="col-md-6" id="no-more-tables">
-            <label *ngIf="testScoreGridErrorMessage">{{testScoreGridErrorMessage}}</label>
+    <div class="row" *ngIf="!isStudentTermScoreGridLoading">
+        <div class="col-md-12" id="no-more-tables">
+            <label *ngIf="termScoreGridErrorMessage">{{termScoreGridErrorMessage}}</label>
             <table class="table-bordered table-condensed cf" id="dev-table">
                 <thead class="bgTableHead cf">
                     <tr>
                         <th class="fw">ID</th>
                         <th class="fw w150">First Name</th>
                         <th class="fw w150">Last Name</th>
-                        <th class="fw">Score</th>
+                        <th class="fw">Attendance</th>
+                        <th class="fw">Homework</th>
+                        <th class="fw">Reading</th>
+                        <th class="fw">Writing</th>
+                        <th class="fw">Speaking</th>
+                        <th class="fw">Behaviour</th>
+                        <th class="fw">Quiz</th>
+                        <th class="fw">Internal</th>
+                        <th class="fw">Term Score</th>
+                        <th class="fw">Total Score</th>
+                        <th class="fw w200">Notes</th>
                     </tr>
                 </thead>
                 <tbody>
-
-                    <tr *ngFor="let testScore of StudentTestScores">
+                    <tr *ngFor="let testScore of StudentTermScores">
                         <td data-title="ID">{{testScore.studentID}}</td>
                         <td data-title="First Name">{{testScore.firstName}}</td>
                         <td data-title="Last Name">{{testScore.lastName}}</td>
-                        <td data-title="Score"><input class="form-control" [(ngModel)]="testScore.score" value="{{testScore.score}}" /></td>
+                        <td data-title="Attendance">{{testScore.attendance}}</td>
+                        <td data-title="Homework">{{testScore.homework}}</td>
+                        <td data-title="Reading">{{testScore.reading}}</td>
+                        <td data-title="Writing">{{testScore.writing}}</td>
+                        <td data-title="Speaking">{{testScore.speaking}}</td>
+                        <td data-title="Behavior">{{testScore.behavior}}</td>
+                        <td data-title="Quiz">{{testScore.quiz}}</td>
+                        <td data-title="Internal">{{testScore.internalScore}}</td>
+                        <td data-title="Score"><input class="form-control" [(ngModel)]="testScore.termScore" value="{{testScore.termScore}}" /></td>
+                        <td data-title="Total Score">{{(testScore.internalScore-0) + (testScore.termScore-0)}}</td>
+                        <td data-title="Notes"><textarea class="form-control rounded-3" rows="1" [(ngModel)]="testScore.notes" maxlength="100">{{testScore.notes}}</textarea></td>
                     </tr>
                 </tbody>
             </table>
         </div>
+    </div>
+    <div class="row">
+        <div *ngIf="studentGridServerErrorMessage" class="col-md-12 mt10 ml10 errorText"><i class="fa fa-exclamation-triangle"></i> {{studentGridServerErrorMessage}} </div>
+        <div *ngIf="studentGridServerSuccessMessage" class="col-md-12 mt10 ml10 successText"><i class="fa fa-check-circle"></i>  {{studentGridServerSuccessMessage}}</div>
+    </div>
+    <div class="row bgBar br5 m5 p5" *ngIf="isStudentTermScoreGridSaving">
+        <div class="col-md-12">Saving Student Term Scores. Please wait.<img src="/img/Loading.gif" height="40" width="40" class="ml10" /></div>
+    </div>
+    <div class="row bgBar br5 m5 p5" *ngIf="!isStudentTermScoreGridSaving">
+
+        <div class="col-md-4"></div>
+        <div class="col-md-4 ">
+            <button class="btn btn-primary btn-sm" type="button" ><strong><i class="fa fa-times-circle"></i> Cancel</strong></button>
+            <button class="btn btn-primary btn-sm ml10" type="submit" *ngIf="!isStudentTermScoreGridSaving"><strong><i class="fa fa-save"></i> Save</strong></button>
+        </div>
+        <div class="col-md-4"></div>
     </div>
 </div>
 

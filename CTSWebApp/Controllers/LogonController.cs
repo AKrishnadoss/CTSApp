@@ -56,7 +56,6 @@ namespace CTSWebApp.Controllers
                     }
                     else if (result.ResetPassword)
                     {
-                        model.ErrorMessage = "TODO: Redirect to Reset Password";
                         ResetPasswordViewModel resetViewModel = CreateResetPasswordViewModel(result);
                         return View("reset", resetViewModel);
                     }
@@ -76,7 +75,7 @@ namespace CTSWebApp.Controllers
             }
             else
             {
-                model.ErrorMessage = "Invalid logon data";
+                model.ErrorMessage = "Invalid Email or bad password";
             }
             ViewBag.AppName = "Cary Tamil School";
             return View(model);

@@ -1,1 +1,1 @@
-{"version":3,"file":"Grade.js","sourceRoot":"","sources":["../../../../ClientApp/model/Grade.ts"],"names":[],"mappings":"AAAA;IAAA;IAMA,CAAC;IAAD,YAAC;AAAD,CAAC,AAND,IAMC"}
+{"version":3,"file":"Grade.js","sourceRoot":"","sources":["../../../../ClientApp/model/Grade.ts"],"names":[],"mappings":"AAAA;IAMI,eAAY,QAAgB,EAAE,WAAmB;QAC7C,IAAI,CAAC,QAAQ,GAAG,QAAQ,CAAC;QACzB,IAAI,CAAC,WAAW,GAAG,WAAW,CAAC;IACnC,CAAC;IACL,YAAC;AAAD,CAAC,AAVD,IAUC"}

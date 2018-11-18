@@ -74,6 +74,12 @@ namespace CTSWebApp.Security
                 return false;
             }
 
+            //claim = claims.Where(x => x.Type == "Roles").FirstOrDefault();
+            //if (claim == null || string.IsNullOrEmpty(claim.Value))
+            //{
+            //    return false;
+            //}
+
             Guid guid;
             claim = claims.Where(x => x.Type == JwtRegisteredClaimNames.Jti).FirstOrDefault();
             if (claim == null || string.IsNullOrEmpty(claim.Value) ||

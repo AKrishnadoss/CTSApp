@@ -13,7 +13,7 @@ namespace CTSWebApp.Data.Entities
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
-        public string Phone { get; set; }
-        
+        public string PrimaryPhone { get; set; }
+        public string CTSGrade { get; set; }
     }
 }

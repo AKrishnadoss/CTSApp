@@ -54,6 +54,11 @@ namespace CTSWebApp.BLL
         private StudentWeekGradeError ValidateStudentWeekGrade(StudentWeekGrade swg)
         {
             StringBuilder builder = new StringBuilder();
+            if ( swg.Attendance != 0 && swg.Attendance != 10)
+            {
+                builder.Append("Invalid Attendance: Attendance must be either 0 and 10.");
+            }
+
             if (swg.Homework < 0 || swg.Homework > 10)
             {
                 builder.Append("Invalid Homework: Homework must be between 0 and 10.");
@@ -83,7 +88,10 @@ namespace CTSWebApp.BLL
             {
                 builder.Append("Invalid Quiz: Quiz must be between 0 and 10.");
             }
-
+            if ( !string.IsNullOrEmpty(swg.Notes) && swg.Notes.Length > 100 )
+            {
+                builder.Append("Invalid Notes: Notes cannot exceed 100 characters.");
+            }
 
             if (builder.Length > 0)
             {

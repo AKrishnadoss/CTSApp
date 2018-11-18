@@ -34,6 +34,11 @@ namespace CTSWebApp.BLL
             return userIdentity;
         }
 
+        public IEnumerable<string> GetUserRoles(int ctsUserId)
+        {
+            return _ctsDBRepository.GetUserRoles(ctsUserId);
+        }
+
         public bool UpdatePassword(int ctsUserId, string email, byte[] hash, string hashedPassword)
         {
             return _ctsDBRepository.UpdatePassword(ctsUserId, email, hash, hashedPassword);

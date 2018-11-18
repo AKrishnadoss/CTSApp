@@ -1,5 +1,7 @@
 var Grade = /** @class */ (function () {
-    function Grade() {
+    function Grade(ctsGrade, countyGrade) {
+        this.ctsGrade = ctsGrade;
+        this.countyGrade = countyGrade;
     }
     return Grade;
 }());

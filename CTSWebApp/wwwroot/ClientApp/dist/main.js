@@ -86,7 +86,7 @@ var AppComponent = /** @class */ (function () {
         var logoutLinkElement = document.getElementById("logoutLink");
         var loggedinElement = document.getElementById("loggedInAs");
         if (this.token == null) {
-            this._loggerService.log('token is null, getting from localStorage');
+            this._loggerService.log('Getting from localStorage');
             this.token = localStorage.getItem('token');
             this.userName = localStorage.getItem('userName');
             this.email = localStorage.getItem('email');
@@ -95,7 +95,6 @@ var AppComponent = /** @class */ (function () {
                 this.expiresBy = new Date(temp);
             }
             if (this.token != null) {
-                this._loggerService.log('localStorage is NOT null');
                 if (loggedinElement != null) {
                     loggedinElement.innerText = this.email;
                 }
@@ -109,7 +108,6 @@ var AppComponent = /** @class */ (function () {
                 this._authService.setAuthToken(this.token);
                 this._authService.setEmail(this.email);
                 this._authService.setUserName(this.userName);
-                //this._authService.setIsLoggedOn(true);
                 this._authService.setExpiresBy(this.expiresBy);
             }
             else {
@@ -118,12 +116,11 @@ var AppComponent = /** @class */ (function () {
                 this._authService.setAuthToken('');
                 this._authService.setEmail('');
                 this._authService.setUserName('');
-                //this._authService.setIsLoggedOn(false);
                 this._authService.setExpiresBy(null);
             }
         }
         else {
-            this._loggerService.log('token is NOT null, setting into localStorage');
+            this._loggerService.log('Setting localStorage');
             localStorage.setItem('token', this.token);
             localStorage.setItem('userName', this.userName);
             localStorage.setItem('email', this.email);
@@ -186,12 +183,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_home_Home__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ../components/home/Home */ "./components/home/Home.ts");
 /* harmony import */ var _components_contact_Contact__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../components/contact/Contact */ "./components/contact/Contact.ts");
 /* harmony import */ var _components_attendance_Attendance__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../components/attendance/Attendance */ "./components/attendance/Attendance.ts");
+/* harmony import */ var _components_score_Scores__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../components/score/Scores */ "./components/score/Scores.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
 
 
 
@@ -218,7 +217,8 @@ var AppModule = /** @class */ (function () {
                 _app_component__WEBPACK_IMPORTED_MODULE_12__["AppComponent"],
                 _components_home_Home__WEBPACK_IMPORTED_MODULE_14__["HomeComponent"],
                 _components_attendance_Attendance__WEBPACK_IMPORTED_MODULE_16__["AttendanceComponent"],
-                _components_contact_Contact__WEBPACK_IMPORTED_MODULE_15__["ContactComponent"]
+                _components_contact_Contact__WEBPACK_IMPORTED_MODULE_15__["ContactComponent"],
+                _components_score_Scores__WEBPACK_IMPORTED_MODULE_17__["ScoresComponent"]
             ],
             imports: [
                 _angular_platform_browser__WEBPACK_IMPORTED_MODULE_0__["BrowserModule"],
@@ -255,9 +255,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _services_AuthService__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../services/AuthService */ "./services/AuthService.ts");
 /* harmony import */ var _services_CalendarService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../services/CalendarService */ "./services/CalendarService.ts");
 /* harmony import */ var _services_GradeService__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../services/GradeService */ "./services/GradeService.ts");
-/* harmony import */ var _services_TeacherService__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../services/TeacherService */ "./services/TeacherService.ts");
-/* harmony import */ var _services_StudentService__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../services/StudentService */ "./services/StudentService.ts");
-/* harmony import */ var _services_LoggerService__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../services/LoggerService */ "./services/LoggerService.ts");
+/* harmony import */ var _model_Grade__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../model/Grade */ "./model/Grade.ts");
+/* harmony import */ var _services_TeacherService__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../services/TeacherService */ "./services/TeacherService.ts");
+/* harmony import */ var _services_StudentService__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../services/StudentService */ "./services/StudentService.ts");
+/* harmony import */ var _services_LoggerService__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../services/LoggerService */ "./services/LoggerService.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -267,6 +268,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 var __metadata = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+
 
 
 
@@ -291,6 +293,12 @@ var AttendanceComponent = /** @class */ (function () {
             window.location.href = "/logon/login";
             return;
         }
+        if (!this._authService.hasAccess("Attendance")) {
+            // TODO: navigate to unauthorized page
+            this._loggerService.log("Unauthorized access");
+            window.location.href = "/error";
+        }
+        this._loggerService.log("Access is authorized");
         this.userName = this._authService.getUserName();
         this.Scores = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         this.isSelectCalendarWeekLoading = false;
@@ -302,21 +310,23 @@ var AttendanceComponent = /** @class */ (function () {
         this.isStudentWeekGradeGridSaving = false;
         this.studentGridServerSuccessMessage = "";
         this.calendarWeekId = 0;
-        this.ctsGrade = "";
-        this.teacherId = 0;
+        this.selectedGrade = "0";
+        this.selectedTeacherId = 0;
         this.calendarWeekLoadError = "";
         this.gradeLoadError = "";
+        this.selectGradeEnabled = true;
+        this.selectTeachedEnabled = true;
         this.getCalendarWeeks();
-        this.getGrades();
-    };
-    AttendanceComponent.prototype.populateScores = function () {
-        this.Scores.push(0);
-        this.Scores.push(1);
-        this.Scores.push(2);
-        this.Scores.push(3);
+        if (this._authService.hasAccess("Attendance.GradeSelection")) {
+            this.getGrades();
+        }
+        else {
+            this.getGradeAndTeacherDetails();
+        }
     };
     AttendanceComponent.prototype.getGrades = function () {
         var _this = this;
+        console.log('Loading grades');
         this.isSelectGradeLoading = true;
         this.gradeLoadError = "";
         this._gradeService.getGrades()
@@ -351,34 +361,71 @@ var AttendanceComponent = /** @class */ (function () {
             _this.calendarWeekLoadError = "Error Occured";
         });
     };
+    AttendanceComponent.prototype.getGradeAndTeacherDetails = function () {
+        var _this = this;
+        if (this.calendarWeekId != 0) {
+            this._teacherService.getAssignedTeacherByWeek(this.calendarWeekId)
+                .subscribe(function (result) {
+                _this.isSelectTeacherLoading = false;
+                _this.Teachers = result;
+                //populate grade from result
+                var gr = new Array();
+                gr.push(new _model_Grade__WEBPACK_IMPORTED_MODULE_4__["Grade"](_this.Teachers[0].ctsGrade, _this.Teachers[0].ctsGrade));
+                _this.Grades = gr;
+                _this.selectedGrade = _this.Teachers[0].ctsGrade;
+                _this.selectGradeEnabled = false;
+                if (_this.Teachers.length > 1) {
+                    _this.selectedTeacherId = 0;
+                }
+                else {
+                    _this.selectedTeacherId = _this.Teachers[0].id;
+                    _this.selectTeachedEnabled = false;
+                    _this.displayStudentWeekGradeGrid();
+                }
+            }, function (err) {
+                _this.isSelectTeacherLoading = false;
+                _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+                if (err.status == "404") {
+                    // data not found
+                    _this.Teachers = null;
+                }
+            });
+        }
+    };
     AttendanceComponent.prototype.onSelectCalendarWeek = function (value) {
         this.calendarWeekId = value;
-        //console.log("selected calendarWeekId = " + value);
-        this.ctsGrade = "0";
-        this.teacherId = 0;
-        this.displayStudentWeekGradeGrid();
-    };
-    AttendanceComponent.prototype.onSelectGrade = function (value) {
-        //console.log("selected grade = " + value);
-        this.studentGridServerErrorMessage = "";
-        this.showStudentGridServerErrorMessage = false;
-        this.Teachers = null;
-        this.teacherId = 0;
-        this.ctsGrade = value;
-        if (value != "0" && this.calendarWeekId != 0) {
-            this.getTeachersByGrade(this.ctsGrade, this.calendarWeekId);
+        if (this._authService.hasAccess("Attendance.GradeSelection")) {
+            this.selectedGrade = "0";
+            this.selectedTeacherId = 0;
+        }
+        else {
+            this.getGradeAndTeacherDetails();
         }
         this.displayStudentWeekGradeGrid();
     };
+    AttendanceComponent.prototype.onSelectGrade = function (value) {
+        if (this._authService.hasAccess("Attendance.TeacherSelection")) {
+            this.studentGridServerErrorMessage = "";
+            this.showStudentGridServerErrorMessage = false;
+            this.studentGridServerWarningMessage = "";
+            this.Teachers = null;
+            this.selectedTeacherId = 0;
+            this.selectedGrade = value;
+            if (value != "0" && this.calendarWeekId != 0) {
+                this.getTeachersByGrade(this.selectedGrade, this.calendarWeekId);
+            }
+            this.displayStudentWeekGradeGrid();
+        }
+    };
     AttendanceComponent.prototype.onSelectTeacher = function (value) {
-        this.teacherId = value;
+        this.selectedTeacherId = value;
         //console.log("selected teacherId = " + value);
         this.displayStudentWeekGradeGrid();
     };
     AttendanceComponent.prototype.getTeachersByGrade = function (grade, weekId) {
         var _this = this;
         this.isSelectTeacherLoading = true;
-        this._teacherService.getTeachersByGrade(grade, weekId)
+        this._teacherService.getAssignedTeacherByGradeAndWeek(grade, weekId)
             .subscribe(function (result) {
             _this.isSelectTeacherLoading = false;
             _this.Teachers = result;
@@ -393,9 +440,10 @@ var AttendanceComponent = /** @class */ (function () {
     };
     AttendanceComponent.prototype.displayStudentWeekGradeGrid = function () {
         this.studentGridServerSuccessMessage = "";
-        if (this.calendarWeekId != 0 && this.teacherId != 0) {
+        if (this.calendarWeekId != 0 && this.selectedTeacherId != 0) {
             this.studentGridServerErrorMessage = "";
             this.showStudentGridServerErrorMessage = false;
+            this.studentGridServerWarningMessage = "";
             this.showStudentWeekGradeGrid = true;
             this.getStudentWeekGrades();
         }
@@ -409,7 +457,8 @@ var AttendanceComponent = /** @class */ (function () {
         this.showStudentWeekGradeGrid = false;
         this.studentGridServerErrorMessage = "";
         this.showStudentGridServerErrorMessage = false;
-        this._teacherService.getStudentWeekGrades(this.teacherId, this.calendarWeekId)
+        this.studentGridServerWarningMessage = "";
+        this._teacherService.getStudentWeekGrades(this.selectedTeacherId, this.calendarWeekId)
             .subscribe(function (result) {
             _this.isStudentWeekGradeGridLoading = false;
             _this.StudentWeekGrades = result;
@@ -419,6 +468,18 @@ var AttendanceComponent = /** @class */ (function () {
                 _this.studentGridServerErrorMessage = "No Student(s) assigned to selected teacher.";
             }
             else {
+                if (result.length > 0) {
+                    if (result[0].dataFreeze == 'Y') {
+                        _this.isStudentWeekGradeGridReadOnly = true;
+                    }
+                    else {
+                        _this.isStudentWeekGradeGridReadOnly = false;
+                    }
+                    if (result[0].id == 0) {
+                        _this.studentGridServerWarningMessage = "Note: Data not entered for this week, showing default entries";
+                        console.log(_this.studentGridServerWarningMessage);
+                    }
+                }
                 _this.showStudentGridServerErrorMessage = false;
                 _this.showStudentWeekGradeGrid = true;
             }
@@ -454,7 +515,7 @@ var AttendanceComponent = /** @class */ (function () {
         }
     };
     AttendanceComponent.prototype.selectAttendance = function (weekGrade, value) {
-        if (value == 'N') {
+        if (value == '0') {
             weekGrade.homework = 0;
             weekGrade.reading = 0;
             weekGrade.writing = 0;
@@ -468,8 +529,9 @@ var AttendanceComponent = /** @class */ (function () {
         this.showStudentWeekGradeGrid = false;
         this.studentGridServerSuccessMessage = "";
         this.studentGridServerErrorMessage = "";
+        this.studentGridServerWarningMessage = "";
         this.StudentWeekGrades = null;
-        this.teacherId = 0;
+        this.selectedTeacherId = 0;
     };
     AttendanceComponent.prototype.saveClick = function () {
         var _this = this;
@@ -477,6 +539,7 @@ var AttendanceComponent = /** @class */ (function () {
         this.showStudentGridServerErrorMessage = false;
         this.studentGridServerErrorMessage = "";
         this.studentGridServerSuccessMessage = "";
+        this.studentGridServerWarningMessage = "";
         this._studentService.saveStudentWeekGrades(this.StudentWeekGrades)
             .subscribe(function (result) {
             _this.isStudentWeekGradeGridSaving = false;
@@ -496,9 +559,9 @@ var AttendanceComponent = /** @class */ (function () {
         __metadata("design:paramtypes", [_services_AuthService__WEBPACK_IMPORTED_MODULE_1__["AuthService"],
             _services_CalendarService__WEBPACK_IMPORTED_MODULE_2__["CalendarService"],
             _services_GradeService__WEBPACK_IMPORTED_MODULE_3__["GradeService"],
-            _services_TeacherService__WEBPACK_IMPORTED_MODULE_4__["TeacherService"],
-            _services_StudentService__WEBPACK_IMPORTED_MODULE_5__["StudentService"],
-            _services_LoggerService__WEBPACK_IMPORTED_MODULE_6__["LoggerService"]])
+            _services_TeacherService__WEBPACK_IMPORTED_MODULE_5__["TeacherService"],
+            _services_StudentService__WEBPACK_IMPORTED_MODULE_6__["StudentService"],
+            _services_LoggerService__WEBPACK_IMPORTED_MODULE_7__["LoggerService"]])
     ], AttendanceComponent);
     return AttendanceComponent;
 }());
@@ -514,7 +577,7 @@ var AttendanceComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<header class=\"container-fluid p0\">\r\n    <nav class=\"navbar navbar-light navbar-expand-md bgcolorMenu\">\r\n        <div class=\"row \">\r\n            <button class=\"navbar-toggler\" data-toggle=\"collapse\" data-target=\"#menuBar\">\r\n                <span class=\"navbar-toggler-icon\"></span>\r\n            </button>\r\n            <div id=\"menuBar\" class=\"navbar-collapse collapse\">\r\n                <ul class=\"navbar-nav\">\r\n                    <li class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/home\">Home</a></li>\r\n                    <li *ngIf=\"isLoggedOn\" class=\"nav-item active\"><a class=\"nav-link py-0\" routerLink=\"/attendance\">Attendance</a></li>\r\n                    <!--<li class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/contactus\">Contact Us</a></li>\r\n                    <li class=\"nav-item\"><a class=\"nav-link py-0\">About Us</a></li>-->\r\n                </ul>\r\n            </div>\r\n        </div>\r\n    </nav>\r\n\r\n</header>\r\n<div class=\"container p0 mt10\">\r\n    <!--<h4 class=\"text-center\">{{pageTitle}}</h4>-->\r\n    \r\n    <div class=\"row bgBar br5 m5 p5\">\r\n        <div class=\"col-md-4\">\r\n            <div class=\"input-group\">\r\n                <label for=\"selectCalenderWeek\" class=\"mt5\">Week</label>\r\n                <img *ngIf=\"isSelectCalendarWeekLoading\" src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\"/>\r\n                <i *ngIf=\"calendarWeekLoadError\" class=\"fa fa-exclamation-triangle form-control errorText\"> {{calendarWeekLoadError}}</i>\r\n                <select *ngIf=\"!isSelectCalendarWeekLoading && !calendarWeekLoadError\" name=\"selectCalenderWeek\" class=\"ml10 selectpicker form-control selectWidth\" (change)=\"onSelectCalendarWeek($event.target.value)\">\r\n                    <option value=\"0\">--Select Week--</option>\r\n                    <option *ngFor=\"let week of CalendarWeeks\" value={{week.weekNo}}>\r\n                        {{week.description}} - {{week.weekDate | date: 'MM/dd/yyyy'}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n        </div>\r\n        <div class=\"col-md-4\">\r\n            <div class=\"input-group\">\r\n                <label for=\"selectGrade\" class=\"mt5\">Grade</label>\r\n                <img *ngIf=\"isSelectGradeLoading\" src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\"/>\r\n                <i *ngIf=\"gradeLoadError\" class=\"fa fa-exclamation-triangle form-control errorText\"> {{gradeLoadError}}</i>\r\n                <select *ngIf=\"!isSelectGradeLoading && !gradeLoadError\" name=\"selectGrade\" class=\"ml10 selectpicker form-control selectWidth\" (change)=\"onSelectGrade($event.target.value)\">\r\n                    <option value=\"0\">--Select Grade--</option>\r\n                    <option *ngFor=\"let grade of Grades\" value={{grade.ctsGrade}}>\r\n                        {{grade.ctsGrade}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n\r\n        </div>\r\n        <div class=\"col-md-4\">\r\n            <div class=\"input-group\">\r\n                <label for=\"selectTeacher\" class=\"mt5\">Teacher</label>\r\n                <img *ngIf=\"isSelectTeacherLoading\" src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" />\r\n                <select *ngIf=\"!isSelectTeacherLoading\" name=\"selectTeacher\" class=\"ml10 selectpicker form-control selectWidth\" (change)=\"onSelectTeacher($event.target.value)\" [(ngModel)]=\"teacherId\">\r\n                    <option value=\"0\">--Select Teacher--</option>\r\n                    <option *ngFor=\"let teacher of Teachers\" value={{teacher.id}}>\r\n                        {{teacher.firstName}} {{teacher.lastName}} \r\n                    </option>\r\n                </select>\r\n            </div>\r\n        </div>\r\n        <!--<div class=\"col-md-2\">\r\n            <button class=\"btn btn-primary btn-sm right mt5\"><strong><i class=\"fa fa-list-ul\"></i> List Students</strong></button>\r\n        </div>-->\r\n    </div>\r\n    <div class=\"row\">\r\n        <div *ngIf=\"isStudentWeekGradeGridLoading\" class=\"col-md-12\">Loading Student Grades. Please wait.<img src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" /></div>\r\n        <!--<div *ngIf=\"showStudentGridServerErrorMessage\" class=\"col-md-12 mt10 ml10 errorText\"><i class=\"fa fa-exclamation-triangle\"></i> {{studentGridServerErrorMessage}} </div>\r\n        <div *ngIf=\"showStudentGridServerSuccessMessage\" class=\"col-md-12 mt10 ml10 successText\"><i class=\"fa fa-check-circle\"></i> Student Week Grades saved successfully ! </div>-->\r\n    </div>\r\n    <div class=\"row\" *ngIf=\"showStudentWeekGradeGrid\">\r\n        <div class=\"col-md-12\" id=\"no-more-tables\">\r\n            <table class=\"table-bordered table-condensed cf\"  id=\"dev-table\">\r\n                <thead class=\"bgTableHead cf\">\r\n                    <tr>\r\n                        <th class=\"fw\">ID</th>\r\n                        <th class=\"fw w150\">First Name</th>\r\n                        <th class=\"fw w150\">Last Name</th>\r\n                        <th class=\"fw\">Attendance</th>\r\n                        <th class=\"fw\">Homework</th>\r\n                        <th class=\"fw\">Reading</th>\r\n                        <th class=\"fw\">Writing</th>\r\n                        <th class=\"fw\">Speaking</th>\r\n                        <th class=\"fw\">Behaviour</th>\r\n                        <th class=\"fw\">Quiz</th>\r\n                        <th class=\"fw w200\">Notes</th>\r\n\r\n                    </tr>\r\n                </thead>\r\n                <tbody>\r\n                    \r\n                    <tr *ngFor=\"let weekGrade of StudentWeekGrades\">\r\n                        <td data-title=\"Student ID\" >{{weekGrade.studentID}}</td>\r\n                        <td data-title=\"First Name\">{{weekGrade.firstName}}</td>\r\n                        <td data-title=\"Last Name\" >{{weekGrade.lastName}}</td>\r\n                        <td data-title=\"Attendance\" >\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectAttendance(weekGrade, $event.target.value)\" [(ngModel)]=\"weekGrade.attendance\" required>\r\n                                <option value=\"Y\">Yes</option>\r\n                                <option value=\"N\">No</option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Homework\">\r\n                            <select class=\"selectpicker form-control\"  (change)=\"selectScore(weekGrade, 'homework', $event.target.value)\" [(ngModel)]=\"weekGrade.homework\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Reading\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'reading', $event.target.value)\" [(ngModel)]=\"weekGrade.reading\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Writing\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'writing', $event.target.value)\" [(ngModel)]=\"weekGrade.writing\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Speaking\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'speaking', $event.target.value)\" [(ngModel)]=\"weekGrade.speaking\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Behavior\" >\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'behavior', $event.target.value)\" [(ngModel)]=\"weekGrade.behavior\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Quiz\" >\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'quiz', $event.target.value)\" [(ngModel)]=\"weekGrade.quiz\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Notes\" ><textarea class=\"form-control rounded-3\" rows=\"1\" [(ngModel)]=\"weekGrade.notes\" >{{weekGrade.notes}}</textarea></td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n    </div>\r\n    <div class=\"row\">\r\n        <div *ngIf=\"studentGridServerErrorMessage\" class=\"col-md-12 mt10 ml10 errorText\"><i class=\"fa fa-exclamation-triangle\"></i> {{studentGridServerErrorMessage}} </div>\r\n        <div *ngIf=\"studentGridServerSuccessMessage\" class=\"col-md-12 mt10 ml10 successText\"><i class=\"fa fa-check-circle\"></i>  {{studentGridServerSuccessMessage}}</div>\r\n    </div>\r\n    <div class=\"row bgBar br5 m5 p5\" *ngIf=\"isStudentWeekGradeGridSaving\">\r\n        <div class=\"col-md-12\">Saving Student Grades. Please wait.<img src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" /></div>\r\n    </div>\r\n    <div class=\"row bgBar br5 m5 p5\" *ngIf=\"showStudentWeekGradeGrid && !isStudentWeekGradeGridSaving\">\r\n        \r\n        <div class=\"col-md-4\" ></div>\r\n        <div class=\"col-md-4 \" >\r\n            <button class=\"btn btn-primary btn-sm\" type=\"button\" (click)=\"cancelClick()\"><strong><i class=\"fa fa-times-circle\"></i> Cancel</strong></button>\r\n            <button class=\"btn btn-primary btn-sm ml10\" (click)=\"saveClick()\" type=\"submit\"><strong><i class=\"fa fa-save\" ></i> Save</strong></button>\r\n        </div>\r\n        <div class=\"col-md-4\" ></div>\r\n    </div>\r\n</div>"
+module.exports = "<header class=\"container-fluid p0\">\r\n    <nav class=\"navbar navbar-light navbar-expand-md bgcolorMenu\">\r\n        <div class=\"row \">\r\n            <button class=\"navbar-toggler\" data-toggle=\"collapse\" data-target=\"#menuBar\">\r\n                <span class=\"navbar-toggler-icon\"></span>\r\n            </button>\r\n            <div id=\"menuBar\" class=\"navbar-collapse collapse\">\r\n                <ul class=\"navbar-nav\">\r\n                    <li class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/home\">Home</a></li>\r\n                    <li *ngIf=\"isLoggedOn\" class=\"nav-item active\"><a class=\"nav-link py-0\" routerLink=\"/attendance\">Attendance</a></li>\r\n                    <li *ngIf=\"isLoggedOn\" class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/scores\">Term Scores</a></li>\r\n                    <!--<li class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/contactus\">Contact Us</a></li>\r\n    <li class=\"nav-item\"><a class=\"nav-link py-0\">About Us</a></li>-->\r\n                </ul>\r\n            </div>\r\n        </div>\r\n    </nav>\r\n\r\n</header>\r\n<div class=\"container p0 mt10\">\r\n    <!--<h4 class=\"text-center\">{{pageTitle}}</h4>-->\r\n    \r\n    <div class=\"row bgBar br5 m5 p5\">\r\n        <div class=\"col-md-4\">\r\n            <div class=\"input-group\">\r\n                <label for=\"selectCalenderWeek\" class=\"mt5\">Week</label>\r\n                <img *ngIf=\"isSelectCalendarWeekLoading\" src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\"/>\r\n                <i *ngIf=\"calendarWeekLoadError\" class=\"fa fa-exclamation-triangle form-control errorText\"> {{calendarWeekLoadError}}</i>\r\n                <select *ngIf=\"!isSelectCalendarWeekLoading && !calendarWeekLoadError\" name=\"selectCalenderWeek\" class=\"ml10 selectpicker form-control selectWidth\" (change)=\"onSelectCalendarWeek($event.target.value)\">\r\n                    <option value=\"0\">--Select Week--</option>\r\n                    <option *ngFor=\"let week of CalendarWeeks\" value={{week.id}}>\r\n                        {{week.description}} - {{week.weekDate | date: 'MM/dd/yyyy'}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n        </div>\r\n        <div class=\"col-md-4\">\r\n            <div class=\"input-group\">\r\n                <label for=\"selectGrade\" class=\"mt5\">Grade</label>\r\n                <img *ngIf=\"isSelectGradeLoading\" src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\"/>\r\n                <i *ngIf=\"gradeLoadError\" class=\"fa fa-exclamation-triangle form-control errorText\"> {{gradeLoadError}}</i>\r\n                <select *ngIf=\"!isSelectGradeLoading && !gradeLoadError\" name=\"selectGrade\" class=\"ml10 selectpicker form-control selectWidth\" \r\n                        (change)=\"onSelectGrade($event.target.value)\" [(ngModel)]=\"selectedGrade\" [disabled]=\"!selectGradeEnabled\">\r\n                    <option value=\"0\">--Select Grade--</option>\r\n                    <option *ngFor=\"let grade of Grades\" value={{grade.ctsGrade}}>\r\n                        {{grade.ctsGrade}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n\r\n        </div>\r\n        <div class=\"col-md-4\">\r\n            <div class=\"input-group\">\r\n                <label for=\"selectTeacher\" class=\"mt5\">Teacher</label>\r\n                <img *ngIf=\"isSelectTeacherLoading\" src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" />\r\n                <select *ngIf=\"!isSelectTeacherLoading\" name=\"selectTeacher\" class=\"ml10 selectpicker form-control selectWidth\" \r\n                        (change)=\"onSelectTeacher($event.target.value)\" [(ngModel)]=\"selectedTeacherId\" [disabled]=\"!selectTeachedEnabled\">\r\n                    <option value=\"0\">--Select Teacher--</option>\r\n                    <option *ngFor=\"let teacher of Teachers\" value={{teacher.id}}>\r\n                        {{teacher.firstName}} {{teacher.lastName}} \r\n                    </option>\r\n                </select>\r\n            </div>\r\n        </div>\r\n        <!--<div class=\"col-md-2\">\r\n            <button class=\"btn btn-primary btn-sm right mt5\"><strong><i class=\"fa fa-list-ul\"></i> List Students</strong></button>\r\n        </div>-->\r\n    </div>\r\n    <div class=\"row\">\r\n        <div *ngIf=\"isStudentWeekGradeGridLoading\" class=\"col-md-12\">Loading Student Grades. Please wait.<img src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" /></div>\r\n        <div *ngIf=\"studentGridServerWarningMessage\" class=\"col-md-12 mt10 ml10 errorText\"><i class=\"fa fa-exclamation-triangle\"></i> {{studentGridServerWarningMessage}} </div>\r\n    </div>\r\n    <div class=\"row\" *ngIf=\"showStudentWeekGradeGrid\">\r\n        <div class=\"col-md-12\" id=\"no-more-tables\">\r\n            <table class=\"table-bordered table-condensed cf\" id=\"dev-table\">\r\n                <thead class=\"bgTableHead cf\">\r\n                    <tr>\r\n                        <th class=\"fw\">ID</th>\r\n                        <th class=\"fw w150\">First Name</th>\r\n                        <th class=\"fw w150\">Last Name</th>\r\n                        <th class=\"fw\">Attendance</th>\r\n                        <th class=\"fw\">Homework</th>\r\n                        <th class=\"fw\">Reading</th>\r\n                        <th class=\"fw\">Writing</th>\r\n                        <th class=\"fw\">Speaking</th>\r\n                        <th class=\"fw\">Behaviour</th>\r\n                        <th class=\"fw\">Quiz</th>\r\n                        <th class=\"fw w200\">Notes</th>\r\n\r\n                    </tr>\r\n                </thead>\r\n                <tbody *ngIf=\"!isStudentWeekGradeGridReadOnly\">\r\n\r\n                    <tr *ngFor=\"let weekGrade of StudentWeekGrades\">\r\n                        <td data-title=\"ID\">{{weekGrade.studentID}}</td>\r\n                        <td data-title=\"First Name\">{{weekGrade.firstName}}</td>\r\n                        <td data-title=\"Last Name\">{{weekGrade.lastName}}</td>\r\n                        <td data-title=\"Attendance\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectAttendance(weekGrade, $event.target.value)\" [(ngModel)]=\"weekGrade.attendance\" required>\r\n                                <option value=\"10\">Yes</option>\r\n                                <option value=\"0\">No</option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Homework\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'homework', $event.target.value)\" [(ngModel)]=\"weekGrade.homework\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Reading\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'reading', $event.target.value)\" [(ngModel)]=\"weekGrade.reading\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Writing\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'writing', $event.target.value)\" [(ngModel)]=\"weekGrade.writing\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Speaking\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'speaking', $event.target.value)\" [(ngModel)]=\"weekGrade.speaking\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Behavior\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'behavior', $event.target.value)\" [(ngModel)]=\"weekGrade.behavior\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Quiz\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'quiz', $event.target.value)\" [(ngModel)]=\"weekGrade.quiz\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Notes\"><textarea class=\"form-control rounded-3\" rows=\"1\" [(ngModel)]=\"weekGrade.notes\" maxlength=\"100\">{{weekGrade.notes}}</textarea></td>\r\n                    </tr>\r\n                </tbody>\r\n                <tbody *ngIf=\"isStudentWeekGradeGridReadOnly\">\r\n                    <tr *ngFor=\"let weekGrade of StudentWeekGrades\">\r\n                        <td data-title=\"ID\">{{weekGrade.studentID}}</td>\r\n                        <td data-title=\"First Name\">{{weekGrade.firstName}}</td>\r\n                        <td data-title=\"Last Name\">{{weekGrade.lastName}}</td>\r\n                        <td data-title=\"Attendance\">{{weekGrade.attendance}}</td>\r\n                        <td data-title=\"Homework\">{{weekGrade.homework}}</td>\r\n                        <td data-title=\"Reading\">{{weekGrade.reading}}</td>\r\n                        <td data-title=\"Writing\">{{weekGrade.writing}}</td>\r\n                        <td data-title=\"Speaking\">{{weekGrade.speaking}}</td>\r\n                        <td data-title=\"Behavior\">{{weekGrade.behavior}}</td>\r\n                        <td data-title=\"Quiz\">{{weekGrade.quiz}}</td>\r\n                        <td data-title=\"Notes\">{{weekGrade.notes}}</td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n    </div>\r\n    <div class=\"row\">\r\n        <div *ngIf=\"studentGridServerErrorMessage\" class=\"col-md-12 mt10 ml10 errorText\"><i class=\"fa fa-exclamation-triangle\"></i> {{studentGridServerErrorMessage}} </div>\r\n        <div *ngIf=\"studentGridServerSuccessMessage\" class=\"col-md-12 mt10 ml10 successText\"><i class=\"fa fa-check-circle\"></i>  {{studentGridServerSuccessMessage}}</div>\r\n    </div>\r\n    <div class=\"row bgBar br5 m5 p5\" *ngIf=\"isStudentWeekGradeGridSaving\">\r\n        <div class=\"col-md-12\">Saving Student Grades. Please wait.<img src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" /></div>\r\n    </div>\r\n    <div class=\"row bgBar br5 m5 p5\" *ngIf=\"showStudentWeekGradeGrid && !isStudentWeekGradeGridSaving\">\r\n        \r\n        <div class=\"col-md-4\" ></div>\r\n        <div class=\"col-md-4 \" >\r\n            <button class=\"btn btn-primary btn-sm\" type=\"button\" (click)=\"cancelClick()\"><strong><i class=\"fa fa-times-circle\"></i> Cancel</strong></button>\r\n            <button class=\"btn btn-primary btn-sm ml10\" (click)=\"saveClick()\" type=\"submit\" *ngIf=\"!isStudentWeekGradeGridReadOnly\"><strong><i class=\"fa fa-save\" ></i> Save</strong></button>\r\n        </div>\r\n        <div class=\"col-md-4\" ></div>\r\n    </div>\r\n</div>"
 
 /***/ }),
 
@@ -610,6 +673,9 @@ var HomeComponent = /** @class */ (function () {
         if (this.isLoggedOn == false) {
             this.resetLoginControls();
         }
+        else {
+            this._authService.getAuthFunctions();
+        }
         this.CarouselImages = [
             { src: "/img/Carousel-1.jpg", alt: 'First', slideTo: "0" },
             { src: "/img/Carousel-2.jpg", alt: 'Second', slideTo: "1" },
@@ -652,7 +718,243 @@ var HomeComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<header class=\"container-fluid p0\">\r\n    <nav class=\"navbar navbar-light navbar-expand-md bgcolorMenu\">\r\n        <div class=\"row \">\r\n            <button class=\"navbar-toggler\" data-toggle=\"collapse\" data-target=\"#menuBar\">\r\n                <span class=\"navbar-toggler-icon\"></span>\r\n            </button>\r\n            <div id=\"menuBar\" class=\"navbar-collapse collapse\">\r\n                <ul class=\"navbar-nav\">\r\n                    <li class=\"nav-item active\"><a class=\"nav-link py-0\" routerLink=\"/home\">Home</a></li>\r\n                    <li *ngIf=\"isLoggedOn\" class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/attendance\">Attendance</a></li>\r\n                    <!--<li class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/contactus\">Contact Us</a></li>\r\n                    <li class=\"nav-item\"><a class=\"nav-link py-0\">About Us</a></li>-->\r\n                </ul>\r\n            </div>\r\n        </div>\r\n    </nav>\r\n</header>\r\n<div class=\"container-fluid p0\">\r\n    <!--<h4 class=\"text-center\">{{pageTitle}}</h4>-->\r\n    <h5 *ngIf=\"isLoggedOn\">Welcome {{userName}}</h5>\r\n    <div class=\"row m5 p5\">\r\n        <div class=\"col-md-3\">\r\n            <p>\r\n                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam auctor dui vel est consequat malesuada. Proin nec leo quam. Aliquam massa dolor, ullamcorper et orci nec, imperdiet tempus justo. Fusce risus tortor, scelerisque nec sagittis et, tincidunt non lectus. Proin suscipit pharetra nisl. Curabitur sagittis dictum facilisis. Nam pretium luctus.\r\n            </p>\r\n        </div>\r\n        <div class=\"col-md-6\">\r\n           <div id=\"carouselExampleIndicators\" class=\"carousel slide\" data-ride=\"carousel\" data-interval=\"3000\">\r\n                <ol class=\"carousel-indicators\">\r\n                    <li data-target=\"#carouselExampleIndicators\" data-slide-to=\"0\" class=\"active\"></li>\r\n                    <li data-target=\"#carouselExampleIndicators\" data-slide-to=\"1\" ></li>\r\n                    <li data-target=\"#carouselExampleIndicators\" data-slide-to=\"2\" ></li>\r\n                    <li data-target=\"#carouselExampleIndicators\" data-slide-to=\"3\" ></li>\r\n                    <li data-target=\"#carouselExampleIndicators\" data-slide-to=\"4\" ></li>\r\n                </ol>\r\n                <div class=\"carousel-inner\">\r\n                    <div class=\"carousel-item active\" >\r\n                        <img class=\"d-block w90p\" src=\"/img/Carousel-1.jpg\" alt=\"First\">\r\n                    </div>\r\n                    <div class=\"carousel-item \" >\r\n                        <img class=\"d-block w90p\" src=\"/img/Carousel-2.jpg\" alt=\"Second\">\r\n                    </div>\r\n                    <div class=\"carousel-item \">\r\n                        <img class=\"d-block w90p\" src=\"/img/Carousel-3.jpg\" alt=\"Third\">\r\n                    </div>\r\n                    <div class=\"carousel-item \">\r\n                        <img class=\"d-block w90p\" src=\"/img/Carousel-4.jpg\" alt=\"Fourth\">\r\n                    </div>\r\n                    <div class=\"carousel-item \">\r\n                        <img class=\"d-block w90p\" src=\"/img/Carousel-5.jpg\" alt=\"Fifth\">\r\n                    </div>\r\n                </div>\r\n                <a class=\"carousel-control-prev\" href=\"#carouselExampleIndicators\" role=\"button\" data-slide=\"prev\">\r\n                    <span class=\"carousel-control-prev-icon\" aria-hidden=\"true\"></span>\r\n                    <span class=\"sr-only\">Previous</span>\r\n                </a>\r\n                <a class=\"carousel-control-next\" href=\"#carouselExampleIndicators\" role=\"button\" data-slide=\"next\">\r\n                    <span class=\"carousel-control-next-icon\" aria-hidden=\"true\"></span>\r\n                    <span class=\"sr-only\">Next</span>\r\n                </a>\r\n\r\n\r\n\r\n              <!--<ol class=\"carousel-indicators\">\r\n                <li data-target=\"#carouselExampleIndicators\" data-slide-to=\"0\" class=\"active\"></li>\r\n                <li data-target=\"#carouselExampleIndicators\" data-slide-to=\"1\"></li>\r\n                <li data-target=\"#carouselExampleIndicators\" data-slide-to=\"2\"></li>\r\n              </ol>\r\n              <div class=\"carousel-inner\">\r\n                <div class=\"carousel-item active\">\r\n                  <img class=\"d-block w-100\" src=\"...\" alt=\"First slide\">\r\n                </div>\r\n                <div class=\"carousel-item\">\r\n                  <img class=\"d-block w-100\" src=\"...\" alt=\"Second slide\">\r\n                </div>\r\n                <div class=\"carousel-item\">\r\n                  <img class=\"d-block w-100\" src=\"...\" alt=\"Third slide\">\r\n                </div>\r\n              </div>\r\n              <a class=\"carousel-control-prev\" href=\"#carouselExampleIndicators\" role=\"button\" data-slide=\"prev\">\r\n                <span class=\"carousel-control-prev-icon\" aria-hidden=\"true\"></span>\r\n                <span class=\"sr-only\">Previous</span>\r\n              </a>\r\n              <a class=\"carousel-control-next\" href=\"#carouselExampleIndicators\" role=\"button\" data-slide=\"next\">\r\n                <span class=\"carousel-control-next-icon\" aria-hidden=\"true\"></span>\r\n                <span class=\"sr-only\">Next</span>\r\n              </a>-->\r\n            </div>\r\n        </div>\r\n        <div class=\"col-md-3\">\r\n            <p>\r\n                Aliquam molestie lacus vehicula, sodales felis vel, dictum nunc. Morbi hendrerit turpis vitae leo ornare.\r\n            </p>\r\n        </div>\r\n    </div>\r\n</div>\r\n"
+module.exports = "<header class=\"container-fluid p0\">\r\n    <nav class=\"navbar navbar-light navbar-expand-md bgcolorMenu\">\r\n        <div class=\"row \">\r\n            <button class=\"navbar-toggler\" data-toggle=\"collapse\" data-target=\"#menuBar\">\r\n                <span class=\"navbar-toggler-icon\"></span>\r\n            </button>\r\n            <div id=\"menuBar\" class=\"navbar-collapse collapse\">\r\n                <ul class=\"navbar-nav\">\r\n                    <li class=\"nav-item active\"><a class=\"nav-link py-0\" routerLink=\"/home\">Home</a></li>\r\n                    <li *ngIf=\"isLoggedOn\" class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/attendance\">Attendance</a></li>\r\n                    <li *ngIf=\"isLoggedOn\" class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/scores\">Term Scores</a></li>\r\n                    <!--<li class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/contactus\">Contact Us</a></li>\r\n    <li class=\"nav-item\"><a class=\"nav-link py-0\">About Us</a></li>-->\r\n                </ul>\r\n            </div>\r\n        </div>\r\n    </nav>\r\n</header>\r\n<div class=\"container-fluid p0\">\r\n    <!--<h4 class=\"text-center\">{{pageTitle}}</h4>-->\r\n    <h5 *ngIf=\"isLoggedOn\">Welcome {{userName}}</h5>\r\n    <div class=\"row m5 p5\">\r\n        <div class=\"col-md-3\">\r\n            <p>\r\n                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam auctor dui vel est consequat malesuada. Proin nec leo quam. Aliquam massa dolor, ullamcorper et orci nec, imperdiet tempus justo. Fusce risus tortor, scelerisque nec sagittis et, tincidunt non lectus. Proin suscipit pharetra nisl. Curabitur sagittis dictum facilisis. Nam pretium luctus.\r\n            </p>\r\n        </div>\r\n        <div class=\"col-md-6\">\r\n           <div id=\"carouselExampleIndicators\" class=\"carousel slide\" data-ride=\"carousel\" data-interval=\"3000\">\r\n                <ol class=\"carousel-indicators\">\r\n                    <li data-target=\"#carouselExampleIndicators\" data-slide-to=\"0\" class=\"active\"></li>\r\n                    <li data-target=\"#carouselExampleIndicators\" data-slide-to=\"1\" ></li>\r\n                    <li data-target=\"#carouselExampleIndicators\" data-slide-to=\"2\" ></li>\r\n                    <li data-target=\"#carouselExampleIndicators\" data-slide-to=\"3\" ></li>\r\n                    <li data-target=\"#carouselExampleIndicators\" data-slide-to=\"4\" ></li>\r\n                </ol>\r\n                <div class=\"carousel-inner\">\r\n                    <div class=\"carousel-item active\" >\r\n                        <img class=\"d-block w90p\" src=\"/img/Carousel-1.jpg\" alt=\"First\">\r\n                    </div>\r\n                    <div class=\"carousel-item \" >\r\n                        <img class=\"d-block w90p\" src=\"/img/Carousel-2.jpg\" alt=\"Second\">\r\n                    </div>\r\n                    <div class=\"carousel-item \">\r\n                        <img class=\"d-block w90p\" src=\"/img/Carousel-3.jpg\" alt=\"Third\">\r\n                    </div>\r\n                    <div class=\"carousel-item \">\r\n                        <img class=\"d-block w90p\" src=\"/img/Carousel-4.jpg\" alt=\"Fourth\">\r\n                    </div>\r\n                    <div class=\"carousel-item \">\r\n                        <img class=\"d-block w90p\" src=\"/img/Carousel-5.jpg\" alt=\"Fifth\">\r\n                    </div>\r\n                </div>\r\n                <a class=\"carousel-control-prev\" href=\"#carouselExampleIndicators\" role=\"button\" data-slide=\"prev\">\r\n                    <span class=\"carousel-control-prev-icon\" aria-hidden=\"true\"></span>\r\n                    <span class=\"sr-only\">Previous</span>\r\n                </a>\r\n                <a class=\"carousel-control-next\" href=\"#carouselExampleIndicators\" role=\"button\" data-slide=\"next\">\r\n                    <span class=\"carousel-control-next-icon\" aria-hidden=\"true\"></span>\r\n                    <span class=\"sr-only\">Next</span>\r\n                </a>\r\n\r\n\r\n\r\n              <!--<ol class=\"carousel-indicators\">\r\n                <li data-target=\"#carouselExampleIndicators\" data-slide-to=\"0\" class=\"active\"></li>\r\n                <li data-target=\"#carouselExampleIndicators\" data-slide-to=\"1\"></li>\r\n                <li data-target=\"#carouselExampleIndicators\" data-slide-to=\"2\"></li>\r\n              </ol>\r\n              <div class=\"carousel-inner\">\r\n                <div class=\"carousel-item active\">\r\n                  <img class=\"d-block w-100\" src=\"...\" alt=\"First slide\">\r\n                </div>\r\n                <div class=\"carousel-item\">\r\n                  <img class=\"d-block w-100\" src=\"...\" alt=\"Second slide\">\r\n                </div>\r\n                <div class=\"carousel-item\">\r\n                  <img class=\"d-block w-100\" src=\"...\" alt=\"Third slide\">\r\n                </div>\r\n              </div>\r\n              <a class=\"carousel-control-prev\" href=\"#carouselExampleIndicators\" role=\"button\" data-slide=\"prev\">\r\n                <span class=\"carousel-control-prev-icon\" aria-hidden=\"true\"></span>\r\n                <span class=\"sr-only\">Previous</span>\r\n              </a>\r\n              <a class=\"carousel-control-next\" href=\"#carouselExampleIndicators\" role=\"button\" data-slide=\"next\">\r\n                <span class=\"carousel-control-next-icon\" aria-hidden=\"true\"></span>\r\n                <span class=\"sr-only\">Next</span>\r\n              </a>-->\r\n            </div>\r\n        </div>\r\n        <div class=\"col-md-3\">\r\n            <p>\r\n                Aliquam molestie lacus vehicula, sodales felis vel, dictum nunc. Morbi hendrerit turpis vitae leo ornare.\r\n            </p>\r\n        </div>\r\n    </div>\r\n</div>\r\n"
+
+/***/ }),
+
+/***/ "./components/score/Scores.ts":
+/*!***********************************************!*\
+  !*** ../clientapp/components/score/Scores.ts ***!
+  \***********************************************/
+/*! exports provided: ScoresComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ScoresComponent", function() { return ScoresComponent; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "../node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var _services_AuthService__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../services/AuthService */ "./services/AuthService.ts");
+/* harmony import */ var _services_LoggerService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../services/LoggerService */ "./services/LoggerService.ts");
+/* harmony import */ var _services_GradeService__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../services/GradeService */ "./services/GradeService.ts");
+/* harmony import */ var _model_Grade__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../model/Grade */ "./model/Grade.ts");
+/* harmony import */ var _services_CalendarService__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../services/CalendarService */ "./services/CalendarService.ts");
+/* harmony import */ var _services_TeacherService__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../services/TeacherService */ "./services/TeacherService.ts");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (undefined && undefined.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+
+
+
+
+
+var ScoresComponent = /** @class */ (function () {
+    function ScoresComponent(_authService, _calendarService, _gradeService, _teacherService, _loggerService) {
+        this._authService = _authService;
+        this._calendarService = _calendarService;
+        this._gradeService = _gradeService;
+        this._teacherService = _teacherService;
+        this._loggerService = _loggerService;
+        this.Terms = new Array();
+    }
+    ScoresComponent.prototype.ngOnInit = function () {
+        this.isLoggedOn = this._authService.getIsLoggedOn();
+        if (this.isLoggedOn == false) {
+            window.location.href = "/logon/login";
+            return;
+        }
+        if (!this._authService.hasAccess("TermScores")) {
+            // TODO: navigate to unauthorized page
+            this._loggerService.log("Unauthorized access");
+            window.location.href = "/error";
+        }
+        this._loggerService.log("Access is authorized");
+        this.isSelectTermLoading = false;
+        this.termLoadError = "";
+        this.isSelectGradeLoading = false;
+        this.gradeLoadError = "";
+        this.isSelectTeacherLoading = false;
+        this.teacherLoadError = "";
+        this.selectedTermWeekId = 0;
+        this.selectedGrade = "";
+        this.selectedTeacherId = 0;
+        this.isStudentTermScoreGridLoading = false;
+        this.termScoreGridErrorMessage = "";
+        this.selectGradeEnabled = true;
+        this.selectTeachedEnabled = true;
+        this.studentGridServerErrorMessage = "";
+        this.studentGridServerSuccessMessage = "";
+        this.isStudentTermScoreGridSaving = false;
+        this.populateTerms();
+        if (this._authService.hasAccess("TermScores.GradeSelection")) {
+            this.populateGrades();
+        }
+        else {
+            this.populateGradeAndTeacherDetails();
+        }
+    };
+    ScoresComponent.prototype.onSelectTerm = function (value) {
+        this.selectedTermWeekId = value;
+        if (this._authService.hasAccess("TermScores.GradeSelection")) {
+            this.selectedGrade = "0";
+            this.selectedTeacherId = 0;
+        }
+        else {
+            this.populateGradeAndTeacherDetails();
+        }
+        this.populateStudentTermScoresGrid();
+    };
+    ScoresComponent.prototype.onSelectGrade = function (value) {
+        this.selectedGrade = value;
+        if (this._authService.hasAccess("TermScores.TeacherSelection")) {
+            if (this.selectedGrade != "0") {
+                this.populateTeachers();
+            }
+        }
+    };
+    ScoresComponent.prototype.onSelectTeacher = function (value) {
+        this.selectedTeacherId = value;
+        if (this.selectedTeacherId != 0) {
+            this.populateStudentTermScoresGrid();
+        }
+    };
+    ScoresComponent.prototype.populateTerms = function () {
+        var _this = this;
+        this.isSelectTermLoading = true;
+        this.termLoadError = "";
+        this._calendarService.getCalendarTestWeeks()
+            .subscribe(function (result) {
+            _this.isSelectTermLoading = false;
+            _this.CalendarWeeks = result;
+        }, function (err) {
+            _this.isSelectTermLoading = false;
+            _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+            if (err.status == "404") {
+                // data not found
+                _this.CalendarWeeks = null;
+            }
+            _this.termLoadError = "Error Occured";
+        });
+    };
+    ScoresComponent.prototype.populateGrades = function () {
+        var _this = this;
+        this.isSelectGradeLoading = true;
+        this.gradeLoadError = "";
+        this._gradeService.getGrades()
+            .subscribe(function (result) {
+            _this.isSelectGradeLoading = false;
+            _this.Grades = result;
+        }, function (err) {
+            _this.isSelectGradeLoading = false;
+            _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+            if (err.status == "404") {
+                // data not found
+                _this.Grades = null;
+            }
+            _this.gradeLoadError = "Error Occured";
+        });
+    };
+    ScoresComponent.prototype.populateTeachers = function () {
+        var _this = this;
+        this.isSelectTeacherLoading = true;
+        this.teacherLoadError = "";
+        this._teacherService.getAssignedTeacherByGradeAndWeek(this.selectedGrade, this.selectedTermWeekId)
+            .subscribe(function (result) {
+            _this.isSelectTeacherLoading = false;
+            _this.Teachers = result;
+        }, function (err) {
+            _this.isSelectTeacherLoading = false;
+            _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+            if (err.status == "404") {
+                // data not found
+                _this.Teachers = null;
+                _this.teacherLoadError = "Error Occured";
+            }
+        });
+    };
+    ScoresComponent.prototype.populateGradeAndTeacherDetails = function () {
+        var _this = this;
+        if (this.selectedTermWeekId != 0) {
+            this._teacherService.getAssignedTeacherByWeek(this.selectedTermWeekId)
+                .subscribe(function (result) {
+                _this.isSelectTeacherLoading = false;
+                _this.Teachers = result;
+                //populate grade from result
+                var gr = new Array();
+                gr.push(new _model_Grade__WEBPACK_IMPORTED_MODULE_4__["Grade"](_this.Teachers[0].ctsGrade, _this.Teachers[0].ctsGrade));
+                _this.Grades = gr;
+                _this.selectedGrade = _this.Teachers[0].ctsGrade;
+                _this.selectGradeEnabled = false;
+                if (_this.Teachers.length > 1) {
+                    _this.selectedTeacherId = 0;
+                }
+                else {
+                    _this.selectedTeacherId = _this.Teachers[0].id;
+                    _this.selectTeachedEnabled = false;
+                    _this.populateStudentTermScoresGrid();
+                }
+            }, function (err) {
+                _this.isSelectTeacherLoading = false;
+                _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+                if (err.status == "404") {
+                    // data not found
+                    _this.Teachers = null;
+                }
+            });
+        }
+    };
+    ScoresComponent.prototype.populateStudentTermScoresGrid = function () {
+        var _this = this;
+        if (this.selectedTermWeekId != 0 && this.selectedGrade != "0" && this.selectedTeacherId != 0) {
+            this.isStudentTermScoreGridLoading = true;
+            this.termScoreGridErrorMessage = "";
+            this._teacherService.getStudentTermScores(this.selectedTeacherId, this.selectedTermWeekId)
+                .subscribe(function (result) {
+                _this.StudentTermScores = result;
+                _this.isStudentTermScoreGridLoading = false;
+            }, function (err) {
+                _this.isStudentTermScoreGridLoading = false;
+                _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+                if (err.status == "404") {
+                    // data not found
+                    _this.StudentTermScores = null;
+                }
+                _this.termScoreGridErrorMessage = "Error Occured while retrieving information : " + err.statusText;
+            });
+        }
+    };
+    ScoresComponent = __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
+            template: __webpack_require__(/*! ./scores.html */ "./components/score/scores.html")
+        }),
+        __metadata("design:paramtypes", [_services_AuthService__WEBPACK_IMPORTED_MODULE_1__["AuthService"],
+            _services_CalendarService__WEBPACK_IMPORTED_MODULE_5__["CalendarService"],
+            _services_GradeService__WEBPACK_IMPORTED_MODULE_3__["GradeService"],
+            _services_TeacherService__WEBPACK_IMPORTED_MODULE_6__["TeacherService"],
+            _services_LoggerService__WEBPACK_IMPORTED_MODULE_2__["LoggerService"]])
+    ], ScoresComponent);
+    return ScoresComponent;
+}());
+
+
+
+/***/ }),
+
+/***/ "./components/score/scores.html":
+/*!*************************************************!*\
+  !*** ../clientapp/components/score/scores.html ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "<header class=\"container-fluid p0\">\r\n    <nav class=\"navbar navbar-light navbar-expand-md bgcolorMenu\">\r\n        <div class=\"row \">\r\n            <button class=\"navbar-toggler\" data-toggle=\"collapse\" data-target=\"#menuBar\">\r\n                <span class=\"navbar-toggler-icon\"></span>\r\n            </button>\r\n            <div id=\"menuBar\" class=\"navbar-collapse collapse\">\r\n                <ul class=\"navbar-nav\">\r\n                    <li class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/home\">Home</a></li>\r\n                    <li *ngIf=\"isLoggedOn\" class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/attendance\">Attendance</a></li>\r\n                    <li *ngIf=\"isLoggedOn\" class=\"nav-item active\"><a class=\"nav-link py-0\" routerLink=\"/scores\">Term Scores</a></li>\r\n                    <!--<li class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/contactus\">Contact Us</a></li>\r\n    <li class=\"nav-item\"><a class=\"nav-link py-0\">About Us</a></li>-->\r\n                </ul>\r\n            </div>\r\n        </div>\r\n    </nav>\r\n\r\n</header>\r\n<div class=\"container p0 mt10\">\r\n    <!--<h4 class=\"text-center\">{{pageTitle}}</h4>-->\r\n\r\n    <div class=\"row bgBar br5 m5 p5\">\r\n        <div class=\"col-md-4\">\r\n            <div class=\"input-group\">\r\n                <label for=\"selectTerm\" class=\"mt5\">Term</label>\r\n                <img *ngIf=\"isSelectTermLoading\" src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" />\r\n                <i *ngIf=\"termLoadError\" class=\"fa fa-exclamation-triangle form-control errorText\"> {{termLoadError}}</i>\r\n                <select *ngIf=\"!isSelectTermLoading && !termLoadError\" name=\"selectTerm\" class=\"ml10 selectpicker form-control selectWidth\" (change)=\"onSelectTerm($event.target.value)\">\r\n                    <option value=\"0\">--Select Term--</option>\r\n                    <option *ngFor=\"let week of CalendarWeeks\" value={{week.id}}>\r\n                        {{week.description}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n        </div>\r\n        <div class=\"col-md-4\">\r\n            <div class=\"input-group\">\r\n                <label for=\"selectGrade\" class=\"mt5\">Grade</label>\r\n                <img *ngIf=\"isSelectGradeLoading\" src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" />\r\n                <i *ngIf=\"gradeLoadError\" class=\"fa fa-exclamation-triangle form-control errorText\"> {{gradeLoadError}}</i>\r\n                <select *ngIf=\"!isSelectGradeLoading && !gradeLoadError\" name=\"selectGrade\" class=\"ml10 selectpicker form-control selectWidth\"\r\n                        (change)=\"onSelectGrade($event.target.value)\" [(ngModel)]=\"selectedGrade\" [disabled]=\"!selectGradeEnabled\">\r\n                    <option value=\"0\">--Select Grade--</option>\r\n                    <option *ngFor=\"let grade of Grades\" value={{grade.ctsGrade}}>\r\n                        {{grade.ctsGrade}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n\r\n        </div>\r\n        <div class=\"col-md-4\">\r\n            <div class=\"input-group\">\r\n                <label for=\"selectTeacher\" class=\"mt5\">Teacher</label>\r\n                <img *ngIf=\"isSelectTeacherLoading\" src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" />\r\n                <i *ngIf=\"teacherLoadError\" class=\"fa fa-exclamation-triangle form-control errorText\"> {{teacherLoadError}}</i>\r\n                <select *ngIf=\"!isSelectTeacherLoading && !teacherLoadError\" name=\"selectTeacher\" class=\"ml10 selectpicker form-control selectWidth\"\r\n                        (change)=\"onSelectTeacher($event.target.value)\" [(ngModel)]=\"selectedTeacherId\" [disabled]=\"!selectTeachedEnabled\">\r\n                    <option value=\"0\">--Select Teacher--</option>\r\n                    <option *ngFor=\"let teacher of Teachers\" value={{teacher.id}}>\r\n                        {{teacher.firstName}} {{teacher.lastName}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n        </div>\r\n    </div>\r\n\r\n    <div class=\"row\">\r\n        <div *ngIf=\"isStudentTermScoreGridLoading\" class=\"col-md-12\">Loading Student Term Scores. Please wait.<img src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" /></div>\r\n    </div>\r\n\r\n    <div class=\"row\" *ngIf=\"!isStudentTermScoreGridLoading\">\r\n        <div class=\"col-md-12\" id=\"no-more-tables\">\r\n            <label *ngIf=\"termScoreGridErrorMessage\">{{termScoreGridErrorMessage}}</label>\r\n            <table class=\"table-bordered table-condensed cf\" id=\"dev-table\">\r\n                <thead class=\"bgTableHead cf\">\r\n                    <tr>\r\n                        <th class=\"fw\">ID</th>\r\n                        <th class=\"fw w150\">First Name</th>\r\n                        <th class=\"fw w150\">Last Name</th>\r\n                        <th class=\"fw\">Attendance</th>\r\n                        <th class=\"fw\">Homework</th>\r\n                        <th class=\"fw\">Reading</th>\r\n                        <th class=\"fw\">Writing</th>\r\n                        <th class=\"fw\">Speaking</th>\r\n                        <th class=\"fw\">Behaviour</th>\r\n                        <th class=\"fw\">Quiz</th>\r\n                        <th class=\"fw\">Internal</th>\r\n                        <th class=\"fw\">Term Score</th>\r\n                        <th class=\"fw\">Total Score</th>\r\n                        <th class=\"fw w200\">Notes</th>\r\n                    </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr *ngFor=\"let testScore of StudentTermScores\">\r\n                        <td data-title=\"ID\">{{testScore.studentID}}</td>\r\n                        <td data-title=\"First Name\">{{testScore.firstName}}</td>\r\n                        <td data-title=\"Last Name\">{{testScore.lastName}}</td>\r\n                        <td data-title=\"Attendance\">{{testScore.attendance}}</td>\r\n                        <td data-title=\"Homework\">{{testScore.homework}}</td>\r\n                        <td data-title=\"Reading\">{{testScore.reading}}</td>\r\n                        <td data-title=\"Writing\">{{testScore.writing}}</td>\r\n                        <td data-title=\"Speaking\">{{testScore.speaking}}</td>\r\n                        <td data-title=\"Behavior\">{{testScore.behavior}}</td>\r\n                        <td data-title=\"Quiz\">{{testScore.quiz}}</td>\r\n                        <td data-title=\"Internal\">{{testScore.internalScore}}</td>\r\n                        <td data-title=\"Score\"><input class=\"form-control\" [(ngModel)]=\"testScore.termScore\" value=\"{{testScore.termScore}}\" /></td>\r\n                        <td data-title=\"Total Score\">{{(testScore.internalScore-0) + (testScore.termScore-0)}}</td>\r\n                        <td data-title=\"Notes\"><textarea class=\"form-control rounded-3\" rows=\"1\" [(ngModel)]=\"testScore.notes\" maxlength=\"100\">{{testScore.notes}}</textarea></td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n    </div>\r\n    <div class=\"row\">\r\n        <div *ngIf=\"studentGridServerErrorMessage\" class=\"col-md-12 mt10 ml10 errorText\"><i class=\"fa fa-exclamation-triangle\"></i> {{studentGridServerErrorMessage}} </div>\r\n        <div *ngIf=\"studentGridServerSuccessMessage\" class=\"col-md-12 mt10 ml10 successText\"><i class=\"fa fa-check-circle\"></i>  {{studentGridServerSuccessMessage}}</div>\r\n    </div>\r\n    <div class=\"row bgBar br5 m5 p5\" *ngIf=\"isStudentTermScoreGridSaving\">\r\n        <div class=\"col-md-12\">Saving Student Term Scores. Please wait.<img src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" /></div>\r\n    </div>\r\n    <div class=\"row bgBar br5 m5 p5\" *ngIf=\"!isStudentTermScoreGridSaving\">\r\n\r\n        <div class=\"col-md-4\"></div>\r\n        <div class=\"col-md-4 \">\r\n            <button class=\"btn btn-primary btn-sm\" type=\"button\" ><strong><i class=\"fa fa-times-circle\"></i> Cancel</strong></button>\r\n            <button class=\"btn btn-primary btn-sm ml10\" type=\"submit\" *ngIf=\"!isStudentTermScoreGridSaving\"><strong><i class=\"fa fa-save\"></i> Save</strong></button>\r\n        </div>\r\n        <div class=\"col-md-4\"></div>\r\n    </div>\r\n</div>\r\n\r\n"
 
 /***/ }),
 
@@ -758,6 +1060,28 @@ Object(_angular_platform_browser_dynamic__WEBPACK_IMPORTED_MODULE_1__["platformB
 
 /***/ }),
 
+/***/ "./model/Grade.ts":
+/*!***********************************!*\
+  !*** ../clientapp/model/Grade.ts ***!
+  \***********************************/
+/*! exports provided: Grade */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Grade", function() { return Grade; });
+var Grade = /** @class */ (function () {
+    function Grade(ctsGrade, countyGrade) {
+        this.ctsGrade = ctsGrade;
+        this.countyGrade = countyGrade;
+    }
+    return Grade;
+}());
+
+
+
+/***/ }),
+
 /***/ "./routes.ts":
 /*!******************************!*\
   !*** ../clientapp/routes.ts ***!
@@ -773,6 +1097,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/router */ "../node_modules/@angular/router/fesm5/router.js");
 /* harmony import */ var _components_home_Home__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/home/Home */ "./components/home/Home.ts");
 /* harmony import */ var _components_attendance_Attendance__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/attendance/Attendance */ "./components/attendance/Attendance.ts");
+/* harmony import */ var _components_score_Scores__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/score/Scores */ "./components/score/Scores.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -783,10 +1108,12 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 
 
+
 var AppRoutes = [
     { path: "", redirectTo: 'home', pathMatch: 'full' },
     { path: "attendance", component: _components_attendance_Attendance__WEBPACK_IMPORTED_MODULE_3__["AttendanceComponent"] },
-    { path: "home", component: _components_home_Home__WEBPACK_IMPORTED_MODULE_2__["HomeComponent"] }
+    { path: "home", component: _components_home_Home__WEBPACK_IMPORTED_MODULE_2__["HomeComponent"] },
+    { path: "scores", component: _components_score_Scores__WEBPACK_IMPORTED_MODULE_4__["ScoresComponent"] }
     //{ path : "contactus", component: ContactComponent}
 ];
 var AppRoutingModule = /** @class */ (function () {
@@ -817,6 +1144,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AuthService", function() { return AuthService; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "../node_modules/@angular/core/fesm5/core.js");
 /* harmony import */ var _LoggerService__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./LoggerService */ "./services/LoggerService.ts");
+/* harmony import */ var _angular_common_http__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/common/http */ "../node_modules/@angular/common/fesm5/http.js");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -828,9 +1156,11 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 };
 
 
+
 var AuthService = /** @class */ (function () {
-    function AuthService(_loggerService) {
+    function AuthService(_loggerService, _http) {
         this._loggerService = _loggerService;
+        this._http = _http;
         if (AuthService_1.instance == null) {
             AuthService_1.instance = this;
         }
@@ -855,9 +1185,6 @@ var AuthService = /** @class */ (function () {
     AuthService.prototype.getUserName = function () {
         return this.userName;
     };
-    //setIsLoggedOn(isLoggedOn : boolean){
-    //	this.isLoggedOn = isLoggedOn;
-    //}
     AuthService.prototype.getIsLoggedOn = function () {
         if (this.authToken != null && this.authToken.length > 0 && this.expiresBy >= new Date()) {
             this._loggerService.log("getIsLoggedOn() = true");
@@ -872,10 +1199,37 @@ var AuthService = /** @class */ (function () {
     AuthService.prototype.getExpiresBy = function () {
         return this.expiresBy;
     };
+    AuthService.prototype.hasAccess = function (fnName) {
+        var allowed = false;
+        if (this.authFunctions != null && this.authFunctions.functions != null && this.authFunctions.functions.length > 0) {
+            var item = this.authFunctions.functions.find(function (x) { return x == fnName; });
+            if (item != null) {
+                allowed = true;
+            }
+        }
+        return allowed;
+    };
+    AuthService.prototype.getAuthFunctions = function () {
+        var _this = this;
+        if (this.authFunctions == null) {
+            this.callAuthFunctionsService()
+                .subscribe(function (result) {
+                //this._loggerService.log(JSON.stringify(result));
+                _this.authFunctions = result;
+            }, function (err) {
+                _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+                // Redirect to error page
+            });
+        }
+    };
+    AuthService.prototype.callAuthFunctionsService = function () {
+        return this._http.get('/api/ctsuser/authfunctions');
+    };
     var AuthService_1;
     AuthService = AuthService_1 = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])(),
-        __metadata("design:paramtypes", [_LoggerService__WEBPACK_IMPORTED_MODULE_1__["LoggerService"]])
+        __metadata("design:paramtypes", [_LoggerService__WEBPACK_IMPORTED_MODULE_1__["LoggerService"],
+            _angular_common_http__WEBPACK_IMPORTED_MODULE_2__["HttpClient"]])
     ], AuthService);
     return AuthService;
 }());
@@ -913,6 +1267,9 @@ var CalendarService = /** @class */ (function () {
     }
     CalendarService.prototype.getCalendarWeeks = function () {
         return this._http.get('/api/calendar/weeks');
+    };
+    CalendarService.prototype.getCalendarTestWeeks = function () {
+        return this._http.get('/api/calendar/testweeks');
     };
     CalendarService = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])(),
@@ -1082,11 +1439,17 @@ var TeacherService = /** @class */ (function () {
     function TeacherService(_http) {
         this._http = _http;
     }
-    TeacherService.prototype.getTeachersByGrade = function (grade, weekId) {
-        return this._http.get('/api/Teacher/teacherbygrade/' + grade + '/' + weekId);
+    TeacherService.prototype.getAssignedTeacherByGradeAndWeek = function (grade, weekId) {
+        return this._http.get('/api/Teacher/assignment/' + grade + '/' + weekId);
+    };
+    TeacherService.prototype.getAssignedTeacherByWeek = function (weekId) {
+        return this._http.get('/api/Teacher/assignmentByWeekId/' + weekId);
     };
     TeacherService.prototype.getStudentWeekGrades = function (teacherId, weekId) {
-        return this._http.get('/api/Teacher/teacherbyid/' + teacherId + '/studentgrades/' + weekId);
+        return this._http.get('/api/Teacher/assignmentById/' + teacherId + '/studentgrades/' + weekId);
+    };
+    TeacherService.prototype.getStudentTermScores = function (teacherId, weekId) {
+        return this._http.get('/api/Teacher/assignmentById/' + teacherId + '/studentscores/' + weekId);
     };
     TeacherService = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])(),
@@ -1106,7 +1469,7 @@ var TeacherService = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! C:\Data\Code\CTSApp\CTSWebApp\clientapp\main.ts */"./main.ts");
+module.exports = __webpack_require__(/*! C:\Data\Akila\code\CTSApp\CTSApp\CTSWebApp\clientapp\main.ts */"./main.ts");
 
 
 /***/ })

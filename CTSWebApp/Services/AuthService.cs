@@ -54,6 +54,160 @@ namespace CTSWebApp.Services
 
         private AuthServiceAuthorizeResult AuthorizeInternalAsync(string email, string password)
         {
+            return AuthenticateUser(email, password);
+
+            //// Check user in DB
+            //AuthServiceAuthorizeResult errorResult = new AuthServiceAuthorizeResult
+            //{
+            //    IsSucceeded = false,
+            //    ErrorMessage = "Logon attempt failed. Invalid user id or bad password. Contact System adminstrator !."
+            //};
+
+            //var userIdentity = _idenityBLL.ValidateUser(email, password);
+            //if (userIdentity != null )
+            //{
+            //    bool acctLocked = (string.IsNullOrEmpty(userIdentity.Locked) || (userIdentity.Locked.ToUpper()) == "Y") ? true : false;
+
+            //    if ( acctLocked)
+            //    {
+            //        return errorResult;
+            //    }
+
+            //    // Validate the password 
+            //    if ( !ValidatePassword(password, userIdentity))
+            //    {
+            //        return errorResult;
+            //    }
+
+            //    // GetUserRoles
+            //    var roles = _idenityBLL.GetUserRoles(userIdentity.CTSUserID);
+            //    string roleString = string.Join(",", roles.ToArray());
+
+            //    // Create Claims
+            //    var claims = new[]
+            //        {
+            //        new Claim("CTSUserID", userIdentity.CTSUserID.ToString()),
+            //        new Claim("UserName", userIdentity.UserName),
+            //        new Claim("Email", userIdentity.Email),
+            //        new Claim("Roles", roleString),
+            //        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            //    };
+
+            //    // Create JWT
+            //    var secret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Token:Key"]));
+            //    var cred = new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
+            //    int days = int.Parse(_configuration["Token:expiryDays"]);
+            //    var expiryDate = DateTime.Now.AddDays(days);
+
+            //    JwtSecurityToken jwtSecToken = new JwtSecurityToken(
+            //        _configuration["Token:Issuer"],
+            //        _configuration["Token:Audience"],
+            //        claims,
+            //        expires: expiryDate,
+            //        signingCredentials: cred);
+
+            //    // Create Result object
+            //    AuthServiceAuthorizeResult result = new AuthServiceAuthorizeResult
+            //    {
+            //        Token = new JwtSecurityTokenHandler().WriteToken(jwtSecToken),
+            //        Expires = expiryDate,
+            //        UserName = userIdentity.UserName,
+            //        Email = userIdentity.Email,
+            //        Locked = acctLocked,
+            //        ResetPassword = (!string.IsNullOrEmpty(userIdentity.ResetPassword) && userIdentity.ResetPassword.ToUpper() == "Y") ? true : false,
+            //        Roles = roleString,
+            //        IsSucceeded = true,
+            //        ErrorMessage = string.Empty
+            //    };
+
+            //    return result;
+            //}
+
+            //return errorResult;
+        }
+
+        private AuthServiceAuthorizeResult AuthorizeInternalAsync(ResetPasswordViewModel model)
+        {
+            return AuthenticateUser(model.Email, model.OldPassword);
+            //// Check user in DB
+            //AuthServiceAuthorizeResult errorResult = new AuthServiceAuthorizeResult
+            //{
+            //    IsSucceeded = false,
+            //    ErrorMessage = "Reset Password attempt failed. Invalid user id or bad password. Contact System adminstrator !."
+            //};
+
+            //var userIdentity = _idenityBLL.ValidateUser(model.Email, model.OldPassword);
+            //if (userIdentity != null)
+            //{
+            //    bool acctLocked = (string.IsNullOrEmpty(userIdentity.Locked) || (userIdentity.Locked.ToUpper()) == "Y") ? true : false;
+
+            //    if (acctLocked)
+            //    {
+            //        return errorResult;
+            //    }
+
+            //    // Validate the password 
+            //    if (!ValidatePassword(model.OldPassword, userIdentity))
+            //    {
+            //        return errorResult;
+            //    }
+
+            //    // GetUserRoles
+            //    var roles = _idenityBLL.GetUserRoles(userIdentity.CTSUserID);
+            //    string roleString = string.Join(",", roles.ToArray());
+
+            //    // Update the New password in db
+            //    byte[] newHash = GetPasswordHash();
+            //    string hashedPassword = GeneratePassword(model.NewPassword, newHash);
+            //    if ( ! _idenityBLL.UpdatePassword(userIdentity.CTSUserID, model.Email, newHash, hashedPassword) )
+            //    {
+            //        return errorResult;
+            //    }
+
+
+            //    // Create Claims
+            //    var claims = new[]
+            //        {
+            //        new Claim("CTSUserID", userIdentity.CTSUserID.ToString()),
+            //        new Claim("UserName", userIdentity.UserName),
+            //        new Claim("Email", userIdentity.Email),
+            //        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            //    };
+
+            //    // Create JWT
+            //    var secret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Token:Key"]));
+            //    var cred = new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
+            //    int days = int.Parse(_configuration["Token:expiryDays"]);
+            //    var expiryDate = DateTime.Now.AddDays(days);
+
+            //    JwtSecurityToken jwtSecToken = new JwtSecurityToken(
+            //        _configuration["Token:Issuer"],
+            //        _configuration["Token:Audience"],
+            //        claims,
+            //        expires: expiryDate,
+            //        signingCredentials: cred);
+
+            //    // Create Result object
+            //    AuthServiceAuthorizeResult result = new AuthServiceAuthorizeResult
+            //    {
+            //        Token = new JwtSecurityTokenHandler().WriteToken(jwtSecToken),
+            //        Expires = expiryDate,
+            //        UserName = userIdentity.UserName,
+            //        Email = userIdentity.Email,
+            //        Locked = acctLocked,
+            //        ResetPassword = (!string.IsNullOrEmpty(userIdentity.ResetPassword) && userIdentity.ResetPassword.ToUpper() == "Y") ? true : false,
+            //        IsSucceeded = true,
+            //        ErrorMessage = string.Empty
+            //    };
+
+            //    return result;
+            //}
+
+            //return errorResult;
+        }
+
+        private AuthServiceAuthorizeResult AuthenticateUser(string email, string password)
+        {
             // Check user in DB
             AuthServiceAuthorizeResult errorResult = new AuthServiceAuthorizeResult
             {
@@ -62,72 +216,6 @@ namespace CTSWebApp.Services
             };
 
             var userIdentity = _idenityBLL.ValidateUser(email, password);
-            if (userIdentity != null )
-            {
-                bool acctLocked = (string.IsNullOrEmpty(userIdentity.Locked) || (userIdentity.Locked.ToUpper()) == "Y") ? true : false;
-
-                if ( acctLocked)
-                {
-                    return errorResult;
-                }
-
-                // Validate the password 
-                if ( !ValidatePassword(password, userIdentity))
-                {
-                    return errorResult;
-                }
-
-                // Create Claims
-                var claims = new[]
-                    {
-                    new Claim("CTSUserID", userIdentity.CTSUserID.ToString()),
-                    new Claim("UserName", userIdentity.UserName),
-                    new Claim("Email", userIdentity.Email),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-                };
-
-                // Create JWT
-                var secret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Token:Key"]));
-                var cred = new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
-                int days = int.Parse(_configuration["Token:expiryDays"]);
-                var expiryDate = DateTime.Now.AddDays(days);
-
-                JwtSecurityToken jwtSecToken = new JwtSecurityToken(
-                    _configuration["Token:Issuer"],
-                    _configuration["Token:Audience"],
-                    claims,
-                    expires: expiryDate,
-                    signingCredentials: cred);
-
-                // Create Result object
-                AuthServiceAuthorizeResult result = new AuthServiceAuthorizeResult
-                {
-                    Token = new JwtSecurityTokenHandler().WriteToken(jwtSecToken),
-                    Expires = expiryDate,
-                    UserName = userIdentity.UserName,
-                    Email = userIdentity.Email,
-                    Locked = acctLocked,
-                    ResetPassword = (!string.IsNullOrEmpty(userIdentity.ResetPassword) && userIdentity.ResetPassword.ToUpper() == "Y") ? true : false,
-                    IsSucceeded = true,
-                    ErrorMessage = string.Empty
-                };
-
-                return result;
-            }
-
-            return errorResult;
-        }
-
-        private AuthServiceAuthorizeResult AuthorizeInternalAsync(ResetPasswordViewModel model)
-        {
-            // Check user in DB
-            AuthServiceAuthorizeResult errorResult = new AuthServiceAuthorizeResult
-            {
-                IsSucceeded = false,
-                ErrorMessage = "Reset Password attempt failed. Invalid user id or bad password. Contact System adminstrator !."
-            };
-
-            var userIdentity = _idenityBLL.ValidateUser(model.Email, model.OldPassword);
             if (userIdentity != null)
             {
                 bool acctLocked = (string.IsNullOrEmpty(userIdentity.Locked) || (userIdentity.Locked.ToUpper()) == "Y") ? true : false;
@@ -138,19 +226,14 @@ namespace CTSWebApp.Services
                 }
 
                 // Validate the password 
-                if (!ValidatePassword(model.OldPassword, userIdentity))
-                {
-                    return errorResult;
-                }
-                
-                // Update the New password in db
-                byte[] newHash = GetPasswordHash();
-                string hashedPassword = GeneratePassword(model.NewPassword, newHash);
-                if ( ! _idenityBLL.UpdatePassword(userIdentity.CTSUserID, model.Email, newHash, hashedPassword) )
+                if (!ValidatePassword(password, userIdentity))
                 {
                     return errorResult;
                 }
 
+                //// GetUserRoles
+                //var roles = _idenityBLL.GetUserRoles(userIdentity.CTSUserID);
+                //string roleString = string.Join(",", roles.ToArray());
 
                 // Create Claims
                 var claims = new[]
@@ -158,6 +241,7 @@ namespace CTSWebApp.Services
                     new Claim("CTSUserID", userIdentity.CTSUserID.ToString()),
                     new Claim("UserName", userIdentity.UserName),
                     new Claim("Email", userIdentity.Email),
+                    //new Claim("Roles", roleString),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
                 };
 
@@ -183,6 +267,7 @@ namespace CTSWebApp.Services
                     Email = userIdentity.Email,
                     Locked = acctLocked,
                     ResetPassword = (!string.IsNullOrEmpty(userIdentity.ResetPassword) && userIdentity.ResetPassword.ToUpper() == "Y") ? true : false,
+                    //Roles = roleString,
                     IsSucceeded = true,
                     ErrorMessage = string.Empty
                 };

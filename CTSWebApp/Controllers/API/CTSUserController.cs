@@ -10,6 +10,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Security.Claims;
+using CTSWebApp.BLL;
 
 namespace CTSWebApp.Controllers.API
 {
@@ -20,12 +22,15 @@ namespace CTSWebApp.Controllers.API
     [Authorize(Policy = "JwtTokenValidationPolicy")]
     public class CTSUserController : ControllerBase
     {
+        private readonly IIdentityBLL _idenityBLL;
         private readonly ICTSDBRepository _ctsDBRepository;
         private readonly ILogger<CTSUserController> _logger;
         private readonly IMapper _mapper;
 
-        public CTSUserController(ICTSDBRepository ctsDBRepository, ILogger<CTSUserController> logger, IMapper mapper)
+        public CTSUserController(IIdentityBLL idenityBLL,
+            ICTSDBRepository ctsDBRepository, ILogger<CTSUserController> logger, IMapper mapper)
         {
+            this._idenityBLL = idenityBLL;
             this._ctsDBRepository = ctsDBRepository;
             this._logger = logger;
             this._mapper = mapper;
@@ -34,6 +39,7 @@ namespace CTSWebApp.Controllers.API
         [HttpGet]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
+        [NonAction]
         public ActionResult<IEnumerable<CTSUserViewModel>> Get()
         {
             try
@@ -50,6 +56,7 @@ namespace CTSWebApp.Controllers.API
         [HttpGet("{id:int}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
+        [NonAction]
         public ActionResult<CTSUserViewModel> Get(int id)
         {
             try
@@ -68,9 +75,85 @@ namespace CTSWebApp.Controllers.API
             }
         }
 
+        [HttpGet]
+        [Route("authfunctions")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public ActionResult<AuthorizedFunctionsViewModel> GetAuthorizedFunctions()
+        {
+            try
+            {
+                if ( HttpContext.User.Identity.IsAuthenticated)
+                {
+                    if ( HttpContext.User.Claims != null )
+                    {
+                        List<Claim> claims = HttpContext.User.Claims.ToList();
+                        Claim claim = claims.Where(x => x.Type == "CTSUserID").FirstOrDefault();
+                        if (claim == null || string.IsNullOrEmpty(claim.Value))
+                        {
+                            return Unauthorized();
+                        }
+
+                        int ctsUserId = int.Parse(claim.Value);
+
+                        // GetUserRoles
+                        var roles = _idenityBLL.GetUserRoles(ctsUserId);
+                        if (roles != null)
+                        {
+                            AuthorizedFunctionsViewModel viewModel = new AuthorizedFunctionsViewModel();
+                            viewModel.Functions = new List<string>();
+                            if (roles.Contains("Admin"))
+                            {
+                                viewModel.Functions.Add("Attendance");
+                                viewModel.Functions.Add("Attendance.GradeSelection");
+                                viewModel.Functions.Add("Attendance.TeacherSelection");
+                                viewModel.Functions.Add("Attendance.Save");
+
+                                viewModel.Functions.Add("TermScores");
+                                viewModel.Functions.Add("TermScores.GradeSelection");
+                                viewModel.Functions.Add("TermScores.TeacherSelection");
+                                viewModel.Functions.Add("TermScores.Save");
+                            }
+                            else if (roles.Contains("LeadTeacher"))
+                            {
+                                viewModel.Functions.Add("Attendance");
+                                viewModel.Functions.Add("Attendance.TeacherSelection");
+                                viewModel.Functions.Add("Attendance.Save");
+
+                                viewModel.Functions.Add("TermScores");
+                                viewModel.Functions.Add("TermScores.TeacherSelection");
+                                viewModel.Functions.Add("TermScores.Save");
+                            }
+                            else if (roles.Contains("Teacher"))
+                            {
+                                viewModel.Functions.Add("Attendance");
+                                viewModel.Functions.Add("Attendance.Save");
+
+                                viewModel.Functions.Add("TermScores");
+                                viewModel.Functions.Add("TermScores.Save");
+                            }
+
+                            if (viewModel.Functions.Count > 0)
+                            {
+                                return Ok(viewModel);
+                            }
+                            return Unauthorized();
+                        }
+                    }
+                }
+                return Unauthorized();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError($"Exception occurred in CTSUserController.GetAuthorizedFunctions() => {exception}");
+                return BadRequest("Exception occurred in ctsuser/authfunctions");
+            }
+        }
+
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
+        [NonAction]
         public IActionResult SaveOrUpdate([FromBody]CTSUserViewModel ctsUserViewModel)
         {
             try
