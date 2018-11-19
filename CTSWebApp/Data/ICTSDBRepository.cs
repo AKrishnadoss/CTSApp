@@ -19,7 +19,7 @@ namespace CTSWebApp.Data
         TeacherAssignment GetTeacherAssignment(int teacherID);
         IEnumerable<StudentEnrollment> GetAssignedStudents(int teacherID);
         IEnumerable<StudentWeekGrade> GetAssignedStudentsWeekGrade(int teacherId, int weekId);
-        IEnumerable<StudentTermScore> GetAssignedStudentsTermScore(int teacherID, int weekId);
+        IEnumerable<StudentTermScore> GetAssignedStudentsTermScore(int teacherID, int termNo, int weekId);
 
         CTSUser SaveOrUpdate(CTSUser teacher);
 

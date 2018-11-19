@@ -68,7 +68,7 @@ export class AttendanceComponent  implements OnInit {
         if (!this._authService.hasAccess("Attendance")) {
             // TODO: navigate to unauthorized page
             this._loggerService.log("Unauthorized access");
-            window.location.href = "/error";
+            //window.location.href = "/error";
         }
         this._loggerService.log("Access is authorized");
 

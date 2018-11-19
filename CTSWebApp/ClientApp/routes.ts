@@ -12,6 +12,8 @@ export const AppRoutes = [
 	{ path : "attendance",component: AttendanceComponent},
     { path: "home", component: HomeComponent },
     { path: "scores", component: ScoresComponent }
+    // TODO: Page not found
+    // TODO: Session timed out or Unauthorized access
 	//{ path : "contactus", component: ContactComponent}
 ]
 

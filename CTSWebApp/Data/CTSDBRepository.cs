@@ -438,7 +438,7 @@ namespace CTSWebApp.Data
             return null;
         }
 
-        public IEnumerable<StudentTermScore> GetAssignedStudentsTermScore(int teacherID, int weekId)
+        public IEnumerable<StudentTermScore> GetAssignedStudentsTermScore(int teacherID, int termNo, int weekId)
         {
             _logger.LogInformation("CTSDBRepository.GetAssignedStudentsTermScore() called");
             List<SqlParameter> paramList = new List<SqlParameter>();
@@ -447,6 +447,13 @@ namespace CTSWebApp.Data
                 ParameterName = "@teacherId",
                 SqlDbType = System.Data.SqlDbType.Int,
                 SqlValue = teacherID
+            });
+
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@termNo",
+                SqlDbType = System.Data.SqlDbType.Int,
+                SqlValue = termNo
             });
 
             paramList.Add(new SqlParameter
@@ -472,7 +479,7 @@ namespace CTSWebApp.Data
             });
 
 
-            var result = _dbContext.StudentTermScore.FromSql("EXEC SELECT_STUDENTTERMSCORE @teacherId, @weekId, @Result OUT, @ErrorMessage OUT", paramList.ToArray());
+            var result = _dbContext.StudentTermScore.FromSql("EXEC SELECT_STUDENTTERMSCORE @teacherId, @termNo, @weekId, @Result OUT, @ErrorMessage OUT", paramList.ToArray());
             if (result != null )
             {
                 return result.ToList();

@@ -54,6 +54,7 @@ var AuthService = /** @class */ (function () {
     };
     AuthService.prototype.hasAccess = function (fnName) {
         var allowed = false;
+        this.getAuthFunctions();
         if (this.authFunctions != null && this.authFunctions.functions != null && this.authFunctions.functions.length > 0) {
             var item = this.authFunctions.functions.find(function (x) { return x == fnName; });
             if (item != null) {

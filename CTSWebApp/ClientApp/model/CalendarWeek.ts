@@ -5,6 +5,6 @@
     weekNo: number;
     description: string;
     weekDate: any;
-    TermNo: number;
+    termNo: number;
     active: string;
 }

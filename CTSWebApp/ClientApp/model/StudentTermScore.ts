@@ -1,4 +1,10 @@
-﻿export class StudentTermScore {
+﻿export class StudentTermScoreResult {
+    dataFreeze: boolean;
+    termScoreEntryAllowed: boolean;
+    studentTermScores : StudentTermScore[];
+}
+
+export class StudentTermScore {
 
     id: number;
     studentID: string;

@@ -28,13 +28,15 @@ namespace CTSWebApp.Controllers.API
         private readonly ILogger<TeacherController> _logger;
         private readonly IMapper _mapper;
         private readonly ITeacherBLL _teacherBLL;
+        private readonly ICalendarBLL _calendarBLL;
 
         public TeacherController(ICTSDBRepository ctsDBRepository, ILogger<TeacherController> logger, IMapper mapper,
-            ITeacherBLL teacherBLL)
+            ITeacherBLL teacherBLL, ICalendarBLL calendarBLL)
         {
             this._logger = logger;
             this._mapper = mapper;
             this._teacherBLL = teacherBLL;
+            this._calendarBLL = calendarBLL;
         }
 
         [HttpGet]
@@ -202,25 +204,55 @@ namespace CTSWebApp.Controllers.API
         }
 
         [HttpGet]
-        [Route("assignmentById/{teacherId:int}/studentscores/{weekId:int}")]
+        [Route("assignmentById/{teacherId:int}/studentscores/{termNo:int}/{weekId:int}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public ActionResult<IEnumerable<StudentTermScore>> GetAssignedStudentsTermScore(int teacherId, int weekId)
+        public ActionResult<StudentTermScoreResultViewModel> GetAssignedStudentsTermScore(int teacherId, int termNo, int weekId)
         {
             try
             {
                 //System.Threading.Thread.Sleep(2000);
-                var result = _teacherBLL.GetAssignedStudentsTermScore(teacherId, weekId);
+                var result = _teacherBLL.GetAssignedStudentsTermScore(teacherId, termNo, weekId);
                 if (result != null && result.Count() > 0)
                 {
-                    return Ok(result);// _mapper.Map<IEnumerable<StudentWeekGrade>, IEnumerable<StudentWeekGradeViewModel>>(result));
+
+                    StudentTermScoreResultViewModel resultViewModel = new StudentTermScoreResultViewModel();
+                    resultViewModel.DataFreeze = false;
+                    resultViewModel.TermScoreEntryAllowed = false;
+                    resultViewModel.StudentTermScores = _mapper.Map<IEnumerable<StudentTermScore>, IEnumerable<StudentTermScoreViewModel>>(result);
+                    StudentTermScoreViewModel vm = resultViewModel.StudentTermScores.FirstOrDefault();
+                    if ( ! string.IsNullOrEmpty(vm.DataFreeze) && vm.DataFreeze.ToUpper() == "Y")
+                    {
+                        resultViewModel.DataFreeze = true;
+                    }
+
+                    if (resultViewModel.DataFreeze == false)
+                    {
+                        IEnumerable<CalendarWeek> calendarWeeks = this._calendarBLL.GetCalendarWeeks();
+                        CalendarWeek cw = calendarWeeks.Where(c => c.ID == vm.CalendarWeekID).FirstOrDefault();
+
+                        if (cw != null)
+                        {
+                            resultViewModel.TermScoreEntryAllowed = DateTime.Today >= cw.WeekDate ? true : false;
+                        }
+                    }
+
+                    return Ok(resultViewModel);
                 }
-                return Ok(null);
+                else
+                {
+                    StudentTermScoreResultViewModel resultViewModel = new StudentTermScoreResultViewModel();
+                    resultViewModel.StudentTermScores = null;
+                    resultViewModel.DataFreeze = true;
+                    resultViewModel.TermScoreEntryAllowed = false;
+                    return Ok(resultViewModel);
+                }
+                
             }
             catch (Exception exception)
             {
-                _logger.LogError($"Exception occurred in GetAssignedStudentsTermScore(teacherId, weekId) => {exception}");
-                return BadRequest("Exception occurred in teacher/assignmentById/teacherId/studentscores/weekId");
+                _logger.LogError($"Exception occurred in GetAssignedStudentsTermScore(teacherId, termNo, weekId) => {exception}");
+                return BadRequest("Exception occurred in teacher/assignmentById/teacherId/studentscores/termNo/weekId");
             }
         }
 

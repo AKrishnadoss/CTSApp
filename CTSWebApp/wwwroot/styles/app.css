@@ -28,6 +28,10 @@
    height:40px; 
 }
 
+.w60 {
+    width: 60px;
+}
+
 .w90p{
     width:90%;
 }

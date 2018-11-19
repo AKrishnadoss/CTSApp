@@ -296,7 +296,7 @@ var AttendanceComponent = /** @class */ (function () {
         if (!this._authService.hasAccess("Attendance")) {
             // TODO: navigate to unauthorized page
             this._loggerService.log("Unauthorized access");
-            window.location.href = "/error";
+            //window.location.href = "/error";
         }
         this._loggerService.log("Access is authorized");
         this.userName = this._authService.getUserName();
@@ -773,7 +773,7 @@ var ScoresComponent = /** @class */ (function () {
         if (!this._authService.hasAccess("TermScores")) {
             // TODO: navigate to unauthorized page
             this._loggerService.log("Unauthorized access");
-            window.location.href = "/error";
+            //window.location.href = "/error";
         }
         this._loggerService.log("Access is authorized");
         this.isSelectTermLoading = false;
@@ -783,15 +783,17 @@ var ScoresComponent = /** @class */ (function () {
         this.isSelectTeacherLoading = false;
         this.teacherLoadError = "";
         this.selectedTermWeekId = 0;
-        this.selectedGrade = "";
+        this.selectedGrade = "0";
         this.selectedTeacherId = 0;
         this.isStudentTermScoreGridLoading = false;
-        this.termScoreGridErrorMessage = "";
+        this.studentGridServerErrorMessage = "";
         this.selectGradeEnabled = true;
         this.selectTeachedEnabled = true;
-        this.studentGridServerErrorMessage = "";
         this.studentGridServerSuccessMessage = "";
         this.isStudentTermScoreGridSaving = false;
+        this.showStudentTestScoreGrid = false;
+        this.studentTermScoreDataFreeze = false;
+        this.studentTermScoreEntryAllowed = true;
         this.populateTerms();
         if (this._authService.hasAccess("TermScores.GradeSelection")) {
             this.populateGrades();
@@ -805,6 +807,7 @@ var ScoresComponent = /** @class */ (function () {
         if (this._authService.hasAccess("TermScores.GradeSelection")) {
             this.selectedGrade = "0";
             this.selectedTeacherId = 0;
+            this.Teachers = null;
         }
         else {
             this.populateGradeAndTeacherDetails();
@@ -814,7 +817,7 @@ var ScoresComponent = /** @class */ (function () {
     ScoresComponent.prototype.onSelectGrade = function (value) {
         this.selectedGrade = value;
         if (this._authService.hasAccess("TermScores.TeacherSelection")) {
-            if (this.selectedGrade != "0") {
+            if (this.selectedGrade != "0" && this.selectedTermWeekId != 0) {
                 this.populateTeachers();
             }
         }
@@ -912,13 +915,32 @@ var ScoresComponent = /** @class */ (function () {
     };
     ScoresComponent.prototype.populateStudentTermScoresGrid = function () {
         var _this = this;
+        this.showStudentTestScoreGrid = false;
         if (this.selectedTermWeekId != 0 && this.selectedGrade != "0" && this.selectedTeacherId != 0) {
             this.isStudentTermScoreGridLoading = true;
-            this.termScoreGridErrorMessage = "";
-            this._teacherService.getStudentTermScores(this.selectedTeacherId, this.selectedTermWeekId)
+            this.studentGridServerErrorMessage = "";
+            this.studentGridServerWarningMessage = "";
+            this.studentTermScoreDataFreeze = false;
+            this.studentTermScoreEntryAllowed = true;
+            console.log('selectedTermWeekId = ' + this.selectedTermWeekId);
+            var cw = this.CalendarWeeks.find(function (x) { return x.id == _this.selectedTermWeekId; });
+            var termNo = cw.termNo;
+            console.log('termNo = ' + termNo);
+            this._teacherService.getStudentTermScores(this.selectedTeacherId, termNo, this.selectedTermWeekId)
                 .subscribe(function (result) {
-                _this.StudentTermScores = result;
                 _this.isStudentTermScoreGridLoading = false;
+                _this.StudentTermScores = result.studentTermScores;
+                if (_this.StudentTermScores != null) {
+                    _this.studentTermScoreDataFreeze = result.dataFreeze;
+                    _this.studentTermScoreEntryAllowed = result.termScoreEntryAllowed;
+                    _this.showStudentTestScoreGrid = true;
+                    if (_this.studentTermScoreDataFreeze == true || _this.studentTermScoreEntryAllowed == false) {
+                        _this.studentGridServerWarningMessage = "Term Score entry is not allowed !";
+                    }
+                }
+                else {
+                    _this.studentGridServerWarningMessage = "No attendance score found.";
+                }
             }, function (err) {
                 _this.isStudentTermScoreGridLoading = false;
                 _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
@@ -926,9 +948,17 @@ var ScoresComponent = /** @class */ (function () {
                     // data not found
                     _this.StudentTermScores = null;
                 }
-                _this.termScoreGridErrorMessage = "Error Occured while retrieving information : " + err.statusText;
+                _this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.statusText;
             });
         }
+    };
+    ScoresComponent.prototype.cancelClick = function () {
+        this.showStudentTestScoreGrid = false;
+        this.studentGridServerSuccessMessage = "";
+        this.studentGridServerErrorMessage = "";
+        this.studentGridServerWarningMessage = "";
+        this.StudentTermScores = null;
+        this.selectedTeacherId = 0;
     };
     ScoresComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
@@ -954,7 +984,7 @@ var ScoresComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<header class=\"container-fluid p0\">\r\n    <nav class=\"navbar navbar-light navbar-expand-md bgcolorMenu\">\r\n        <div class=\"row \">\r\n            <button class=\"navbar-toggler\" data-toggle=\"collapse\" data-target=\"#menuBar\">\r\n                <span class=\"navbar-toggler-icon\"></span>\r\n            </button>\r\n            <div id=\"menuBar\" class=\"navbar-collapse collapse\">\r\n                <ul class=\"navbar-nav\">\r\n                    <li class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/home\">Home</a></li>\r\n                    <li *ngIf=\"isLoggedOn\" class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/attendance\">Attendance</a></li>\r\n                    <li *ngIf=\"isLoggedOn\" class=\"nav-item active\"><a class=\"nav-link py-0\" routerLink=\"/scores\">Term Scores</a></li>\r\n                    <!--<li class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/contactus\">Contact Us</a></li>\r\n    <li class=\"nav-item\"><a class=\"nav-link py-0\">About Us</a></li>-->\r\n                </ul>\r\n            </div>\r\n        </div>\r\n    </nav>\r\n\r\n</header>\r\n<div class=\"container p0 mt10\">\r\n    <!--<h4 class=\"text-center\">{{pageTitle}}</h4>-->\r\n\r\n    <div class=\"row bgBar br5 m5 p5\">\r\n        <div class=\"col-md-4\">\r\n            <div class=\"input-group\">\r\n                <label for=\"selectTerm\" class=\"mt5\">Term</label>\r\n                <img *ngIf=\"isSelectTermLoading\" src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" />\r\n                <i *ngIf=\"termLoadError\" class=\"fa fa-exclamation-triangle form-control errorText\"> {{termLoadError}}</i>\r\n                <select *ngIf=\"!isSelectTermLoading && !termLoadError\" name=\"selectTerm\" class=\"ml10 selectpicker form-control selectWidth\" (change)=\"onSelectTerm($event.target.value)\">\r\n                    <option value=\"0\">--Select Term--</option>\r\n                    <option *ngFor=\"let week of CalendarWeeks\" value={{week.id}}>\r\n                        {{week.description}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n        </div>\r\n        <div class=\"col-md-4\">\r\n            <div class=\"input-group\">\r\n                <label for=\"selectGrade\" class=\"mt5\">Grade</label>\r\n                <img *ngIf=\"isSelectGradeLoading\" src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" />\r\n                <i *ngIf=\"gradeLoadError\" class=\"fa fa-exclamation-triangle form-control errorText\"> {{gradeLoadError}}</i>\r\n                <select *ngIf=\"!isSelectGradeLoading && !gradeLoadError\" name=\"selectGrade\" class=\"ml10 selectpicker form-control selectWidth\"\r\n                        (change)=\"onSelectGrade($event.target.value)\" [(ngModel)]=\"selectedGrade\" [disabled]=\"!selectGradeEnabled\">\r\n                    <option value=\"0\">--Select Grade--</option>\r\n                    <option *ngFor=\"let grade of Grades\" value={{grade.ctsGrade}}>\r\n                        {{grade.ctsGrade}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n\r\n        </div>\r\n        <div class=\"col-md-4\">\r\n            <div class=\"input-group\">\r\n                <label for=\"selectTeacher\" class=\"mt5\">Teacher</label>\r\n                <img *ngIf=\"isSelectTeacherLoading\" src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" />\r\n                <i *ngIf=\"teacherLoadError\" class=\"fa fa-exclamation-triangle form-control errorText\"> {{teacherLoadError}}</i>\r\n                <select *ngIf=\"!isSelectTeacherLoading && !teacherLoadError\" name=\"selectTeacher\" class=\"ml10 selectpicker form-control selectWidth\"\r\n                        (change)=\"onSelectTeacher($event.target.value)\" [(ngModel)]=\"selectedTeacherId\" [disabled]=\"!selectTeachedEnabled\">\r\n                    <option value=\"0\">--Select Teacher--</option>\r\n                    <option *ngFor=\"let teacher of Teachers\" value={{teacher.id}}>\r\n                        {{teacher.firstName}} {{teacher.lastName}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n        </div>\r\n    </div>\r\n\r\n    <div class=\"row\">\r\n        <div *ngIf=\"isStudentTermScoreGridLoading\" class=\"col-md-12\">Loading Student Term Scores. Please wait.<img src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" /></div>\r\n    </div>\r\n\r\n    <div class=\"row\" *ngIf=\"!isStudentTermScoreGridLoading\">\r\n        <div class=\"col-md-12\" id=\"no-more-tables\">\r\n            <label *ngIf=\"termScoreGridErrorMessage\">{{termScoreGridErrorMessage}}</label>\r\n            <table class=\"table-bordered table-condensed cf\" id=\"dev-table\">\r\n                <thead class=\"bgTableHead cf\">\r\n                    <tr>\r\n                        <th class=\"fw\">ID</th>\r\n                        <th class=\"fw w150\">First Name</th>\r\n                        <th class=\"fw w150\">Last Name</th>\r\n                        <th class=\"fw\">Attendance</th>\r\n                        <th class=\"fw\">Homework</th>\r\n                        <th class=\"fw\">Reading</th>\r\n                        <th class=\"fw\">Writing</th>\r\n                        <th class=\"fw\">Speaking</th>\r\n                        <th class=\"fw\">Behaviour</th>\r\n                        <th class=\"fw\">Quiz</th>\r\n                        <th class=\"fw\">Internal</th>\r\n                        <th class=\"fw\">Term Score</th>\r\n                        <th class=\"fw\">Total Score</th>\r\n                        <th class=\"fw w200\">Notes</th>\r\n                    </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr *ngFor=\"let testScore of StudentTermScores\">\r\n                        <td data-title=\"ID\">{{testScore.studentID}}</td>\r\n                        <td data-title=\"First Name\">{{testScore.firstName}}</td>\r\n                        <td data-title=\"Last Name\">{{testScore.lastName}}</td>\r\n                        <td data-title=\"Attendance\">{{testScore.attendance}}</td>\r\n                        <td data-title=\"Homework\">{{testScore.homework}}</td>\r\n                        <td data-title=\"Reading\">{{testScore.reading}}</td>\r\n                        <td data-title=\"Writing\">{{testScore.writing}}</td>\r\n                        <td data-title=\"Speaking\">{{testScore.speaking}}</td>\r\n                        <td data-title=\"Behavior\">{{testScore.behavior}}</td>\r\n                        <td data-title=\"Quiz\">{{testScore.quiz}}</td>\r\n                        <td data-title=\"Internal\">{{testScore.internalScore}}</td>\r\n                        <td data-title=\"Score\"><input class=\"form-control\" [(ngModel)]=\"testScore.termScore\" value=\"{{testScore.termScore}}\" /></td>\r\n                        <td data-title=\"Total Score\">{{(testScore.internalScore-0) + (testScore.termScore-0)}}</td>\r\n                        <td data-title=\"Notes\"><textarea class=\"form-control rounded-3\" rows=\"1\" [(ngModel)]=\"testScore.notes\" maxlength=\"100\">{{testScore.notes}}</textarea></td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n    </div>\r\n    <div class=\"row\">\r\n        <div *ngIf=\"studentGridServerErrorMessage\" class=\"col-md-12 mt10 ml10 errorText\"><i class=\"fa fa-exclamation-triangle\"></i> {{studentGridServerErrorMessage}} </div>\r\n        <div *ngIf=\"studentGridServerSuccessMessage\" class=\"col-md-12 mt10 ml10 successText\"><i class=\"fa fa-check-circle\"></i>  {{studentGridServerSuccessMessage}}</div>\r\n    </div>\r\n    <div class=\"row bgBar br5 m5 p5\" *ngIf=\"isStudentTermScoreGridSaving\">\r\n        <div class=\"col-md-12\">Saving Student Term Scores. Please wait.<img src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" /></div>\r\n    </div>\r\n    <div class=\"row bgBar br5 m5 p5\" *ngIf=\"!isStudentTermScoreGridSaving\">\r\n\r\n        <div class=\"col-md-4\"></div>\r\n        <div class=\"col-md-4 \">\r\n            <button class=\"btn btn-primary btn-sm\" type=\"button\" ><strong><i class=\"fa fa-times-circle\"></i> Cancel</strong></button>\r\n            <button class=\"btn btn-primary btn-sm ml10\" type=\"submit\" *ngIf=\"!isStudentTermScoreGridSaving\"><strong><i class=\"fa fa-save\"></i> Save</strong></button>\r\n        </div>\r\n        <div class=\"col-md-4\"></div>\r\n    </div>\r\n</div>\r\n\r\n"
+module.exports = "<header class=\"container-fluid p0\">\r\n    <nav class=\"navbar navbar-light navbar-expand-md bgcolorMenu\">\r\n        <div class=\"row \">\r\n            <button class=\"navbar-toggler\" data-toggle=\"collapse\" data-target=\"#menuBar\">\r\n                <span class=\"navbar-toggler-icon\"></span>\r\n            </button>\r\n            <div id=\"menuBar\" class=\"navbar-collapse collapse\">\r\n                <ul class=\"navbar-nav\">\r\n                    <li class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/home\">Home</a></li>\r\n                    <li *ngIf=\"isLoggedOn\" class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/attendance\">Attendance</a></li>\r\n                    <li *ngIf=\"isLoggedOn\" class=\"nav-item active\"><a class=\"nav-link py-0\" routerLink=\"/scores\">Term Scores</a></li>\r\n                    <!--<li class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/contactus\">Contact Us</a></li>\r\n    <li class=\"nav-item\"><a class=\"nav-link py-0\">About Us</a></li>-->\r\n                </ul>\r\n            </div>\r\n        </div>\r\n    </nav>\r\n\r\n</header>\r\n<div class=\"container p0 mt10\">\r\n    <!--<h4 class=\"text-center\">{{pageTitle}}</h4>-->\r\n\r\n    <div class=\"row bgBar br5 m5 p5\">\r\n        <div class=\"col-md-4\">\r\n            <div class=\"input-group\">\r\n                <label for=\"selectTerm\" class=\"mt5\">Term</label>\r\n                <img *ngIf=\"isSelectTermLoading\" src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" />\r\n                <i *ngIf=\"termLoadError\" class=\"fa fa-exclamation-triangle form-control errorText\"> {{termLoadError}}</i>\r\n                <select *ngIf=\"!isSelectTermLoading && !termLoadError\" name=\"selectTerm\" class=\"ml10 selectpicker form-control selectWidth\" (change)=\"onSelectTerm($event.target.value)\">\r\n                    <option value=\"0\">--Select Term--</option>\r\n                    <option *ngFor=\"let week of CalendarWeeks\" value={{week.id}}>\r\n                        {{week.description}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n        </div>\r\n        <div class=\"col-md-4\">\r\n            <div class=\"input-group\">\r\n                <label for=\"selectGrade\" class=\"mt5\">Grade</label>\r\n                <img *ngIf=\"isSelectGradeLoading\" src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" />\r\n                <i *ngIf=\"gradeLoadError\" class=\"fa fa-exclamation-triangle form-control errorText\"> {{gradeLoadError}}</i>\r\n                <select *ngIf=\"!isSelectGradeLoading && !gradeLoadError\" name=\"selectGrade\" class=\"ml10 selectpicker form-control selectWidth\"\r\n                        (change)=\"onSelectGrade($event.target.value)\" [(ngModel)]=\"selectedGrade\" [disabled]=\"!selectGradeEnabled\">\r\n                    <option value=\"0\">--Select Grade--</option>\r\n                    <option *ngFor=\"let grade of Grades\" value={{grade.ctsGrade}}>\r\n                        {{grade.ctsGrade}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n\r\n        </div>\r\n        <div class=\"col-md-4\">\r\n            <div class=\"input-group\">\r\n                <label for=\"selectTeacher\" class=\"mt5\">Teacher</label>\r\n                <img *ngIf=\"isSelectTeacherLoading\" src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" />\r\n                <i *ngIf=\"teacherLoadError\" class=\"fa fa-exclamation-triangle form-control errorText\"> {{teacherLoadError}}</i>\r\n                <select *ngIf=\"!isSelectTeacherLoading && !teacherLoadError\" name=\"selectTeacher\" class=\"ml10 selectpicker form-control selectWidth\"\r\n                        (change)=\"onSelectTeacher($event.target.value)\" [(ngModel)]=\"selectedTeacherId\" [disabled]=\"!selectTeachedEnabled\">\r\n                    <option value=\"0\">--Select Teacher--</option>\r\n                    <option *ngFor=\"let teacher of Teachers\" value={{teacher.id}}>\r\n                        {{teacher.firstName}} {{teacher.lastName}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n        </div>\r\n    </div>\r\n\r\n    <div class=\"row\">\r\n        <div *ngIf=\"isStudentTermScoreGridLoading\" class=\"col-md-12\">Loading Student Term Scores. Please wait.<img src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" /></div>\r\n        <div *ngIf=\"studentGridServerWarningMessage\" class=\"col-md-12 mt10 ml10 errorText\"><i class=\"fa fa-exclamation-triangle\"></i> {{studentGridServerWarningMessage}} </div>\r\n    </div>\r\n\r\n    <div class=\"row\" *ngIf=\"showStudentTestScoreGrid\">\r\n        <div class=\"col-md-12\" id=\"no-more-tables\">\r\n            <table class=\"table-bordered table-condensed cf\" id=\"dev-table\">\r\n                <thead class=\"bgTableHead cf\">\r\n                    <tr>\r\n                        <th class=\"fw\">ID</th>\r\n                        <th class=\"fw w150\">First Name</th>\r\n                        <th class=\"fw w150\">Last Name</th>\r\n                        <th class=\"fw\">Attendance</th>\r\n                        <th class=\"fw\">Homework</th>\r\n                        <th class=\"fw\">Reading</th>\r\n                        <th class=\"fw\">Writing</th>\r\n                        <th class=\"fw\">Speaking</th>\r\n                        <th class=\"fw\">Behaviour</th>\r\n                        <th class=\"fw\">Quiz</th>\r\n                        <th class=\"fw\">Internal</th>\r\n                        <th class=\"fw w60\">Term Score</th>\r\n                        <th class=\"fw\">Total Score</th>\r\n                        <th class=\"fw w200\">Notes</th>\r\n                    </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr *ngFor=\"let testScore of StudentTermScores\">\r\n                        <td data-title=\"ID\">{{testScore.studentID}}</td>\r\n                        <td data-title=\"First Name\">{{testScore.firstName}}</td>\r\n                        <td data-title=\"Last Name\">{{testScore.lastName}}</td>\r\n                        <td data-title=\"Attendance\">{{testScore.attendance}}</td>\r\n                        <td data-title=\"Homework\">{{testScore.homework}}</td>\r\n                        <td data-title=\"Reading\">{{testScore.reading}}</td>\r\n                        <td data-title=\"Writing\">{{testScore.writing}}</td>\r\n                        <td data-title=\"Speaking\">{{testScore.speaking}}</td>\r\n                        <td data-title=\"Behavior\">{{testScore.behavior}}</td>\r\n                        <td data-title=\"Quiz\">{{testScore.quiz}}</td>\r\n                        <td data-title=\"Internal\">{{testScore.internalScore}}</td>\r\n                        <td data-title=\"Score\">\r\n                            <input class=\"form-control\" [(ngModel)]=\"testScore.termScore\" value=\"{{testScore.termScore}}\" *ngIf=\"studentTermScoreEntryAllowed\" maxlength=\"3\" />\r\n                            <span *ngIf=\"!studentTermScoreEntryAllowed\">{{testScore.termScore}}</span>\r\n                        </td>\r\n                        <td data-title=\"Total Score\">{{(testScore.internalScore-0) + ((testScore.termScore-0)/2)}}</td>\r\n                        <td data-title=\"Notes\">\r\n                            <textarea class=\"form-control rounded-3\" rows=\"1\" [(ngModel)]=\"testScore.notes\" maxlength=\"100\" *ngIf=\"studentTermScoreEntryAllowed\">{{testScore.notes}}</textarea>\r\n                            <span *ngIf=\"!studentTermScoreEntryAllowed\">{{testScore.notes}}</span>\r\n                        </td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n    </div>\r\n    <div class=\"row\">\r\n        <div *ngIf=\"studentGridServerErrorMessage\" class=\"col-md-12 mt10 ml10 errorText\"><i class=\"fa fa-exclamation-triangle\"></i> {{studentGridServerErrorMessage}} </div>\r\n        <div *ngIf=\"studentGridServerSuccessMessage\" class=\"col-md-12 mt10 ml10 successText\"><i class=\"fa fa-check-circle\"></i>  {{studentGridServerSuccessMessage}}</div>\r\n    </div>\r\n    <div class=\"row bgBar br5 m5 p5\" *ngIf=\"isStudentTermScoreGridSaving\">\r\n        <div class=\"col-md-12\">Saving Student Term Scores. Please wait.<img src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" /></div>\r\n    </div>\r\n    <div class=\"row bgBar br5 m5 p5\" *ngIf=\"!isStudentTermScoreGridSaving && showStudentTestScoreGrid\">\r\n\r\n        <div class=\"col-md-4\"></div>\r\n        <div class=\"col-md-4 \">\r\n            <button class=\"btn btn-primary btn-sm\" type=\"button\" (click)=\"cancelClick()\"><strong><i class=\"fa fa-times-circle\"></i> Cancel</strong></button>\r\n            <button class=\"btn btn-primary btn-sm ml10\" type=\"submit\" *ngIf=\"studentTermScoreEntryAllowed\"><strong><i class=\"fa fa-save\"></i> Save</strong></button>\r\n        </div>\r\n        <div class=\"col-md-4\"></div>\r\n    </div>\r\n</div>\r\n\r\n"
 
 /***/ }),
 
@@ -1201,6 +1231,7 @@ var AuthService = /** @class */ (function () {
     };
     AuthService.prototype.hasAccess = function (fnName) {
         var allowed = false;
+        this.getAuthFunctions();
         if (this.authFunctions != null && this.authFunctions.functions != null && this.authFunctions.functions.length > 0) {
             var item = this.authFunctions.functions.find(function (x) { return x == fnName; });
             if (item != null) {
@@ -1448,8 +1479,8 @@ var TeacherService = /** @class */ (function () {
     TeacherService.prototype.getStudentWeekGrades = function (teacherId, weekId) {
         return this._http.get('/api/Teacher/assignmentById/' + teacherId + '/studentgrades/' + weekId);
     };
-    TeacherService.prototype.getStudentTermScores = function (teacherId, weekId) {
-        return this._http.get('/api/Teacher/assignmentById/' + teacherId + '/studentscores/' + weekId);
+    TeacherService.prototype.getStudentTermScores = function (teacherId, termNo, weekId) {
+        return this._http.get('/api/Teacher/assignmentById/' + teacherId + '/studentscores/' + termNo + '/' + weekId);
     };
     TeacherService = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])(),

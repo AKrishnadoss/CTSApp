@@ -38,11 +38,15 @@ export class ScoresComponent implements OnInit {
     selectTeachedEnabled: boolean;
 
     isStudentTermScoreGridLoading : boolean;
-	termScoreGridErrorMessage : string;
+    studentGridServerErrorMessage : string;
 	//StudentTestScores : Array<StudentTestScore> = new Array<StudentTestScore>();
     StudentTermScores: StudentTermScore[];
+    studentTermScoreDataFreeze: boolean;
+    studentTermScoreEntryAllowed: boolean;
+    studentGridServerWarningMessage: string;
 
-    studentGridServerErrorMessage: string;
+    showStudentTestScoreGrid: boolean;
+
     studentGridServerSuccessMessage: string;
     isStudentTermScoreGridSaving: boolean;
 
@@ -64,7 +68,7 @@ export class ScoresComponent implements OnInit {
         if (!this._authService.hasAccess("TermScores")) {
             // TODO: navigate to unauthorized page
             this._loggerService.log("Unauthorized access");
-            window.location.href = "/error";
+            //window.location.href = "/error";
         }
         this._loggerService.log("Access is authorized");
 
@@ -76,18 +80,21 @@ export class ScoresComponent implements OnInit {
 		this.teacherLoadError = "";
 
 		this.selectedTermWeekId = 0;
-		this.selectedGrade = "";
+        this.selectedGrade = "0";
 		this.selectedTeacherId = 0;
 
         this.isStudentTermScoreGridLoading = false;
-		this.termScoreGridErrorMessage = "";
+        this.studentGridServerErrorMessage = "";
 
         this.selectGradeEnabled = true;
         this.selectTeachedEnabled = true;
 
-        this.studentGridServerErrorMessage = "";
         this.studentGridServerSuccessMessage = "";
         this.isStudentTermScoreGridSaving = false;
+
+        this.showStudentTestScoreGrid = false;
+        this.studentTermScoreDataFreeze = false;
+        this.studentTermScoreEntryAllowed = true;
 
         this.populateTerms();
         if (this._authService.hasAccess("TermScores.GradeSelection")) {
@@ -105,6 +112,7 @@ export class ScoresComponent implements OnInit {
         if (this._authService.hasAccess("TermScores.GradeSelection")) {
             this.selectedGrade = "0";
             this.selectedTeacherId = 0;
+            this.Teachers = null;
         }
         else {
             this.populateGradeAndTeacherDetails();
@@ -115,7 +123,7 @@ export class ScoresComponent implements OnInit {
     onSelectGrade(value: any) {
         this.selectedGrade = value;
         if (this._authService.hasAccess("TermScores.TeacherSelection")) {
-            if (this.selectedGrade != "0") {
+            if (this.selectedGrade != "0" && this.selectedTermWeekId != 0) {
                 this.populateTeachers();
             }
         }
@@ -224,13 +232,32 @@ export class ScoresComponent implements OnInit {
     }
 
     populateStudentTermScoresGrid() {
+        this.showStudentTestScoreGrid = false;
         if (this.selectedTermWeekId != 0 && this.selectedGrade != "0" && this.selectedTeacherId != 0) {
             this.isStudentTermScoreGridLoading = true;
-            this.termScoreGridErrorMessage = "";
-            this._teacherService.getStudentTermScores(this.selectedTeacherId, this.selectedTermWeekId)
+            this.studentGridServerErrorMessage = "";
+            this.studentGridServerWarningMessage = "";
+            this.studentTermScoreDataFreeze = false;
+            this.studentTermScoreEntryAllowed = true;
+            console.log('selectedTermWeekId = ' + this.selectedTermWeekId);
+            let cw = this.CalendarWeeks.find(x => x.id == this.selectedTermWeekId);
+            let termNo = cw.termNo;
+            console.log('termNo = ' + termNo);
+            this._teacherService.getStudentTermScores(this.selectedTeacherId, termNo, this.selectedTermWeekId)
                 .subscribe(result => {
-                    this.StudentTermScores = result;
                     this.isStudentTermScoreGridLoading = false;
+                    this.StudentTermScores = result.studentTermScores;
+                    if (this.StudentTermScores != null) {
+                        this.studentTermScoreDataFreeze = result.dataFreeze;
+                        this.studentTermScoreEntryAllowed = result.termScoreEntryAllowed;
+                        this.showStudentTestScoreGrid = true;
+                        if (this.studentTermScoreDataFreeze == true || this.studentTermScoreEntryAllowed == false) {
+                            this.studentGridServerWarningMessage = "Term Score entry is not allowed !";
+                        }
+                    }
+                    else {
+                        this.studentGridServerWarningMessage = "No attendance score found.";
+                    }
                 },
                 err => {
                     this.isStudentTermScoreGridLoading = false;
@@ -239,10 +266,19 @@ export class ScoresComponent implements OnInit {
                         // data not found
                         this.StudentTermScores = null;
                     }
-                    this.termScoreGridErrorMessage = "Error Occured while retrieving information : " + err.statusText;
+                    this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.statusText;
                 });
         }
         
-	}
+    }
+
+    cancelClick() {
+        this.showStudentTestScoreGrid = false;
+        this.studentGridServerSuccessMessage = "";
+        this.studentGridServerErrorMessage = "";
+        this.studentGridServerWarningMessage = "";
+        this.StudentTermScores = null;
+        this.selectedTeacherId = 0;
+    }
 
 }

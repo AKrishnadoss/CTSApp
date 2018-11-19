@@ -16,16 +16,19 @@ using System.Text;
 using CTSWebApp.BLL;
 using CTSWebApp.Security;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CTSWebApp
 {
     public class Startup
     {
         private readonly IConfiguration _config;
+        private readonly IHostingEnvironment _environment;
 
-        public Startup(IConfiguration config)
+        public Startup(IConfiguration config, IHostingEnvironment environment)
         {
             this._config = config;
+            this._environment = environment;
         }
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
@@ -70,7 +73,13 @@ namespace CTSWebApp
 
             services.AddMemoryCache();
 
-            services.AddMvc()
+            services.AddMvc( config=> {
+                    if (_environment.IsDevelopment())
+                    {
+                    config.SslPort = 44324;
+                    }
+                config.Filters.Add(new RequireHttpsAttribute());
+            })
                 .SetCompatibilityVersion(Microsoft.AspNetCore.Mvc.CompatibilityVersion.Version_2_1);
 
             services.AddDistributedMemoryCache();

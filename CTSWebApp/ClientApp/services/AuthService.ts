@@ -73,6 +73,7 @@ export class AuthService {
 
     hasAccess(fnName: string): boolean {
         let allowed = false;
+        this.getAuthFunctions();
         if (this.authFunctions != null && this.authFunctions.functions != null && this.authFunctions.functions.length > 0) {
             var item  = this.authFunctions.functions.find(x => x == fnName);
             if (item != null) {
@@ -99,42 +100,4 @@ export class AuthService {
     callAuthFunctionsService() {
         return this._http.get<AuthFunctions>('/api/ctsuser/authfunctions');
     }
-
-    //isAdmin(): boolean{
-    //    console.log(this.roles);
-    //    if (this.roles != null && this.roles.indexOf("Admin") > -1) {
-    //        console.log("Admin.isAdmin()=true");
-    //        return true;
-    //    }
-    //    console.log("Admin.isAdmin()=false");
-    //    return false;
-    //}
-
-
-    //isTeacher(): boolean {
-    //    console.log(this.roles);
-    //    if (this.roles != null && this.roles.indexOf("Teacher") > -1) {
-    //        console.log("Admin.isTeacher()=true");
-    //        return true;
-    //    }
-    //    console.log("Admin.isTeacher()=false");
-    //    return false;
-    //}
-
-    //isAuthorized(accessName): boolean {
-    //    let access: boolean;
-    //    access = false;
-    //    switch (accessName) {
-    //        case "attendance":
-    //            if (this.isAdmin() || this.isTeacher()) {
-    //                access = true;
-    //            }
-    //            break;
-    //        default:
-    //            access = false;
-    //            break;
-    //    }
-    //    return access;
-    //}
-
 }

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { Teacher } from '../model/Teacher';
 import { StudentWeekGrade } from '../model/StudentWeekGrade';
-import { StudentTermScore } from '../model/StudentTermScore';
+import { StudentTermScoreResult } from '../model/StudentTermScore';
 
 
 @Injectable()
@@ -22,7 +22,7 @@ export class TeacherService {
         return this._http.get<StudentWeekGrade[]>('/api/Teacher/assignmentById/' + teacherId + '/studentgrades/' + weekId);
     }
 
-    getStudentTermScores(teacherId: number, weekId: number) {
-        return this._http.get<StudentTermScore[]>('/api/Teacher/assignmentById/' + teacherId + '/studentscores/' + weekId);
+    getStudentTermScores(teacherId: number, termNo: number, weekId: number) {
+        return this._http.get<StudentTermScoreResult>('/api/Teacher/assignmentById/' + teacherId + '/studentscores/' + termNo + '/' + weekId);
     }
 }

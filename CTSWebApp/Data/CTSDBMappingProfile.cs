@@ -34,6 +34,10 @@ namespace CTSWebApp.Data
 
             CreateMap<StudentWeekGrade, StudentWeekGradeViewModel>()
                 .ReverseMap();
+
+            CreateMap<StudentTermScore, StudentTermScoreViewModel>()
+                .ReverseMap();
+
         }
     }
 }

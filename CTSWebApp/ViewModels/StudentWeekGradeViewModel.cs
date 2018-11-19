@@ -8,6 +8,7 @@ namespace CTSWebApp.ViewModels
 {
     public class StudentWeekGradeViewModel
     {
+        [Required]
         public int ID { get; set; }
         [Required]
         public string StudentID { get; set; }
