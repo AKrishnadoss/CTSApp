@@ -17,6 +17,7 @@ var AppComponent = /** @class */ (function () {
         this.pageTitle = 'Home Page';
     }
     AppComponent.prototype.ngOnInit = function () {
+        var _this = this;
         var tokenElement = document.getElementById("hdnToken");
         if (tokenElement != null) {
             this.token = tokenElement.innerText;
@@ -90,6 +91,14 @@ var AppComponent = /** @class */ (function () {
             this._authService.setEmail(this.email);
             this._authService.setUserName(this.userName);
             this._authService.setExpiresBy(this.expiresBy);
+        }
+        if (this._authService.getIsLoggedOn() == true) {
+            this._authService.getAuthFunctions()
+                .subscribe(function (result) {
+                _this._authService.authFunctions = result;
+            }, function (err) {
+                _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+            });
         }
     };
     AppComponent = __decorate([

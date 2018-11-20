@@ -5,42 +5,42 @@ using System.Threading.Tasks;
 
 namespace CTSWebApp.Data.Entities
 {
-    public class StudentWeekGradeResult
+    public class StudentErrorResult
     {
-        public StudentWeekGradeResult()
+        public StudentErrorResult()
         {
 
         }
 
-        public StudentWeekGradeResult(bool result, string errorMessage)
+        public StudentErrorResult(bool result, string errorMessage)
         {
             this.Result = result;
             this.ErrorMessage = errorMessage;
-            this.StudentWeekGradeErrors = null;
+            this.StudentErrors = null;
         }
 
-        public StudentWeekGradeResult(bool result, string errorMessage, List<StudentWeekGradeError> studentWeekGradeErrors)
+        public StudentErrorResult(bool result, string errorMessage, List<StudentError> studentErrors)
         {
             this.Result = result;
             this.ErrorMessage = errorMessage;
-            this.StudentWeekGradeErrors = studentWeekGradeErrors;
+            this.StudentErrors = studentErrors;
         }
 
         public bool Result { get; set; }
         public string ErrorMessage { get; set; }
 
-        public List<StudentWeekGradeError> StudentWeekGradeErrors { get; set; }
+        public List<StudentError> StudentErrors { get; set; }
 
        
     }
 
-    public class StudentWeekGradeError
+    public class StudentError
     {
-        public StudentWeekGradeError()
+        public StudentError()
         {
 
         }
-        public StudentWeekGradeError(string studentID, string errorMessage)
+        public StudentError(string studentID, string errorMessage)
         {
             this.StudentID = studentID;
             this.ErrorMessage = errorMessage;

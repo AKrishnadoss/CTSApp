@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { AuthFunctions } from '../model/AuthFunctions';
 
+
 @Injectable()
 export class AuthService {
 	static instance : AuthService;
@@ -71,33 +72,46 @@ export class AuthService {
     }
 
 
-    hasAccess(fnName: string): boolean {
+    async hasAccess(fnName: string): Promise<boolean> {
         let allowed = false;
-        this.getAuthFunctions();
-        if (this.authFunctions != null && this.authFunctions.functions != null && this.authFunctions.functions.length > 0) {
-            var item  = this.authFunctions.functions.find(x => x == fnName);
-            if (item != null) {
-                allowed = true;
+        if (this.authFunctions == null) {
+            await this.callAuthFunctionsService()
+                .then((result) => {
+                    this.authFunctions = result;
+
+                    if (this.authFunctions != null && this.authFunctions.functions != null && this.authFunctions.functions.length > 0) {
+                        var item = this.authFunctions.functions.find(x => x == fnName);
+                        if (item != null) {
+                            allowed = true;
+                        }
+                        return allowed;
+                    }
+                });
+        }
+        else {
+            if (this.authFunctions != null && this.authFunctions.functions != null && this.authFunctions.functions.length > 0) {
+                var item = this.authFunctions.functions.find(x => x == fnName);
+                if (item != null) {
+                    allowed = true;
+                }
             }
         }
+        console.log("hasAccess=" + fnName);
+        console.log("allowed=" + allowed);
         return allowed;
     }
 
-    getAuthFunctions() {
+    async callAuthFunctionsService() {
         if (this.authFunctions == null) {
-            this.callAuthFunctionsService()
-                .subscribe(result => {
-                    //this._loggerService.log(JSON.stringify(result));
-                    this.authFunctions = result;
-                },
-                    err => {
-                        this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
-                        // Redirect to error page
-                    });
+            let promise = new Promise < AuthFunctions>(() => {
+                this._http.get<AuthFunctions>('/api/ctsuser/authfunctions')
+                    .toPromise()
+            });
+            return promise;
         }
     }
 
-    callAuthFunctionsService() {
+    getAuthFunctions() {
         return this._http.get<AuthFunctions>('/api/ctsuser/authfunctions');
     }
 }

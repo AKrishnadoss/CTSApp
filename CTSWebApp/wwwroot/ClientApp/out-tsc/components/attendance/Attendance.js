@@ -8,6 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from '../../services/AuthService';
 import { CalendarService } from '../../services/CalendarService';
 import { GradeService } from '../../services/GradeService';
@@ -16,28 +17,31 @@ import { TeacherService } from '../../services/TeacherService';
 import { StudentService } from '../../services/StudentService';
 import { LoggerService } from '../../services/LoggerService';
 var AttendanceComponent = /** @class */ (function () {
-    function AttendanceComponent(_authService, _calendarService, _gradeService, _teacherService, _studentService, _loggerService) {
+    function AttendanceComponent(_authService, _calendarService, _gradeService, _teacherService, _studentService, _loggerService, _router) {
         this._authService = _authService;
         this._calendarService = _calendarService;
         this._gradeService = _gradeService;
         this._teacherService = _teacherService;
         this._studentService = _studentService;
         this._loggerService = _loggerService;
+        this._router = _router;
         this.pageTitle = "Attendance";
         this.userName = '';
     }
     AttendanceComponent.prototype.ngOnInit = function () {
+        var _this = this;
         this.isLoggedOn = this._authService.getIsLoggedOn();
         if (this.isLoggedOn == false) {
-            window.location.href = "/logon/login";
+            this._loggerService.log("Not logged in");
+            this._router.navigate(["loggedOut"]);
             return;
         }
         if (!this._authService.hasAccess("Attendance")) {
-            // TODO: navigate to unauthorized page
             this._loggerService.log("Unauthorized access");
-            //window.location.href = "/error";
+            this._router.navigate(["accessDenied"]);
+            return;
         }
-        this._loggerService.log("Access is authorized");
+        this._loggerService.log("Attendance Access is authorized");
         this.userName = this._authService.getUserName();
         this.Scores = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         this.isSelectCalendarWeekLoading = false;
@@ -56,12 +60,20 @@ var AttendanceComponent = /** @class */ (function () {
         this.selectGradeEnabled = true;
         this.selectTeachedEnabled = true;
         this.getCalendarWeeks();
-        if (this._authService.hasAccess("Attendance.GradeSelection")) {
-            this.getGrades();
-        }
-        else {
-            this.getGradeAndTeacherDetails();
-        }
+        this.gradeSelectionAllowed = false;
+        this.teacherSelectionAllowed = false;
+        this._authService.hasAccess("Attendance.GradeSelection").then(function (x) {
+            _this.gradeSelectionAllowed = x;
+            if (_this.gradeSelectionAllowed == true) {
+                _this.getGrades();
+            }
+            else {
+                _this.getGradeAndTeacherDetails();
+            }
+        });
+        this._authService.hasAccess("Attendance.TeacherSelection").then(function (x) {
+            _this.teacherSelectionAllowed = x;
+        });
     };
     AttendanceComponent.prototype.getGrades = function () {
         var _this = this;
@@ -133,7 +145,7 @@ var AttendanceComponent = /** @class */ (function () {
     };
     AttendanceComponent.prototype.onSelectCalendarWeek = function (value) {
         this.calendarWeekId = value;
-        if (this._authService.hasAccess("Attendance.GradeSelection")) {
+        if (this.gradeSelectionAllowed == true) {
             this.selectedGrade = "0";
             this.selectedTeacherId = 0;
         }
@@ -143,7 +155,7 @@ var AttendanceComponent = /** @class */ (function () {
         this.displayStudentWeekGradeGrid();
     };
     AttendanceComponent.prototype.onSelectGrade = function (value) {
-        if (this._authService.hasAccess("Attendance.TeacherSelection")) {
+        if (this.teacherSelectionAllowed == true) {
             this.studentGridServerErrorMessage = "";
             this.showStudentGridServerErrorMessage = false;
             this.studentGridServerWarningMessage = "";
@@ -288,7 +300,7 @@ var AttendanceComponent = /** @class */ (function () {
             _this.isStudentWeekGradeGridSaving = false;
             _this.showStudentGridServerErrorMessage = true;
             _this.studentGridServerSuccessMessage = "";
-            _this.studentGridServerErrorMessage = "Save failed. " + err.statusText;
+            _this.studentGridServerErrorMessage = "Save failed. ";
         });
     };
     AttendanceComponent = __decorate([
@@ -300,7 +312,8 @@ var AttendanceComponent = /** @class */ (function () {
             GradeService,
             TeacherService,
             StudentService,
-            LoggerService])
+            LoggerService,
+            Router])
     ], AttendanceComponent);
     return AttendanceComponent;
 }());

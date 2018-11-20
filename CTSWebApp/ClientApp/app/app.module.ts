@@ -20,6 +20,8 @@ import {HomeComponent} from '../components/home/Home';
 import {ContactComponent} from '../components/contact/Contact'
 import {AttendanceComponent} from '../components/attendance/Attendance';
 import { ScoresComponent } from '../components/score/Scores';
+import { LoggedOutComponent } from '../components/loggedOut/loggedOut';
+import { AccessDeniedComponent } from '../components/accessDenied/accessDenied';
 
 
 @NgModule({
@@ -28,7 +30,9 @@ import { ScoresComponent } from '../components/score/Scores';
 	HomeComponent,
 	AttendanceComponent,
       ContactComponent,
-      ScoresComponent
+      ScoresComponent,
+      LoggedOutComponent,
+      AccessDeniedComponent
   ],
   imports: [
       BrowserModule,

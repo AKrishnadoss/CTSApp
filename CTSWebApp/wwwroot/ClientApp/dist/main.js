@@ -66,6 +66,7 @@ var AppComponent = /** @class */ (function () {
         this.pageTitle = 'Home Page';
     }
     AppComponent.prototype.ngOnInit = function () {
+        var _this = this;
         var tokenElement = document.getElementById("hdnToken");
         if (tokenElement != null) {
             this.token = tokenElement.innerText;
@@ -140,6 +141,14 @@ var AppComponent = /** @class */ (function () {
             this._authService.setUserName(this.userName);
             this._authService.setExpiresBy(this.expiresBy);
         }
+        if (this._authService.getIsLoggedOn() == true) {
+            this._authService.getAuthFunctions()
+                .subscribe(function (result) {
+                _this._authService.authFunctions = result;
+            }, function (err) {
+                _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+            });
+        }
     };
     AppComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
@@ -184,12 +193,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_contact_Contact__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../components/contact/Contact */ "./components/contact/Contact.ts");
 /* harmony import */ var _components_attendance_Attendance__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../components/attendance/Attendance */ "./components/attendance/Attendance.ts");
 /* harmony import */ var _components_score_Scores__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../components/score/Scores */ "./components/score/Scores.ts");
+/* harmony import */ var _components_loggedOut_loggedOut__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../components/loggedOut/loggedOut */ "./components/loggedOut/loggedOut.ts");
+/* harmony import */ var _components_accessDenied_accessDenied__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../components/accessDenied/accessDenied */ "./components/accessDenied/accessDenied.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
+
 
 
 
@@ -218,7 +231,9 @@ var AppModule = /** @class */ (function () {
                 _components_home_Home__WEBPACK_IMPORTED_MODULE_14__["HomeComponent"],
                 _components_attendance_Attendance__WEBPACK_IMPORTED_MODULE_16__["AttendanceComponent"],
                 _components_contact_Contact__WEBPACK_IMPORTED_MODULE_15__["ContactComponent"],
-                _components_score_Scores__WEBPACK_IMPORTED_MODULE_17__["ScoresComponent"]
+                _components_score_Scores__WEBPACK_IMPORTED_MODULE_17__["ScoresComponent"],
+                _components_loggedOut_loggedOut__WEBPACK_IMPORTED_MODULE_18__["LoggedOutComponent"],
+                _components_accessDenied_accessDenied__WEBPACK_IMPORTED_MODULE_19__["AccessDeniedComponent"]
             ],
             imports: [
                 _angular_platform_browser__WEBPACK_IMPORTED_MODULE_0__["BrowserModule"],
@@ -241,6 +256,62 @@ var AppModule = /** @class */ (function () {
 
 /***/ }),
 
+/***/ "./components/accessDenied/accessDenied.html":
+/*!**************************************************************!*\
+  !*** ../clientapp/components/accessDenied/accessDenied.html ***!
+  \**************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"container\">\r\n    <div class=\"jumbotron\">\r\n        <h2 style=\"color:darkred\">Sorry ! Access Denied for this Page. </h2>\r\n        <div>\r\n            Please contact system administrator to gain access. Click <button id=\"btnCancel\" type=\"reset\" class=\"btn btn-primary btn-sm\" (click)=\"homeClick()\"><i class=\"fa fa-home\" aria-hidden=\"true\"></i> here</button> to navigate to Home Page !\r\n        </div>\r\n    </div>\r\n</div>"
+
+/***/ }),
+
+/***/ "./components/accessDenied/accessDenied.ts":
+/*!************************************************************!*\
+  !*** ../clientapp/components/accessDenied/accessDenied.ts ***!
+  \************************************************************/
+/*! exports provided: AccessDeniedComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AccessDeniedComponent", function() { return AccessDeniedComponent; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "../node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/router */ "../node_modules/@angular/router/fesm5/router.js");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (undefined && undefined.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+var AccessDeniedComponent = /** @class */ (function () {
+    function AccessDeniedComponent(_router) {
+        this._router = _router;
+    }
+    AccessDeniedComponent.prototype.ngOnInit = function () {
+    };
+    AccessDeniedComponent.prototype.homeClick = function () {
+        this._router.navigate(["home"]);
+    };
+    AccessDeniedComponent = __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
+            template: __webpack_require__(/*! ./accessDenied.html */ "./components/accessDenied/accessDenied.html")
+        }),
+        __metadata("design:paramtypes", [_angular_router__WEBPACK_IMPORTED_MODULE_1__["Router"]])
+    ], AccessDeniedComponent);
+    return AccessDeniedComponent;
+}());
+
+
+
+/***/ }),
+
 /***/ "./components/attendance/Attendance.ts":
 /*!********************************************************!*\
   !*** ../clientapp/components/attendance/Attendance.ts ***!
@@ -252,13 +323,14 @@ var AppModule = /** @class */ (function () {
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AttendanceComponent", function() { return AttendanceComponent; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "../node_modules/@angular/core/fesm5/core.js");
-/* harmony import */ var _services_AuthService__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../services/AuthService */ "./services/AuthService.ts");
-/* harmony import */ var _services_CalendarService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../services/CalendarService */ "./services/CalendarService.ts");
-/* harmony import */ var _services_GradeService__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../services/GradeService */ "./services/GradeService.ts");
-/* harmony import */ var _model_Grade__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../model/Grade */ "./model/Grade.ts");
-/* harmony import */ var _services_TeacherService__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../services/TeacherService */ "./services/TeacherService.ts");
-/* harmony import */ var _services_StudentService__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../services/StudentService */ "./services/StudentService.ts");
-/* harmony import */ var _services_LoggerService__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../services/LoggerService */ "./services/LoggerService.ts");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/router */ "../node_modules/@angular/router/fesm5/router.js");
+/* harmony import */ var _services_AuthService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../services/AuthService */ "./services/AuthService.ts");
+/* harmony import */ var _services_CalendarService__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../services/CalendarService */ "./services/CalendarService.ts");
+/* harmony import */ var _services_GradeService__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../services/GradeService */ "./services/GradeService.ts");
+/* harmony import */ var _model_Grade__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../model/Grade */ "./model/Grade.ts");
+/* harmony import */ var _services_TeacherService__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../services/TeacherService */ "./services/TeacherService.ts");
+/* harmony import */ var _services_StudentService__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../services/StudentService */ "./services/StudentService.ts");
+/* harmony import */ var _services_LoggerService__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../services/LoggerService */ "./services/LoggerService.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -276,29 +348,34 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 
 
+
 var AttendanceComponent = /** @class */ (function () {
-    function AttendanceComponent(_authService, _calendarService, _gradeService, _teacherService, _studentService, _loggerService) {
+    function AttendanceComponent(_authService, _calendarService, _gradeService, _teacherService, _studentService, _loggerService, _router) {
         this._authService = _authService;
         this._calendarService = _calendarService;
         this._gradeService = _gradeService;
         this._teacherService = _teacherService;
         this._studentService = _studentService;
         this._loggerService = _loggerService;
+        this._router = _router;
         this.pageTitle = "Attendance";
         this.userName = '';
     }
     AttendanceComponent.prototype.ngOnInit = function () {
+        var _this = this;
         this.isLoggedOn = this._authService.getIsLoggedOn();
         if (this.isLoggedOn == false) {
-            window.location.href = "/logon/login";
+            this._loggerService.log("Not logged in");
+            this._router.navigate(["loggedOut"]);
             return;
         }
-        if (!this._authService.hasAccess("Attendance")) {
-            // TODO: navigate to unauthorized page
-            this._loggerService.log("Unauthorized access");
-            //window.location.href = "/error";
-        }
-        this._loggerService.log("Access is authorized");
+        this._authService.hasAccess("Attendance")
+            .then(function (x) {
+            if (x == false) {
+                _this._loggerService.log("Unauthorized access");
+                _this._router.navigate(["accessDenied"]);
+            }
+        });
         this.userName = this._authService.getUserName();
         this.Scores = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         this.isSelectCalendarWeekLoading = false;
@@ -317,12 +394,20 @@ var AttendanceComponent = /** @class */ (function () {
         this.selectGradeEnabled = true;
         this.selectTeachedEnabled = true;
         this.getCalendarWeeks();
-        if (this._authService.hasAccess("Attendance.GradeSelection")) {
-            this.getGrades();
-        }
-        else {
-            this.getGradeAndTeacherDetails();
-        }
+        this.gradeSelectionAllowed = false;
+        this.teacherSelectionAllowed = false;
+        this._authService.hasAccess("Attendance.GradeSelection").then(function (x) {
+            _this.gradeSelectionAllowed = x;
+            if (_this.gradeSelectionAllowed == true) {
+                _this.getGrades();
+            }
+            else {
+                _this.getGradeAndTeacherDetails();
+            }
+        });
+        this._authService.hasAccess("Attendance.TeacherSelection").then(function (x) {
+            _this.teacherSelectionAllowed = x;
+        });
     };
     AttendanceComponent.prototype.getGrades = function () {
         var _this = this;
@@ -370,7 +455,7 @@ var AttendanceComponent = /** @class */ (function () {
                 _this.Teachers = result;
                 //populate grade from result
                 var gr = new Array();
-                gr.push(new _model_Grade__WEBPACK_IMPORTED_MODULE_4__["Grade"](_this.Teachers[0].ctsGrade, _this.Teachers[0].ctsGrade));
+                gr.push(new _model_Grade__WEBPACK_IMPORTED_MODULE_5__["Grade"](_this.Teachers[0].ctsGrade, _this.Teachers[0].ctsGrade));
                 _this.Grades = gr;
                 _this.selectedGrade = _this.Teachers[0].ctsGrade;
                 _this.selectGradeEnabled = false;
@@ -394,7 +479,7 @@ var AttendanceComponent = /** @class */ (function () {
     };
     AttendanceComponent.prototype.onSelectCalendarWeek = function (value) {
         this.calendarWeekId = value;
-        if (this._authService.hasAccess("Attendance.GradeSelection")) {
+        if (this.gradeSelectionAllowed == true) {
             this.selectedGrade = "0";
             this.selectedTeacherId = 0;
         }
@@ -404,7 +489,7 @@ var AttendanceComponent = /** @class */ (function () {
         this.displayStudentWeekGradeGrid();
     };
     AttendanceComponent.prototype.onSelectGrade = function (value) {
-        if (this._authService.hasAccess("Attendance.TeacherSelection")) {
+        if (this.teacherSelectionAllowed == true) {
             this.studentGridServerErrorMessage = "";
             this.showStudentGridServerErrorMessage = false;
             this.studentGridServerWarningMessage = "";
@@ -549,19 +634,20 @@ var AttendanceComponent = /** @class */ (function () {
             _this.isStudentWeekGradeGridSaving = false;
             _this.showStudentGridServerErrorMessage = true;
             _this.studentGridServerSuccessMessage = "";
-            _this.studentGridServerErrorMessage = "Save failed. " + err.statusText;
+            _this.studentGridServerErrorMessage = "Save failed. ";
         });
     };
     AttendanceComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
             template: __webpack_require__(/*! ./attendance.html */ "./components/attendance/attendance.html")
         }),
-        __metadata("design:paramtypes", [_services_AuthService__WEBPACK_IMPORTED_MODULE_1__["AuthService"],
-            _services_CalendarService__WEBPACK_IMPORTED_MODULE_2__["CalendarService"],
-            _services_GradeService__WEBPACK_IMPORTED_MODULE_3__["GradeService"],
-            _services_TeacherService__WEBPACK_IMPORTED_MODULE_5__["TeacherService"],
-            _services_StudentService__WEBPACK_IMPORTED_MODULE_6__["StudentService"],
-            _services_LoggerService__WEBPACK_IMPORTED_MODULE_7__["LoggerService"]])
+        __metadata("design:paramtypes", [_services_AuthService__WEBPACK_IMPORTED_MODULE_2__["AuthService"],
+            _services_CalendarService__WEBPACK_IMPORTED_MODULE_3__["CalendarService"],
+            _services_GradeService__WEBPACK_IMPORTED_MODULE_4__["GradeService"],
+            _services_TeacherService__WEBPACK_IMPORTED_MODULE_6__["TeacherService"],
+            _services_StudentService__WEBPACK_IMPORTED_MODULE_7__["StudentService"],
+            _services_LoggerService__WEBPACK_IMPORTED_MODULE_8__["LoggerService"],
+            _angular_router__WEBPACK_IMPORTED_MODULE_1__["Router"]])
     ], AttendanceComponent);
     return AttendanceComponent;
 }());
@@ -649,7 +735,9 @@ module.exports = "<header class=\"container-fluid p0\">\r\n    <nav class=\"navb
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "HomeComponent", function() { return HomeComponent; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "../node_modules/@angular/core/fesm5/core.js");
-/* harmony import */ var _services_AuthService__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../services/AuthService */ "./services/AuthService.ts");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/router */ "../node_modules/@angular/router/fesm5/router.js");
+/* harmony import */ var _services_AuthService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../services/AuthService */ "./services/AuthService.ts");
+/* harmony import */ var _services_LoggerService__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../services/LoggerService */ "./services/LoggerService.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -661,20 +749,34 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 };
 
 
+
+
 var HomeComponent = /** @class */ (function () {
-    function HomeComponent(_authService) {
+    function HomeComponent(_authService, _loggerService, _router) {
         this._authService = _authService;
+        this._loggerService = _loggerService;
+        this._router = _router;
         this.pageTitle = 'Home Page';
         this.userName = '';
     }
     HomeComponent.prototype.ngOnInit = function () {
+        var _this = this;
         this.isLoggedOn = this._authService.getIsLoggedOn();
         this.userName = this._authService.getUserName();
+        this.appTitle = "Cary Tamil School - Attendance and Score System";
         if (this.isLoggedOn == false) {
             this.resetLoginControls();
         }
         else {
-            this._authService.getAuthFunctions();
+            if (this._authService.authFunctions == null) {
+                this._loggerService.log("home ts - > getting authFunctions");
+                this._authService.getAuthFunctions()
+                    .subscribe(function (result) {
+                    _this._authService.authFunctions = result;
+                }, function (err) {
+                    _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+                });
+            }
         }
         this.CarouselImages = [
             { src: "/img/Carousel-1.jpg", alt: 'First', slideTo: "0" },
@@ -702,7 +804,9 @@ var HomeComponent = /** @class */ (function () {
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
             template: __webpack_require__(/*! ./home.html */ "./components/home/home.html")
         }),
-        __metadata("design:paramtypes", [_services_AuthService__WEBPACK_IMPORTED_MODULE_1__["AuthService"]])
+        __metadata("design:paramtypes", [_services_AuthService__WEBPACK_IMPORTED_MODULE_2__["AuthService"],
+            _services_LoggerService__WEBPACK_IMPORTED_MODULE_3__["LoggerService"],
+            _angular_router__WEBPACK_IMPORTED_MODULE_1__["Router"]])
     ], HomeComponent);
     return HomeComponent;
 }());
@@ -718,7 +822,66 @@ var HomeComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<header class=\"container-fluid p0\">\r\n    <nav class=\"navbar navbar-light navbar-expand-md bgcolorMenu\">\r\n        <div class=\"row \">\r\n            <button class=\"navbar-toggler\" data-toggle=\"collapse\" data-target=\"#menuBar\">\r\n                <span class=\"navbar-toggler-icon\"></span>\r\n            </button>\r\n            <div id=\"menuBar\" class=\"navbar-collapse collapse\">\r\n                <ul class=\"navbar-nav\">\r\n                    <li class=\"nav-item active\"><a class=\"nav-link py-0\" routerLink=\"/home\">Home</a></li>\r\n                    <li *ngIf=\"isLoggedOn\" class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/attendance\">Attendance</a></li>\r\n                    <li *ngIf=\"isLoggedOn\" class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/scores\">Term Scores</a></li>\r\n                    <!--<li class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/contactus\">Contact Us</a></li>\r\n    <li class=\"nav-item\"><a class=\"nav-link py-0\">About Us</a></li>-->\r\n                </ul>\r\n            </div>\r\n        </div>\r\n    </nav>\r\n</header>\r\n<div class=\"container-fluid p0\">\r\n    <!--<h4 class=\"text-center\">{{pageTitle}}</h4>-->\r\n    <h5 *ngIf=\"isLoggedOn\">Welcome {{userName}}</h5>\r\n    <div class=\"row m5 p5\">\r\n        <div class=\"col-md-3\">\r\n            <p>\r\n                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam auctor dui vel est consequat malesuada. Proin nec leo quam. Aliquam massa dolor, ullamcorper et orci nec, imperdiet tempus justo. Fusce risus tortor, scelerisque nec sagittis et, tincidunt non lectus. Proin suscipit pharetra nisl. Curabitur sagittis dictum facilisis. Nam pretium luctus.\r\n            </p>\r\n        </div>\r\n        <div class=\"col-md-6\">\r\n           <div id=\"carouselExampleIndicators\" class=\"carousel slide\" data-ride=\"carousel\" data-interval=\"3000\">\r\n                <ol class=\"carousel-indicators\">\r\n                    <li data-target=\"#carouselExampleIndicators\" data-slide-to=\"0\" class=\"active\"></li>\r\n                    <li data-target=\"#carouselExampleIndicators\" data-slide-to=\"1\" ></li>\r\n                    <li data-target=\"#carouselExampleIndicators\" data-slide-to=\"2\" ></li>\r\n                    <li data-target=\"#carouselExampleIndicators\" data-slide-to=\"3\" ></li>\r\n                    <li data-target=\"#carouselExampleIndicators\" data-slide-to=\"4\" ></li>\r\n                </ol>\r\n                <div class=\"carousel-inner\">\r\n                    <div class=\"carousel-item active\" >\r\n                        <img class=\"d-block w90p\" src=\"/img/Carousel-1.jpg\" alt=\"First\">\r\n                    </div>\r\n                    <div class=\"carousel-item \" >\r\n                        <img class=\"d-block w90p\" src=\"/img/Carousel-2.jpg\" alt=\"Second\">\r\n                    </div>\r\n                    <div class=\"carousel-item \">\r\n                        <img class=\"d-block w90p\" src=\"/img/Carousel-3.jpg\" alt=\"Third\">\r\n                    </div>\r\n                    <div class=\"carousel-item \">\r\n                        <img class=\"d-block w90p\" src=\"/img/Carousel-4.jpg\" alt=\"Fourth\">\r\n                    </div>\r\n                    <div class=\"carousel-item \">\r\n                        <img class=\"d-block w90p\" src=\"/img/Carousel-5.jpg\" alt=\"Fifth\">\r\n                    </div>\r\n                </div>\r\n                <a class=\"carousel-control-prev\" href=\"#carouselExampleIndicators\" role=\"button\" data-slide=\"prev\">\r\n                    <span class=\"carousel-control-prev-icon\" aria-hidden=\"true\"></span>\r\n                    <span class=\"sr-only\">Previous</span>\r\n                </a>\r\n                <a class=\"carousel-control-next\" href=\"#carouselExampleIndicators\" role=\"button\" data-slide=\"next\">\r\n                    <span class=\"carousel-control-next-icon\" aria-hidden=\"true\"></span>\r\n                    <span class=\"sr-only\">Next</span>\r\n                </a>\r\n\r\n\r\n\r\n              <!--<ol class=\"carousel-indicators\">\r\n                <li data-target=\"#carouselExampleIndicators\" data-slide-to=\"0\" class=\"active\"></li>\r\n                <li data-target=\"#carouselExampleIndicators\" data-slide-to=\"1\"></li>\r\n                <li data-target=\"#carouselExampleIndicators\" data-slide-to=\"2\"></li>\r\n              </ol>\r\n              <div class=\"carousel-inner\">\r\n                <div class=\"carousel-item active\">\r\n                  <img class=\"d-block w-100\" src=\"...\" alt=\"First slide\">\r\n                </div>\r\n                <div class=\"carousel-item\">\r\n                  <img class=\"d-block w-100\" src=\"...\" alt=\"Second slide\">\r\n                </div>\r\n                <div class=\"carousel-item\">\r\n                  <img class=\"d-block w-100\" src=\"...\" alt=\"Third slide\">\r\n                </div>\r\n              </div>\r\n              <a class=\"carousel-control-prev\" href=\"#carouselExampleIndicators\" role=\"button\" data-slide=\"prev\">\r\n                <span class=\"carousel-control-prev-icon\" aria-hidden=\"true\"></span>\r\n                <span class=\"sr-only\">Previous</span>\r\n              </a>\r\n              <a class=\"carousel-control-next\" href=\"#carouselExampleIndicators\" role=\"button\" data-slide=\"next\">\r\n                <span class=\"carousel-control-next-icon\" aria-hidden=\"true\"></span>\r\n                <span class=\"sr-only\">Next</span>\r\n              </a>-->\r\n            </div>\r\n        </div>\r\n        <div class=\"col-md-3\">\r\n            <p>\r\n                Aliquam molestie lacus vehicula, sodales felis vel, dictum nunc. Morbi hendrerit turpis vitae leo ornare.\r\n            </p>\r\n        </div>\r\n    </div>\r\n</div>\r\n"
+module.exports = "<header class=\"container-fluid p0\">\r\n    <nav class=\"navbar navbar-light navbar-expand-md bgcolorMenu\">\r\n        <div class=\"row \">\r\n            <button class=\"navbar-toggler\" data-toggle=\"collapse\" data-target=\"#menuBar\">\r\n                <span class=\"navbar-toggler-icon\"></span>\r\n            </button>\r\n            <div id=\"menuBar\" class=\"navbar-collapse collapse\">\r\n                <ul class=\"navbar-nav\">\r\n                    <li class=\"nav-item active\"><a class=\"nav-link py-0\" routerLink=\"/home\">Home</a></li>\r\n                    <li *ngIf=\"isLoggedOn\" class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/attendance\">Attendance</a></li>\r\n                    <li *ngIf=\"isLoggedOn\" class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/scores\">Term Scores</a></li>\r\n                    <!--<li class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/contactus\">Contact Us</a></li>\r\n    <li class=\"nav-item\"><a class=\"nav-link py-0\">About Us</a></li>-->\r\n                </ul>\r\n            </div>\r\n        </div>\r\n    </nav>\r\n</header>\r\n<div class=\"container-fluid p0\">\r\n    <!--<h4 class=\"text-center\">{{pageTitle}}</h4>-->\r\n    <div class=\"row m5 p5\">\r\n        <div class=\"col-md-3\">\r\n            <h5 *ngIf=\"isLoggedOn\">Vanakkam {{userName}}</h5>\r\n            <p *ngIf=\"!isLoggedOn\">\r\n                Welcome to <strong>{{appTitle}}</strong>. Once you are authenticated, You can enter your weekly attendance for your class in \"Attendance\" page. Term scores can be entered in \"Term Scores\" page. Contact system administrator to get access.\r\n            </p>\r\n            <p *ngIf=\"isLoggedOn\">\r\n                Welcome to <strong>{{appTitle}}</strong>. You can enter your weekly attendance for your class in \"Attendance\" page. Term scores can be entered in \"Term Scores\" page. \r\n            </p>\r\n        </div>\r\n        <div class=\"col-md-6\">\r\n           <div id=\"carouselExampleIndicators\" class=\"carousel slide\" data-ride=\"carousel\" data-interval=\"3000\">\r\n                <ol class=\"carousel-indicators\">\r\n                    <li data-target=\"#carouselExampleIndicators\" data-slide-to=\"0\" class=\"active\"></li>\r\n                    <li data-target=\"#carouselExampleIndicators\" data-slide-to=\"1\" ></li>\r\n                    <li data-target=\"#carouselExampleIndicators\" data-slide-to=\"2\" ></li>\r\n                    <li data-target=\"#carouselExampleIndicators\" data-slide-to=\"3\" ></li>\r\n                    <li data-target=\"#carouselExampleIndicators\" data-slide-to=\"4\" ></li>\r\n                </ol>\r\n                <div class=\"carousel-inner\">\r\n                    <div class=\"carousel-item active\" >\r\n                        <img class=\"d-block w90p\" src=\"/img/Carousel-1.jpg\" alt=\"First\">\r\n                    </div>\r\n                    <div class=\"carousel-item \" >\r\n                        <img class=\"d-block w90p\" src=\"/img/Carousel-2.jpg\" alt=\"Second\">\r\n                    </div>\r\n                    <div class=\"carousel-item \">\r\n                        <img class=\"d-block w90p\" src=\"/img/Carousel-3.jpg\" alt=\"Third\">\r\n                    </div>\r\n                    <div class=\"carousel-item \">\r\n                        <img class=\"d-block w90p\" src=\"/img/Carousel-4.jpg\" alt=\"Fourth\">\r\n                    </div>\r\n                    <div class=\"carousel-item \">\r\n                        <img class=\"d-block w90p\" src=\"/img/Carousel-5.jpg\" alt=\"Fifth\">\r\n                    </div>\r\n                </div>\r\n                <a class=\"carousel-control-prev\" href=\"#carouselExampleIndicators\" role=\"button\" data-slide=\"prev\">\r\n                    <span class=\"carousel-control-prev-icon\" aria-hidden=\"true\"></span>\r\n                    <span class=\"sr-only\">Previous</span>\r\n                </a>\r\n                <a class=\"carousel-control-next\" href=\"#carouselExampleIndicators\" role=\"button\" data-slide=\"next\">\r\n                    <span class=\"carousel-control-next-icon\" aria-hidden=\"true\"></span>\r\n                    <span class=\"sr-only\">Next</span>\r\n                </a>\r\n            </div>\r\n        </div>\r\n        <div class=\"col-md-3\">\r\n            <p>\r\n                More features are coming soon. Stay tuned!\r\n            </p>\r\n        </div>\r\n    </div>\r\n</div>\r\n"
+
+/***/ }),
+
+/***/ "./components/loggedOut/loggedOut.html":
+/*!********************************************************!*\
+  !*** ../clientapp/components/loggedOut/loggedOut.html ***!
+  \********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "<div class=\"container\">\r\n    <div class=\"jumbotron\">\r\n        <h2 style=\"color:darkred\">Session Expired or You have logged out !</h2>\r\n        <div>Please <button id=\"btnLogin\" type=\"reset\" class=\"btn btn-success btn-sm\" (click)=\"loginClick()\"><i class=\"fa fa-unlock\" aria-hidden=\"true\"></i> login</button> to access requested Page or\r\n        Click <button id=\"btnCancel\" type=\"reset\" class=\"btn btn-primary btn-sm\" (click)=\"homeClick()\"><i class=\"fa fa-home\" aria-hidden=\"true\"></i> here</button> to navigate to Home Page !</div>\r\n    </div>\r\n</div>"
+
+/***/ }),
+
+/***/ "./components/loggedOut/loggedOut.ts":
+/*!******************************************************!*\
+  !*** ../clientapp/components/loggedOut/loggedOut.ts ***!
+  \******************************************************/
+/*! exports provided: LoggedOutComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "LoggedOutComponent", function() { return LoggedOutComponent; });
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "../node_modules/@angular/core/fesm5/core.js");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/router */ "../node_modules/@angular/router/fesm5/router.js");
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (undefined && undefined.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+
+
+var LoggedOutComponent = /** @class */ (function () {
+    function LoggedOutComponent(_router) {
+        this._router = _router;
+    }
+    LoggedOutComponent.prototype.ngOnInit = function () {
+    };
+    LoggedOutComponent.prototype.loginClick = function () {
+        window.location.href = "/logon/login";
+    };
+    LoggedOutComponent.prototype.homeClick = function () {
+        this._router.navigate(["home"]);
+    };
+    LoggedOutComponent = __decorate([
+        Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
+            template: __webpack_require__(/*! ./loggedOut.html */ "./components/loggedOut/loggedOut.html")
+        }),
+        __metadata("design:paramtypes", [_angular_router__WEBPACK_IMPORTED_MODULE_1__["Router"]])
+    ], LoggedOutComponent);
+    return LoggedOutComponent;
+}());
+
+
 
 /***/ }),
 
@@ -733,12 +896,14 @@ module.exports = "<header class=\"container-fluid p0\">\r\n    <nav class=\"navb
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ScoresComponent", function() { return ScoresComponent; });
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ "../node_modules/@angular/core/fesm5/core.js");
-/* harmony import */ var _services_AuthService__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../services/AuthService */ "./services/AuthService.ts");
-/* harmony import */ var _services_LoggerService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../services/LoggerService */ "./services/LoggerService.ts");
-/* harmony import */ var _services_GradeService__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../services/GradeService */ "./services/GradeService.ts");
-/* harmony import */ var _model_Grade__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../model/Grade */ "./model/Grade.ts");
-/* harmony import */ var _services_CalendarService__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../services/CalendarService */ "./services/CalendarService.ts");
-/* harmony import */ var _services_TeacherService__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../services/TeacherService */ "./services/TeacherService.ts");
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/router */ "../node_modules/@angular/router/fesm5/router.js");
+/* harmony import */ var _services_AuthService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../services/AuthService */ "./services/AuthService.ts");
+/* harmony import */ var _services_LoggerService__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../services/LoggerService */ "./services/LoggerService.ts");
+/* harmony import */ var _services_GradeService__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../services/GradeService */ "./services/GradeService.ts");
+/* harmony import */ var _model_Grade__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../model/Grade */ "./model/Grade.ts");
+/* harmony import */ var _services_CalendarService__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../services/CalendarService */ "./services/CalendarService.ts");
+/* harmony import */ var _services_TeacherService__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../services/TeacherService */ "./services/TeacherService.ts");
+/* harmony import */ var _services_StudentService__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../services/StudentService */ "./services/StudentService.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -755,27 +920,36 @@ var __metadata = (undefined && undefined.__metadata) || function (k, v) {
 
 
 
+
+//import { transformAll } from '@angular/compiler/src/render3/r3_ast';
+
 var ScoresComponent = /** @class */ (function () {
-    function ScoresComponent(_authService, _calendarService, _gradeService, _teacherService, _loggerService) {
+    function ScoresComponent(_authService, _calendarService, _gradeService, _teacherService, _studentService, _loggerService, _router) {
         this._authService = _authService;
         this._calendarService = _calendarService;
         this._gradeService = _gradeService;
         this._teacherService = _teacherService;
+        this._studentService = _studentService;
         this._loggerService = _loggerService;
+        this._router = _router;
         this.Terms = new Array();
     }
     ScoresComponent.prototype.ngOnInit = function () {
+        var _this = this;
         this.isLoggedOn = this._authService.getIsLoggedOn();
         if (this.isLoggedOn == false) {
-            window.location.href = "/logon/login";
+            //window.location.href = "/logon/login";
+            this._loggerService.log("Not logged in");
+            this._router.navigate(["loggedOut"]);
             return;
         }
-        if (!this._authService.hasAccess("TermScores")) {
-            // TODO: navigate to unauthorized page
-            this._loggerService.log("Unauthorized access");
-            //window.location.href = "/error";
-        }
-        this._loggerService.log("Access is authorized");
+        this._authService.hasAccess("TermScores")
+            .then(function (x) {
+            if (x == false) {
+                _this._loggerService.log("Unauthorized access");
+                _this._router.navigate(["accessDenied"]);
+            }
+        });
         this.isSelectTermLoading = false;
         this.termLoadError = "";
         this.isSelectGradeLoading = false;
@@ -785,6 +959,7 @@ var ScoresComponent = /** @class */ (function () {
         this.selectedTermWeekId = 0;
         this.selectedGrade = "0";
         this.selectedTeacherId = 0;
+        this.selectedTermNo = 0;
         this.isStudentTermScoreGridLoading = false;
         this.studentGridServerErrorMessage = "";
         this.selectGradeEnabled = true;
@@ -795,16 +970,24 @@ var ScoresComponent = /** @class */ (function () {
         this.studentTermScoreDataFreeze = false;
         this.studentTermScoreEntryAllowed = true;
         this.populateTerms();
-        if (this._authService.hasAccess("TermScores.GradeSelection")) {
-            this.populateGrades();
-        }
-        else {
-            this.populateGradeAndTeacherDetails();
-        }
+        this.gradeSelectionAllowed = false;
+        this.teacherSelectionAllowed = false;
+        this._authService.hasAccess("TermScores.GradeSelection").then(function (x) {
+            _this.gradeSelectionAllowed = x;
+            if (_this.gradeSelectionAllowed == true) {
+                _this.populateGrades();
+            }
+            else {
+                _this.populateGradeAndTeacherDetails();
+            }
+        });
+        this._authService.hasAccess("TermScores.TeacherSelection").then(function (x) {
+            _this.teacherSelectionAllowed = x;
+        });
     };
     ScoresComponent.prototype.onSelectTerm = function (value) {
         this.selectedTermWeekId = value;
-        if (this._authService.hasAccess("TermScores.GradeSelection")) {
+        if (this.gradeSelectionAllowed == true) {
             this.selectedGrade = "0";
             this.selectedTeacherId = 0;
             this.Teachers = null;
@@ -816,7 +999,7 @@ var ScoresComponent = /** @class */ (function () {
     };
     ScoresComponent.prototype.onSelectGrade = function (value) {
         this.selectedGrade = value;
-        if (this._authService.hasAccess("TermScores.TeacherSelection")) {
+        if (this.teacherSelectionAllowed == true) {
             if (this.selectedGrade != "0" && this.selectedTermWeekId != 0) {
                 this.populateTeachers();
             }
@@ -891,7 +1074,7 @@ var ScoresComponent = /** @class */ (function () {
                 _this.Teachers = result;
                 //populate grade from result
                 var gr = new Array();
-                gr.push(new _model_Grade__WEBPACK_IMPORTED_MODULE_4__["Grade"](_this.Teachers[0].ctsGrade, _this.Teachers[0].ctsGrade));
+                gr.push(new _model_Grade__WEBPACK_IMPORTED_MODULE_5__["Grade"](_this.Teachers[0].ctsGrade, _this.Teachers[0].ctsGrade));
                 _this.Grades = gr;
                 _this.selectedGrade = _this.Teachers[0].ctsGrade;
                 _this.selectGradeEnabled = false;
@@ -919,14 +1102,15 @@ var ScoresComponent = /** @class */ (function () {
         if (this.selectedTermWeekId != 0 && this.selectedGrade != "0" && this.selectedTeacherId != 0) {
             this.isStudentTermScoreGridLoading = true;
             this.studentGridServerErrorMessage = "";
+            this.studentGridServerSuccessMessage = "";
             this.studentGridServerWarningMessage = "";
             this.studentTermScoreDataFreeze = false;
             this.studentTermScoreEntryAllowed = true;
-            console.log('selectedTermWeekId = ' + this.selectedTermWeekId);
+            //console.log('selectedTermWeekId = ' + this.selectedTermWeekId);
             var cw = this.CalendarWeeks.find(function (x) { return x.id == _this.selectedTermWeekId; });
-            var termNo = cw.termNo;
-            console.log('termNo = ' + termNo);
-            this._teacherService.getStudentTermScores(this.selectedTeacherId, termNo, this.selectedTermWeekId)
+            this.selectedTermNo = cw.termNo;
+            //console.log('termNo = ' + termNo);
+            this._teacherService.getStudentTermScores(this.selectedTeacherId, this.selectedTermNo, this.selectedTermWeekId)
                 .subscribe(function (result) {
                 _this.isStudentTermScoreGridLoading = false;
                 _this.StudentTermScores = result.studentTermScores;
@@ -939,7 +1123,7 @@ var ScoresComponent = /** @class */ (function () {
                     }
                 }
                 else {
-                    _this.studentGridServerWarningMessage = "No attendance score found.";
+                    _this.studentGridServerWarningMessage = "No attendance score found to generate average scores.";
                 }
             }, function (err) {
                 _this.isStudentTermScoreGridLoading = false;
@@ -960,15 +1144,38 @@ var ScoresComponent = /** @class */ (function () {
         this.StudentTermScores = null;
         this.selectedTeacherId = 0;
     };
+    ScoresComponent.prototype.saveClick = function () {
+        var _this = this;
+        this.isStudentTermScoreGridSaving = true;
+        this.studentGridServerErrorMessage = "";
+        this.studentGridServerSuccessMessage = "";
+        this.studentGridServerWarningMessage = "";
+        // Set selected TermNo for all records
+        this.StudentTermScores.forEach(function (x) {
+            x.termNo = _this.selectedTermNo;
+        });
+        this._studentService.saveStudentTestScores(this.StudentTermScores)
+            .subscribe(function (result) {
+            _this.isStudentTermScoreGridSaving = false;
+            _this.studentGridServerSuccessMessage = "Student Term Scores saved successfully !";
+        }, function (err) {
+            console.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+            _this.isStudentTermScoreGridSaving = false;
+            _this.studentGridServerSuccessMessage = "";
+            _this.studentGridServerErrorMessage = "Save failed. ";
+        });
+    };
     ScoresComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
             template: __webpack_require__(/*! ./scores.html */ "./components/score/scores.html")
         }),
-        __metadata("design:paramtypes", [_services_AuthService__WEBPACK_IMPORTED_MODULE_1__["AuthService"],
-            _services_CalendarService__WEBPACK_IMPORTED_MODULE_5__["CalendarService"],
-            _services_GradeService__WEBPACK_IMPORTED_MODULE_3__["GradeService"],
-            _services_TeacherService__WEBPACK_IMPORTED_MODULE_6__["TeacherService"],
-            _services_LoggerService__WEBPACK_IMPORTED_MODULE_2__["LoggerService"]])
+        __metadata("design:paramtypes", [_services_AuthService__WEBPACK_IMPORTED_MODULE_2__["AuthService"],
+            _services_CalendarService__WEBPACK_IMPORTED_MODULE_6__["CalendarService"],
+            _services_GradeService__WEBPACK_IMPORTED_MODULE_4__["GradeService"],
+            _services_TeacherService__WEBPACK_IMPORTED_MODULE_7__["TeacherService"],
+            _services_StudentService__WEBPACK_IMPORTED_MODULE_8__["StudentService"],
+            _services_LoggerService__WEBPACK_IMPORTED_MODULE_3__["LoggerService"],
+            _angular_router__WEBPACK_IMPORTED_MODULE_1__["Router"]])
     ], ScoresComponent);
     return ScoresComponent;
 }());
@@ -984,7 +1191,7 @@ var ScoresComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<header class=\"container-fluid p0\">\r\n    <nav class=\"navbar navbar-light navbar-expand-md bgcolorMenu\">\r\n        <div class=\"row \">\r\n            <button class=\"navbar-toggler\" data-toggle=\"collapse\" data-target=\"#menuBar\">\r\n                <span class=\"navbar-toggler-icon\"></span>\r\n            </button>\r\n            <div id=\"menuBar\" class=\"navbar-collapse collapse\">\r\n                <ul class=\"navbar-nav\">\r\n                    <li class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/home\">Home</a></li>\r\n                    <li *ngIf=\"isLoggedOn\" class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/attendance\">Attendance</a></li>\r\n                    <li *ngIf=\"isLoggedOn\" class=\"nav-item active\"><a class=\"nav-link py-0\" routerLink=\"/scores\">Term Scores</a></li>\r\n                    <!--<li class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/contactus\">Contact Us</a></li>\r\n    <li class=\"nav-item\"><a class=\"nav-link py-0\">About Us</a></li>-->\r\n                </ul>\r\n            </div>\r\n        </div>\r\n    </nav>\r\n\r\n</header>\r\n<div class=\"container p0 mt10\">\r\n    <!--<h4 class=\"text-center\">{{pageTitle}}</h4>-->\r\n\r\n    <div class=\"row bgBar br5 m5 p5\">\r\n        <div class=\"col-md-4\">\r\n            <div class=\"input-group\">\r\n                <label for=\"selectTerm\" class=\"mt5\">Term</label>\r\n                <img *ngIf=\"isSelectTermLoading\" src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" />\r\n                <i *ngIf=\"termLoadError\" class=\"fa fa-exclamation-triangle form-control errorText\"> {{termLoadError}}</i>\r\n                <select *ngIf=\"!isSelectTermLoading && !termLoadError\" name=\"selectTerm\" class=\"ml10 selectpicker form-control selectWidth\" (change)=\"onSelectTerm($event.target.value)\">\r\n                    <option value=\"0\">--Select Term--</option>\r\n                    <option *ngFor=\"let week of CalendarWeeks\" value={{week.id}}>\r\n                        {{week.description}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n        </div>\r\n        <div class=\"col-md-4\">\r\n            <div class=\"input-group\">\r\n                <label for=\"selectGrade\" class=\"mt5\">Grade</label>\r\n                <img *ngIf=\"isSelectGradeLoading\" src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" />\r\n                <i *ngIf=\"gradeLoadError\" class=\"fa fa-exclamation-triangle form-control errorText\"> {{gradeLoadError}}</i>\r\n                <select *ngIf=\"!isSelectGradeLoading && !gradeLoadError\" name=\"selectGrade\" class=\"ml10 selectpicker form-control selectWidth\"\r\n                        (change)=\"onSelectGrade($event.target.value)\" [(ngModel)]=\"selectedGrade\" [disabled]=\"!selectGradeEnabled\">\r\n                    <option value=\"0\">--Select Grade--</option>\r\n                    <option *ngFor=\"let grade of Grades\" value={{grade.ctsGrade}}>\r\n                        {{grade.ctsGrade}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n\r\n        </div>\r\n        <div class=\"col-md-4\">\r\n            <div class=\"input-group\">\r\n                <label for=\"selectTeacher\" class=\"mt5\">Teacher</label>\r\n                <img *ngIf=\"isSelectTeacherLoading\" src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" />\r\n                <i *ngIf=\"teacherLoadError\" class=\"fa fa-exclamation-triangle form-control errorText\"> {{teacherLoadError}}</i>\r\n                <select *ngIf=\"!isSelectTeacherLoading && !teacherLoadError\" name=\"selectTeacher\" class=\"ml10 selectpicker form-control selectWidth\"\r\n                        (change)=\"onSelectTeacher($event.target.value)\" [(ngModel)]=\"selectedTeacherId\" [disabled]=\"!selectTeachedEnabled\">\r\n                    <option value=\"0\">--Select Teacher--</option>\r\n                    <option *ngFor=\"let teacher of Teachers\" value={{teacher.id}}>\r\n                        {{teacher.firstName}} {{teacher.lastName}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n        </div>\r\n    </div>\r\n\r\n    <div class=\"row\">\r\n        <div *ngIf=\"isStudentTermScoreGridLoading\" class=\"col-md-12\">Loading Student Term Scores. Please wait.<img src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" /></div>\r\n        <div *ngIf=\"studentGridServerWarningMessage\" class=\"col-md-12 mt10 ml10 errorText\"><i class=\"fa fa-exclamation-triangle\"></i> {{studentGridServerWarningMessage}} </div>\r\n    </div>\r\n\r\n    <div class=\"row\" *ngIf=\"showStudentTestScoreGrid\">\r\n        <div class=\"col-md-12\" id=\"no-more-tables\">\r\n            <table class=\"table-bordered table-condensed cf\" id=\"dev-table\">\r\n                <thead class=\"bgTableHead cf\">\r\n                    <tr>\r\n                        <th class=\"fw\">ID</th>\r\n                        <th class=\"fw w150\">First Name</th>\r\n                        <th class=\"fw w150\">Last Name</th>\r\n                        <th class=\"fw\">Attendance</th>\r\n                        <th class=\"fw\">Homework</th>\r\n                        <th class=\"fw\">Reading</th>\r\n                        <th class=\"fw\">Writing</th>\r\n                        <th class=\"fw\">Speaking</th>\r\n                        <th class=\"fw\">Behaviour</th>\r\n                        <th class=\"fw\">Quiz</th>\r\n                        <th class=\"fw\">Internal</th>\r\n                        <th class=\"fw w60\">Term Score</th>\r\n                        <th class=\"fw\">Total Score</th>\r\n                        <th class=\"fw w200\">Notes</th>\r\n                    </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr *ngFor=\"let testScore of StudentTermScores\">\r\n                        <td data-title=\"ID\">{{testScore.studentID}}</td>\r\n                        <td data-title=\"First Name\">{{testScore.firstName}}</td>\r\n                        <td data-title=\"Last Name\">{{testScore.lastName}}</td>\r\n                        <td data-title=\"Attendance\">{{testScore.attendance}}</td>\r\n                        <td data-title=\"Homework\">{{testScore.homework}}</td>\r\n                        <td data-title=\"Reading\">{{testScore.reading}}</td>\r\n                        <td data-title=\"Writing\">{{testScore.writing}}</td>\r\n                        <td data-title=\"Speaking\">{{testScore.speaking}}</td>\r\n                        <td data-title=\"Behavior\">{{testScore.behavior}}</td>\r\n                        <td data-title=\"Quiz\">{{testScore.quiz}}</td>\r\n                        <td data-title=\"Internal\">{{testScore.internalScore}}</td>\r\n                        <td data-title=\"Score\">\r\n                            <input class=\"form-control\" [(ngModel)]=\"testScore.termScore\" value=\"{{testScore.termScore}}\" *ngIf=\"studentTermScoreEntryAllowed\" maxlength=\"3\" />\r\n                            <span *ngIf=\"!studentTermScoreEntryAllowed\">{{testScore.termScore}}</span>\r\n                        </td>\r\n                        <td data-title=\"Total Score\">{{(testScore.internalScore-0) + ((testScore.termScore-0)/2)}}</td>\r\n                        <td data-title=\"Notes\">\r\n                            <textarea class=\"form-control rounded-3\" rows=\"1\" [(ngModel)]=\"testScore.notes\" maxlength=\"100\" *ngIf=\"studentTermScoreEntryAllowed\">{{testScore.notes}}</textarea>\r\n                            <span *ngIf=\"!studentTermScoreEntryAllowed\">{{testScore.notes}}</span>\r\n                        </td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n    </div>\r\n    <div class=\"row\">\r\n        <div *ngIf=\"studentGridServerErrorMessage\" class=\"col-md-12 mt10 ml10 errorText\"><i class=\"fa fa-exclamation-triangle\"></i> {{studentGridServerErrorMessage}} </div>\r\n        <div *ngIf=\"studentGridServerSuccessMessage\" class=\"col-md-12 mt10 ml10 successText\"><i class=\"fa fa-check-circle\"></i>  {{studentGridServerSuccessMessage}}</div>\r\n    </div>\r\n    <div class=\"row bgBar br5 m5 p5\" *ngIf=\"isStudentTermScoreGridSaving\">\r\n        <div class=\"col-md-12\">Saving Student Term Scores. Please wait.<img src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" /></div>\r\n    </div>\r\n    <div class=\"row bgBar br5 m5 p5\" *ngIf=\"!isStudentTermScoreGridSaving && showStudentTestScoreGrid\">\r\n\r\n        <div class=\"col-md-4\"></div>\r\n        <div class=\"col-md-4 \">\r\n            <button class=\"btn btn-primary btn-sm\" type=\"button\" (click)=\"cancelClick()\"><strong><i class=\"fa fa-times-circle\"></i> Cancel</strong></button>\r\n            <button class=\"btn btn-primary btn-sm ml10\" type=\"submit\" *ngIf=\"studentTermScoreEntryAllowed\"><strong><i class=\"fa fa-save\"></i> Save</strong></button>\r\n        </div>\r\n        <div class=\"col-md-4\"></div>\r\n    </div>\r\n</div>\r\n\r\n"
+module.exports = "<header class=\"container-fluid p0\">\r\n    <nav class=\"navbar navbar-light navbar-expand-md bgcolorMenu\">\r\n        <div class=\"row \">\r\n            <button class=\"navbar-toggler\" data-toggle=\"collapse\" data-target=\"#menuBar\">\r\n                <span class=\"navbar-toggler-icon\"></span>\r\n            </button>\r\n            <div id=\"menuBar\" class=\"navbar-collapse collapse\">\r\n                <ul class=\"navbar-nav\">\r\n                    <li class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/home\">Home</a></li>\r\n                    <li *ngIf=\"isLoggedOn\" class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/attendance\">Attendance</a></li>\r\n                    <li *ngIf=\"isLoggedOn\" class=\"nav-item active\"><a class=\"nav-link py-0\" routerLink=\"/scores\">Term Scores</a></li>\r\n                    <!--<li class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/contactus\">Contact Us</a></li>\r\n    <li class=\"nav-item\"><a class=\"nav-link py-0\">About Us</a></li>-->\r\n                </ul>\r\n            </div>\r\n        </div>\r\n    </nav>\r\n\r\n</header>\r\n<div class=\"container p0 mt10\">\r\n    <!--<h4 class=\"text-center\">{{pageTitle}}</h4>-->\r\n\r\n    <div class=\"row bgBar br5 m5 p5\">\r\n        <div class=\"col-md-4\">\r\n            <div class=\"input-group\">\r\n                <label for=\"selectTerm\" class=\"mt5\">Term</label>\r\n                <img *ngIf=\"isSelectTermLoading\" src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" />\r\n                <i *ngIf=\"termLoadError\" class=\"fa fa-exclamation-triangle form-control errorText\"> {{termLoadError}}</i>\r\n                <select *ngIf=\"!isSelectTermLoading && !termLoadError\" name=\"selectTerm\" class=\"ml10 selectpicker form-control selectWidth\" (change)=\"onSelectTerm($event.target.value)\">\r\n                    <option value=\"0\">--Select Term--</option>\r\n                    <option *ngFor=\"let week of CalendarWeeks\" value={{week.id}}>\r\n                        {{week.description}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n        </div>\r\n        <div class=\"col-md-4\">\r\n            <div class=\"input-group\">\r\n                <label for=\"selectGrade\" class=\"mt5\">Grade</label>\r\n                <img *ngIf=\"isSelectGradeLoading\" src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" />\r\n                <i *ngIf=\"gradeLoadError\" class=\"fa fa-exclamation-triangle form-control errorText\"> {{gradeLoadError}}</i>\r\n                <select *ngIf=\"!isSelectGradeLoading && !gradeLoadError\" name=\"selectGrade\" class=\"ml10 selectpicker form-control selectWidth\"\r\n                        (change)=\"onSelectGrade($event.target.value)\" [(ngModel)]=\"selectedGrade\" [disabled]=\"!selectGradeEnabled\">\r\n                    <option value=\"0\">--Select Grade--</option>\r\n                    <option *ngFor=\"let grade of Grades\" value={{grade.ctsGrade}}>\r\n                        {{grade.ctsGrade}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n\r\n        </div>\r\n        <div class=\"col-md-4\">\r\n            <div class=\"input-group\">\r\n                <label for=\"selectTeacher\" class=\"mt5\">Teacher</label>\r\n                <img *ngIf=\"isSelectTeacherLoading\" src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" />\r\n                <i *ngIf=\"teacherLoadError\" class=\"fa fa-exclamation-triangle form-control errorText\"> {{teacherLoadError}}</i>\r\n                <select *ngIf=\"!isSelectTeacherLoading && !teacherLoadError\" name=\"selectTeacher\" class=\"ml10 selectpicker form-control selectWidth\"\r\n                        (change)=\"onSelectTeacher($event.target.value)\" [(ngModel)]=\"selectedTeacherId\" [disabled]=\"!selectTeachedEnabled\">\r\n                    <option value=\"0\">--Select Teacher--</option>\r\n                    <option *ngFor=\"let teacher of Teachers\" value={{teacher.id}}>\r\n                        {{teacher.firstName}} {{teacher.lastName}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n        </div>\r\n    </div>\r\n\r\n    <div class=\"row\">\r\n        <div *ngIf=\"isStudentTermScoreGridLoading\" class=\"col-md-12\">Loading Student Term Scores. Please wait.<img src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" /></div>\r\n        <div *ngIf=\"studentGridServerWarningMessage\" class=\"col-md-12 mt10 ml10 errorText\"><i class=\"fa fa-exclamation-triangle\"></i> {{studentGridServerWarningMessage}} </div>\r\n    </div>\r\n\r\n    <div class=\"row\" *ngIf=\"showStudentTestScoreGrid\">\r\n        <div class=\"col-md-12\" id=\"no-more-tables\">\r\n            <table class=\"table-bordered table-condensed cf\" id=\"dev-table\">\r\n                <thead class=\"bgTableHead cf\">\r\n                    <tr>\r\n                        <th class=\"fw\">ID</th>\r\n                        <th class=\"fw w150\">First Name</th>\r\n                        <th class=\"fw w150\">Last Name</th>\r\n                        <th class=\"fw\">Attendance</th>\r\n                        <th class=\"fw\">Homework</th>\r\n                        <th class=\"fw\">Reading</th>\r\n                        <th class=\"fw\">Writing</th>\r\n                        <th class=\"fw\">Speaking</th>\r\n                        <th class=\"fw\">Behaviour</th>\r\n                        <th class=\"fw\">Quiz</th>\r\n                        <th class=\"fw\">Internal</th>\r\n                        <th class=\"fw w60\">Term Score</th>\r\n                        <th class=\"fw\">Total Score</th>\r\n                        <th class=\"fw w200\">Notes</th>\r\n                    </tr>\r\n                </thead>\r\n                <tbody>\r\n                    <tr *ngFor=\"let testScore of StudentTermScores\">\r\n                        <td data-title=\"ID\">{{testScore.studentID}}</td>\r\n                        <td data-title=\"First Name\">{{testScore.firstName}}</td>\r\n                        <td data-title=\"Last Name\">{{testScore.lastName}}</td>\r\n                        <td data-title=\"Attendance\">{{testScore.attendance}}</td>\r\n                        <td data-title=\"Homework\">{{testScore.homework}}</td>\r\n                        <td data-title=\"Reading\">{{testScore.reading}}</td>\r\n                        <td data-title=\"Writing\">{{testScore.writing}}</td>\r\n                        <td data-title=\"Speaking\">{{testScore.speaking}}</td>\r\n                        <td data-title=\"Behavior\">{{testScore.behavior}}</td>\r\n                        <td data-title=\"Quiz\">{{testScore.quiz}}</td>\r\n                        <td data-title=\"Internal\">{{testScore.internalScore}}</td>\r\n                        <td data-title=\"Score\">\r\n                            <input class=\"form-control\" [(ngModel)]=\"testScore.termScore\" value=\"{{testScore.termScore}}\" *ngIf=\"studentTermScoreEntryAllowed\" maxlength=\"3\" />\r\n                            <span *ngIf=\"!studentTermScoreEntryAllowed\">{{testScore.termScore}}</span>\r\n                        </td>\r\n                        <td data-title=\"Total Score\">{{(testScore.internalScore-0) + ((testScore.termScore-0)/2)}}</td>\r\n                        <td data-title=\"Notes\">\r\n                            <textarea class=\"form-control rounded-3\" rows=\"1\" [(ngModel)]=\"testScore.notes\" maxlength=\"100\" *ngIf=\"studentTermScoreEntryAllowed\">{{testScore.notes}}</textarea>\r\n                            <span *ngIf=\"!studentTermScoreEntryAllowed\">{{testScore.notes}}</span>\r\n                        </td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n    </div>\r\n    <div class=\"row\">\r\n        <div *ngIf=\"studentGridServerErrorMessage\" class=\"col-md-12 mt10 ml10 errorText\"><i class=\"fa fa-exclamation-triangle\"></i> {{studentGridServerErrorMessage}} </div>\r\n        <div *ngIf=\"studentGridServerSuccessMessage\" class=\"col-md-12 mt10 ml10 successText\"><i class=\"fa fa-check-circle\"></i>  {{studentGridServerSuccessMessage}}</div>\r\n    </div>\r\n    <div class=\"row bgBar br5 m5 p5\" *ngIf=\"isStudentTermScoreGridSaving\">\r\n        <div class=\"col-md-12\">Saving Student Term Scores. Please wait.<img src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" /></div>\r\n    </div>\r\n    <div class=\"row bgBar br5 m5 p5\" *ngIf=\"!isStudentTermScoreGridSaving && showStudentTestScoreGrid\">\r\n\r\n        <div class=\"col-md-4\"></div>\r\n        <div class=\"col-md-4 \">\r\n            <button class=\"btn btn-primary btn-sm\" type=\"button\" (click)=\"cancelClick()\"><strong><i class=\"fa fa-times-circle\"></i> Cancel</strong></button>\r\n            <button class=\"btn btn-primary btn-sm ml10\" (click)=\"saveClick()\" type=\"submit\" *ngIf=\"studentTermScoreEntryAllowed\"><strong><i class=\"fa fa-save\"></i> Save</strong></button>\r\n        </div>\r\n        <div class=\"col-md-4\"></div>\r\n    </div>\r\n</div>\r\n\r\n"
 
 /***/ }),
 
@@ -1128,6 +1335,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_home_Home__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./components/home/Home */ "./components/home/Home.ts");
 /* harmony import */ var _components_attendance_Attendance__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./components/attendance/Attendance */ "./components/attendance/Attendance.ts");
 /* harmony import */ var _components_score_Scores__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./components/score/Scores */ "./components/score/Scores.ts");
+/* harmony import */ var _components_loggedOut_loggedOut__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./components/loggedOut/loggedOut */ "./components/loggedOut/loggedOut.ts");
+/* harmony import */ var _components_accessDenied_accessDenied__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./components/accessDenied/accessDenied */ "./components/accessDenied/accessDenied.ts");
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1138,12 +1347,19 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 
 
+//import { ContactComponent } from './components/contact/Contact';
+
+
 
 var AppRoutes = [
     { path: "", redirectTo: 'home', pathMatch: 'full' },
     { path: "attendance", component: _components_attendance_Attendance__WEBPACK_IMPORTED_MODULE_3__["AttendanceComponent"] },
     { path: "home", component: _components_home_Home__WEBPACK_IMPORTED_MODULE_2__["HomeComponent"] },
-    { path: "scores", component: _components_score_Scores__WEBPACK_IMPORTED_MODULE_4__["ScoresComponent"] }
+    { path: "scores", component: _components_score_Scores__WEBPACK_IMPORTED_MODULE_4__["ScoresComponent"] },
+    { path: "loggedOut", component: _components_loggedOut_loggedOut__WEBPACK_IMPORTED_MODULE_5__["LoggedOutComponent"] },
+    { path: "accessDenied", component: _components_accessDenied_accessDenied__WEBPACK_IMPORTED_MODULE_6__["AccessDeniedComponent"] },
+    { path: "**", redirectTo: 'home', pathMatch: 'full' }
+    // TODO: Session timed out or Unauthorized access
     //{ path : "contactus", component: ContactComponent}
 ];
 var AppRoutingModule = /** @class */ (function () {
@@ -1183,6 +1399,41 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 };
 var __metadata = (undefined && undefined.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (undefined && undefined.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
 };
 
 
@@ -1230,30 +1481,61 @@ var AuthService = /** @class */ (function () {
         return this.expiresBy;
     };
     AuthService.prototype.hasAccess = function (fnName) {
-        var allowed = false;
-        this.getAuthFunctions();
-        if (this.authFunctions != null && this.authFunctions.functions != null && this.authFunctions.functions.length > 0) {
-            var item = this.authFunctions.functions.find(function (x) { return x == fnName; });
-            if (item != null) {
-                allowed = true;
-            }
-        }
-        return allowed;
-    };
-    AuthService.prototype.getAuthFunctions = function () {
-        var _this = this;
-        if (this.authFunctions == null) {
-            this.callAuthFunctionsService()
-                .subscribe(function (result) {
-                //this._loggerService.log(JSON.stringify(result));
-                _this.authFunctions = result;
-            }, function (err) {
-                _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
-                // Redirect to error page
+        return __awaiter(this, void 0, void 0, function () {
+            var allowed, item;
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        allowed = false;
+                        if (!(this.authFunctions == null)) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.callAuthFunctionsService()
+                                .then(function (result) {
+                                _this.authFunctions = result;
+                                if (_this.authFunctions != null && _this.authFunctions.functions != null && _this.authFunctions.functions.length > 0) {
+                                    var item = _this.authFunctions.functions.find(function (x) { return x == fnName; });
+                                    if (item != null) {
+                                        allowed = true;
+                                    }
+                                    return allowed;
+                                }
+                            })];
+                    case 1:
+                        _a.sent();
+                        return [3 /*break*/, 3];
+                    case 2:
+                        if (this.authFunctions != null && this.authFunctions.functions != null && this.authFunctions.functions.length > 0) {
+                            item = this.authFunctions.functions.find(function (x) { return x == fnName; });
+                            if (item != null) {
+                                allowed = true;
+                            }
+                        }
+                        _a.label = 3;
+                    case 3:
+                        console.log("hasAccess=" + fnName);
+                        console.log("allowed=" + allowed);
+                        return [2 /*return*/, allowed];
+                }
             });
-        }
+        });
     };
     AuthService.prototype.callAuthFunctionsService = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var promise;
+            var _this = this;
+            return __generator(this, function (_a) {
+                if (this.authFunctions == null) {
+                    promise = new Promise(function () {
+                        _this._http.get('/api/ctsuser/authfunctions')
+                            .toPromise();
+                    });
+                    return [2 /*return*/, promise];
+                }
+                return [2 /*return*/];
+            });
+        });
+    };
+    AuthService.prototype.getAuthFunctions = function () {
         return this._http.get('/api/ctsuser/authfunctions');
     };
     var AuthService_1;
@@ -1431,6 +1713,9 @@ var StudentService = /** @class */ (function () {
     }
     StudentService.prototype.saveStudentWeekGrades = function (studentWeekGrades) {
         return this._http.post('/api/student/savestudentweekgrades', studentWeekGrades);
+    };
+    StudentService.prototype.saveStudentTestScores = function (studentTermScores) {
+        return this._http.post('/api/student/savestudenttermscores', studentTermScores);
     };
     StudentService = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Injectable"])(),

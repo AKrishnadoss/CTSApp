@@ -566,29 +566,29 @@ namespace CTSWebApp.Data
             return result;
         }
 
-        public StudentWeekGradeResult SaveStudentWeekGrades(IEnumerable<StudentWeekGrade> studentWeekGrades)
+        public StudentErrorResult SaveStudentWeekGrades(int ctsUserId, IEnumerable<StudentWeekGrade> studentWeekGrades)
         {
             _logger.LogInformation("CTSDBRepository.SaveStudentWeekGrades() called");
-            StudentWeekGradeResult studentWeekGradeResult = new StudentWeekGradeResult(true, "Sucess", new List<StudentWeekGradeError>());
+            StudentErrorResult studentWeekGradeResult = new StudentErrorResult(true, "Sucess", new List<StudentError>());
             try
             {
                 _dbContext.Database.BeginTransaction();
 
                 foreach ( StudentWeekGrade swg in studentWeekGrades)
                 {
-                    StudentWeekGradeError result = SaveStudentWeekGrade(swg);
+                    StudentError result = SaveStudentWeekGrade(ctsUserId, swg);
                     if ( result != null)
                     {
                         studentWeekGradeResult.Result = false;
                         studentWeekGradeResult.ErrorMessage = "Failed to Save data";
-                        studentWeekGradeResult.StudentWeekGradeErrors.Add(result);
+                        studentWeekGradeResult.StudentErrors.Add(result);
                     }
                 }
 
                 if (studentWeekGradeResult.Result == true)
                 {
                     _dbContext.Database.CommitTransaction();
-                    studentWeekGradeResult.StudentWeekGradeErrors = null;
+                    studentWeekGradeResult.StudentErrors = null;
                 }
                 else
                 {
@@ -604,9 +604,54 @@ namespace CTSWebApp.Data
             }
         }
 
-        private StudentWeekGradeError SaveStudentWeekGrade(StudentWeekGrade swg)
+        public StudentErrorResult SaveStudentTermScores(int ctsUserId, IEnumerable<StudentTermScore> studentTermScores)
+        {
+            _logger.LogInformation("CTSDBRepository.SaveStudentTermScores() called");
+            StudentErrorResult studentTermScoreResult = new StudentErrorResult(true, "Sucess", new List<StudentError>());
+            try
+            {
+                _dbContext.Database.BeginTransaction();
+
+                foreach (StudentTermScore sts in studentTermScores)
+                {
+                    StudentError result = SaveStudentTermScore(ctsUserId, sts);
+                    if (result != null)
+                    {
+                        studentTermScoreResult.Result = false;
+                        studentTermScoreResult.ErrorMessage = "Failed to Save data";
+                        studentTermScoreResult.StudentErrors.Add(result);
+                    }
+                }
+
+                if (studentTermScoreResult.Result == true)
+                {
+                    _dbContext.Database.CommitTransaction();
+                    studentTermScoreResult.StudentErrors = null;
+                }
+                else
+                {
+                    _dbContext.Database.RollbackTransaction();
+                }
+
+                return studentTermScoreResult;
+            }
+            catch (Exception exception)
+            {
+                _dbContext.Database.RollbackTransaction();
+                throw exception;
+            }
+        }
+
+        private StudentError SaveStudentWeekGrade(int ctsUserId, StudentWeekGrade swg)
         {
             List<SqlParameter> paramList = new List<SqlParameter>();
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@ctsUserID",
+                SqlDbType = System.Data.SqlDbType.Int,
+                SqlValue = ctsUserId
+            });
+
             paramList.Add(new SqlParameter
             {
                 ParameterName = "@StudentID",
@@ -695,15 +740,100 @@ namespace CTSWebApp.Data
                 Size = 100
             });
 
-            var result = _dbContext.Database.ExecuteSqlCommand("EXEC SAVE_STUDENTWEEKGRADE @StudentID, @CalendarWeekID, @Attendance, " +
-                "@Homework, @Reading, @Writing, @Speaking, @Behavior , @Quiz, @Notes, @Result OUT, @ErrorMessage OUT", paramList.ToArray());
+            var result = _dbContext.Database.ExecuteSqlCommand("EXEC SAVE_STUDENTWEEKGRADE @ctsUserID, @StudentID, @CalendarWeekID, @Attendance, "
+                + "@Homework, @Reading, @Writing, @Speaking, @Behavior , @Quiz, @Notes, @Result OUT, @ErrorMessage OUT", paramList.ToArray());
 
-            int returnCode = paramList[10].SqlValue != null ? int.Parse(paramList[10].SqlValue.ToString()) : 0;
+            int returnCode = paramList[11].SqlValue != null ? int.Parse(paramList[11].SqlValue.ToString()) : 0;
             if (returnCode != 1)
             {
-                string errorMessage = paramList[11].SqlValue != null ? paramList[11].SqlValue.ToString() : "Error Occurred";
+                string errorMessage = paramList[12].SqlValue != null ? paramList[12].SqlValue.ToString() : "Error Occurred";
                 _logger.LogError("CTSDBRepository.SaveStudentWeekGrade() failed. Error Message = " + errorMessage);
-                return new StudentWeekGradeError(swg.StudentID, errorMessage);
+                return new StudentError(swg.StudentID, errorMessage);
+            }
+
+            return null;
+        }
+
+        private StudentError SaveStudentTermScore(int ctsUserId, StudentTermScore sts)
+        {
+            List<SqlParameter> paramList = new List<SqlParameter>();
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@ctsUserID",
+                SqlDbType = System.Data.SqlDbType.Int,
+                SqlValue = ctsUserId
+            });
+
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@StudentID",
+                SqlDbType = System.Data.SqlDbType.VarChar,
+                Size = 11,
+                SqlValue = sts.StudentID
+            });
+
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@TeacherID",
+                SqlDbType = System.Data.SqlDbType.Int,
+                SqlValue = sts.TeacherID
+            });
+
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@TermNo",
+                SqlDbType = System.Data.SqlDbType.Int,
+                SqlValue = sts.TermNo
+            });
+
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@CalendarWeekID",
+                SqlDbType = System.Data.SqlDbType.Int,
+                SqlValue = sts.CalendarWeekID
+            });
+
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@TermScore",
+                SqlDbType = System.Data.SqlDbType.Decimal,
+                Precision = 5,
+                Scale = 2,
+                SqlValue = sts.TermScore
+            });
+
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@Notes",
+                SqlDbType = System.Data.SqlDbType.VarChar,
+                Size = 100,
+                SqlValue = string.IsNullOrEmpty(sts.Notes) ? "" : sts.Notes
+            });
+
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@Result",
+                SqlDbType = System.Data.SqlDbType.Int,
+                Direction = System.Data.ParameterDirection.Output
+            });
+
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@ErrorMessage",
+                SqlDbType = System.Data.SqlDbType.VarChar,
+                Direction = System.Data.ParameterDirection.Output,
+                Size = 100
+            });
+
+            var result = _dbContext.Database.ExecuteSqlCommand("EXEC SAVE_STUDENTTERMSCORE @ctsUserID, @StudentID, @TeacherID, @TermNo, @CalendarWeekID, @TermScore, "
+                + " @Notes, @Result OUT, @ErrorMessage OUT", paramList.ToArray());
+
+            int returnCode = paramList[7].SqlValue != null ? int.Parse(paramList[7].SqlValue.ToString()) : 0;
+            if (returnCode != 1)
+            {
+                string errorMessage = paramList[8].SqlValue != null ? paramList[8].SqlValue.ToString() : "Error Occurred";
+                _logger.LogError("CTSDBRepository.SaveStudentTermScore() failed. Error Message = " + errorMessage);
+                return new StudentError(sts.StudentID, errorMessage);
             }
 
             return null;

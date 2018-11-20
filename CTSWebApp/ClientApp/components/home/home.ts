@@ -1,30 +1,44 @@
-﻿import { Component,OnInit, PACKAGE_ROOT_URL } from '@angular/core';
+﻿import { Component, OnInit, PACKAGE_ROOT_URL } from '@angular/core';
+import { Router } from '@angular/router';
 import {AuthService} from '../../services/AuthService';
+import { LoggerService } from '../../services/LoggerService';
 
 @Component({
   templateUrl: './home.html'
 })
 export class HomeComponent  implements OnInit {
-  pageTitle = 'Home Page';
+    pageTitle = 'Home Page';
+    appTitle: string;
   userName = '';
 
   isLoggedOn : boolean;
   CarouselImages : any[];
 
-  constructor(private _authService: AuthService){
+    constructor(private _authService: AuthService,
+        private _loggerService: LoggerService,
+        private _router: Router) {
   }
 
   ngOnInit(){
 
 	this.isLoggedOn = this._authService.getIsLoggedOn();
-	this.userName = this._authService.getUserName();
+      this.userName = this._authService.getUserName();
+      this.appTitle = "Cary Tamil School - Attendance and Score System";
 
       if (this.isLoggedOn == false) {
           this.resetLoginControls();
       }
-
       else {
-          this._authService.getAuthFunctions();
+          if (this._authService.authFunctions == null) {
+              this._loggerService.log("home ts - > getting authFunctions");
+              this._authService.getAuthFunctions()
+                  .subscribe(result => {
+                      this._authService.authFunctions = result;
+                  },
+                      err => {
+                          this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+                      });
+          }
       }
 
 	this.CarouselImages = [

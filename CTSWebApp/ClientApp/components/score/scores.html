@@ -130,7 +130,7 @@
         <div class="col-md-4"></div>
         <div class="col-md-4 ">
             <button class="btn btn-primary btn-sm" type="button" (click)="cancelClick()"><strong><i class="fa fa-times-circle"></i> Cancel</strong></button>
-            <button class="btn btn-primary btn-sm ml10" type="submit" *ngIf="studentTermScoreEntryAllowed"><strong><i class="fa fa-save"></i> Save</strong></button>
+            <button class="btn btn-primary btn-sm ml10" (click)="saveClick()" type="submit" *ngIf="studentTermScoreEntryAllowed"><strong><i class="fa fa-save"></i> Save</strong></button>
         </div>
         <div class="col-md-4"></div>
     </div>

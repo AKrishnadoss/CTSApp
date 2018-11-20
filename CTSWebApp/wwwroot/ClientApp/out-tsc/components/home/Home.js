@@ -8,21 +8,34 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from '../../services/AuthService';
+import { LoggerService } from '../../services/LoggerService';
 var HomeComponent = /** @class */ (function () {
-    function HomeComponent(_authService) {
+    function HomeComponent(_authService, _loggerService, _router) {
         this._authService = _authService;
+        this._loggerService = _loggerService;
+        this._router = _router;
         this.pageTitle = 'Home Page';
         this.userName = '';
     }
     HomeComponent.prototype.ngOnInit = function () {
+        var _this = this;
         this.isLoggedOn = this._authService.getIsLoggedOn();
         this.userName = this._authService.getUserName();
         if (this.isLoggedOn == false) {
             this.resetLoginControls();
         }
         else {
-            this._authService.getAuthFunctions();
+            if (this._authService.authFunctions == null) {
+                this._loggerService.log("home ts - > getting authFunctions");
+                this._authService.getAuthFunctions()
+                    .subscribe(function (result) {
+                    _this._authService.authFunctions = result;
+                }, function (err) {
+                    _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+                });
+            }
         }
         this.CarouselImages = [
             { src: "/img/Carousel-1.jpg", alt: 'First', slideTo: "0" },
@@ -50,7 +63,9 @@ var HomeComponent = /** @class */ (function () {
         Component({
             templateUrl: './home.html'
         }),
-        __metadata("design:paramtypes", [AuthService])
+        __metadata("design:paramtypes", [AuthService,
+            LoggerService,
+            Router])
     ], HomeComponent);
     return HomeComponent;
 }());

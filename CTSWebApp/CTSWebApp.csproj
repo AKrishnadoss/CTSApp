@@ -6,8 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="ClientApp\components\accessDenied\accessDenied.ts" />
     <None Remove="ClientApp\components\contact\contact.ts" />
     <None Remove="ClientApp\components\home\home.ts" />
+    <None Remove="ClientApp\components\loggedOut\loggedOut.ts" />
     <None Remove="ClientApp\interceps\AuthInterceptor.ts" />
     <None Remove="ClientApp\model\authFunctions.ts" />
     <None Remove="ClientApp\model\CalendarWeek.ts" />
@@ -40,9 +42,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <TypeScriptCompile Include="ClientApp\components\accessDenied\accessDenied.ts" />
     <TypeScriptCompile Include="ClientApp\components\attendance\attendance.ts" />
     <TypeScriptCompile Include="ClientApp\components\contact\contact.ts" />
     <TypeScriptCompile Include="ClientApp\components\home\home.ts" />
+    <TypeScriptCompile Include="ClientApp\components\loggedOut\loggedOut.ts" />
     <TypeScriptCompile Include="ClientApp\interceps\AuthInterceptor.ts" />
     <TypeScriptCompile Include="ClientApp\model\authFunctions.ts" />
     <TypeScriptCompile Include="ClientApp\model\CalendarWeek.ts" />

@@ -114,6 +114,16 @@ export class AppComponent  implements OnInit {
 		this._authService.setEmail(this.email);
 		this._authService.setUserName(this.userName);
         this._authService.setExpiresBy(this.expiresBy);
-	}
+      }
+
+      if (this._authService.getIsLoggedOn() == true) {
+          this._authService.getAuthFunctions()
+              .subscribe(result => {
+                  this._authService.authFunctions = result;
+              },
+                  err => {
+                      this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+                  });
+      }
   }
 }

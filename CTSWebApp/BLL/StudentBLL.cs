@@ -26,18 +26,18 @@ namespace CTSWebApp.BLL
             return _ctsDBRepository.GetAllStudents(includeInActive);
         }
 
-        public StudentWeekGradeResult SaveStudentWeekGrades(IEnumerable<StudentWeekGrade> studentWeekGrades)
+        public StudentErrorResult SaveStudentWeekGrades(int ctsUserId, IEnumerable<StudentWeekGrade> studentWeekGrades)
         {
             // Do Business Logic Data validation
             if (studentWeekGrades == null || studentWeekGrades.Count() == 0 )
             {
-                return new StudentWeekGradeResult(false, "No StudentWeekGrade found to update");
+                return new StudentErrorResult(false, "No StudentWeekGrade found to insert/update");
             }
 
-            List<StudentWeekGradeError> errors = new List<StudentWeekGradeError>();
+            List<StudentError> errors = new List<StudentError>();
             foreach (StudentWeekGrade swg in studentWeekGrades)
             {
-                StudentWeekGradeError error = ValidateStudentWeekGrade(swg);
+                StudentError error = ValidateStudentWeekGrade(swg);
                 if (error != null)
                 {
                     errors.Add(error);
@@ -46,12 +46,36 @@ namespace CTSWebApp.BLL
 
             if (errors.Count() > 0 )
             {
-                return new StudentWeekGradeResult(false, "Invalid data", errors);
+                return new StudentErrorResult(false, "Invalid data", errors);
             }
-            return _ctsDBRepository.SaveStudentWeekGrades(studentWeekGrades);
+            return _ctsDBRepository.SaveStudentWeekGrades(ctsUserId, studentWeekGrades);
         }
 
-        private StudentWeekGradeError ValidateStudentWeekGrade(StudentWeekGrade swg)
+        public StudentErrorResult SaveStudentTermScores(int ctsUserId, IEnumerable<StudentTermScore> studentTermScores)
+        {
+            if (studentTermScores == null || studentTermScores.Count() == 0)
+            {
+                return new StudentErrorResult(false, "No StudentTermScore found to insert/update");
+            }
+
+            List<StudentError> errors = new List<StudentError>();
+            foreach (StudentTermScore sts in studentTermScores)
+            {
+                StudentError error = ValidateStudentTermScore(sts);
+                if (error != null)
+                {
+                    errors.Add(error);
+                }
+            }
+
+            if (errors.Count() > 0)
+            {
+                return new StudentErrorResult(false, "Invalid data", errors);
+            }
+            return _ctsDBRepository.SaveStudentTermScores(ctsUserId, studentTermScores);
+        }
+
+        private StudentError ValidateStudentWeekGrade(StudentWeekGrade swg)
         {
             StringBuilder builder = new StringBuilder();
             if ( swg.Attendance != 0 && swg.Attendance != 10)
@@ -95,7 +119,29 @@ namespace CTSWebApp.BLL
 
             if (builder.Length > 0)
             {
-                StudentWeekGradeError error = new StudentWeekGradeError(swg.StudentID, builder.ToString());
+                StudentError error = new StudentError(swg.StudentID, builder.ToString());
+                return error;
+            }
+            return null;
+        }
+
+        private StudentError ValidateStudentTermScore(StudentTermScore sts)
+        {
+            StringBuilder builder = new StringBuilder();
+            if (sts.TermScore < 0 || sts.TermScore > 100)
+            {
+                builder.Append("Invalid TermScore: Attendance must be between 0 and 100.");
+            }
+
+            
+            if (!string.IsNullOrEmpty(sts.Notes) && sts.Notes.Length > 100)
+            {
+                builder.Append("Invalid Notes: Notes cannot exceed 100 characters.");
+            }
+
+            if (builder.Length > 0)
+            {
+                StudentError error = new StudentError(sts.StudentID, builder.ToString());
                 return error;
             }
             return null;

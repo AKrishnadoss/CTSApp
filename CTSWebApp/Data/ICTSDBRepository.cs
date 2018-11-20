@@ -31,6 +31,7 @@ namespace CTSWebApp.Data
         IEnumerable<Teacher> GetAssignedTeacher(string grade, int weekId);
         IEnumerable<Teacher> GetAssignedTeacher(int teacherId, int weekId);
 
-        StudentWeekGradeResult SaveStudentWeekGrades(IEnumerable<StudentWeekGrade> studentWeekGrades);
+        StudentErrorResult SaveStudentWeekGrades(int ctsUserId, IEnumerable<StudentWeekGrade> studentWeekGrades);
+        StudentErrorResult SaveStudentTermScores(int ctsUserId, IEnumerable<StudentTermScore> studentTermScores);
     }
 }

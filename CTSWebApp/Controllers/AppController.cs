@@ -25,7 +25,7 @@ namespace CTSWebApp.Controllers
 
         public IActionResult Index()
         {
-            ViewBag.AppName = "Cary Tamil School";
+            ViewBag.AppName = "Cary Tamil School - Attendance & Scores";
             string sessionData = HttpContext.Session.GetString("identity");
             if ( !string.IsNullOrEmpty(sessionData) )
             {

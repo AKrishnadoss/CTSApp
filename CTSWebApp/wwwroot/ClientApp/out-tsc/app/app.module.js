@@ -22,6 +22,8 @@ import { HomeComponent } from '../components/home/Home';
 import { ContactComponent } from '../components/contact/Contact';
 import { AttendanceComponent } from '../components/attendance/Attendance';
 import { ScoresComponent } from '../components/score/Scores';
+import { LoggedOutComponent } from '../components/loggedOut/loggedOut';
+import { AccessDeniedComponent } from '../components/accessDenied/accessDenied';
 var AppModule = /** @class */ (function () {
     function AppModule() {
     }
@@ -32,7 +34,9 @@ var AppModule = /** @class */ (function () {
                 HomeComponent,
                 AttendanceComponent,
                 ContactComponent,
-                ScoresComponent
+                ScoresComponent,
+                LoggedOutComponent,
+                AccessDeniedComponent
             ],
             imports: [
                 BrowserModule,

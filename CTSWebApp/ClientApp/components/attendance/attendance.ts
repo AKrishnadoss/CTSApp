@@ -1,4 +1,5 @@
-﻿import {Component, OnInit} from '@angular/core'
+﻿import { Component, OnInit } from '@angular/core'
+import { Router } from '@angular/router';
 import { AuthService } from '../../services/AuthService';
 import { CalendarService } from '../../services/CalendarService';
 import { CalendarWeek } from '../../model/CalendarWeek';
@@ -50,46 +51,52 @@ export class AttendanceComponent  implements OnInit {
     selectedGrade: string;
     selectedTeacherId: number;
 
+    gradeSelectionAllowed: boolean;
+    teacherSelectionAllowed: boolean;
+
     constructor(private _authService: AuthService,
         private _calendarService: CalendarService,
         private _gradeService: GradeService,
 		private _teacherService: TeacherService,
 		private _studentService: StudentService,
-		private _loggerService: LoggerService) {
+        private _loggerService: LoggerService,
+        private _router: Router) {
 	}
 
-	ngOnInit(){
-		this.isLoggedOn = this._authService.getIsLoggedOn();
-		if ( this.isLoggedOn == false){
-			window.location.href = "/logon/login";
-			return;
-		}
-
-        if (!this._authService.hasAccess("Attendance")) {
-            // TODO: navigate to unauthorized page
-            this._loggerService.log("Unauthorized access");
-            //window.location.href = "/error";
+    ngOnInit() {
+        this.isLoggedOn = this._authService.getIsLoggedOn();
+        if (this.isLoggedOn == false) {
+            this._loggerService.log("Not logged in");
+            this._router.navigate(["loggedOut"]);
+            return;
         }
-        this._loggerService.log("Access is authorized");
+
+        this._authService.hasAccess("Attendance")
+            .then((x) => {
+                if (x == false) {
+                    this._loggerService.log("Unauthorized access");
+                    this._router.navigate(["accessDenied"]);
+                }
+            }); 
 
         this.userName = this._authService.getUserName();
-		
-		this.Scores = [0,1,2,3,4,5,6,7,8,9,10];
 
-		this.isSelectCalendarWeekLoading = false;
-		this.isSelectGradeLoading = false;
-		this.isSelectTeacherLoading = false;
-		this.isStudentWeekGradeGridLoading = false;
-		this.showStudentWeekGradeGrid = false;
-		this.showStudentGridServerErrorMessage = false;
-		this.isStudentWeekGradeGridSaving = false;
-		this.studentGridServerSuccessMessage = "";
+        this.Scores = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-		this.calendarWeekId = 0;
+        this.isSelectCalendarWeekLoading = false;
+        this.isSelectGradeLoading = false;
+        this.isSelectTeacherLoading = false;
+        this.isStudentWeekGradeGridLoading = false;
+        this.showStudentWeekGradeGrid = false;
+        this.showStudentGridServerErrorMessage = false;
+        this.isStudentWeekGradeGridSaving = false;
+        this.studentGridServerSuccessMessage = "";
+
+        this.calendarWeekId = 0;
         this.selectedGrade = "0";
         this.selectedTeacherId = 0;
 
-		this.calendarWeekLoadError = "";
+        this.calendarWeekLoadError = "";
         this.gradeLoadError = "";
 
         this.selectGradeEnabled = true;
@@ -97,12 +104,21 @@ export class AttendanceComponent  implements OnInit {
 
         this.getCalendarWeeks();
 
-        if (this._authService.hasAccess("Attendance.GradeSelection")) {
-            this.getGrades();
-        }
-        else {
-            this.getGradeAndTeacherDetails();
-        }
+        this.gradeSelectionAllowed = false;
+        this.teacherSelectionAllowed = false;
+        this._authService.hasAccess("Attendance.GradeSelection").then((x) => {
+            this.gradeSelectionAllowed = x;
+            if (this.gradeSelectionAllowed == true) {
+                this.getGrades();
+            }
+            else {
+                this.getGradeAndTeacherDetails();
+            }
+        });
+
+        this._authService.hasAccess("Attendance.TeacherSelection").then((x) => {
+            this.teacherSelectionAllowed = x;
+        });
     }
 
     getGrades() {
@@ -181,7 +197,7 @@ export class AttendanceComponent  implements OnInit {
 
     onSelectCalendarWeek(value : any) {
         this.calendarWeekId = value;
-        if (this._authService.hasAccess("Attendance.GradeSelection")) {
+        if (this.gradeSelectionAllowed == true) {
             this.selectedGrade = "0";
             this.selectedTeacherId = 0;
         }
@@ -192,7 +208,8 @@ export class AttendanceComponent  implements OnInit {
     }
 
     onSelectGrade(value: any) {
-        if (this._authService.hasAccess("Attendance.TeacherSelection")) {
+
+        if (this.teacherSelectionAllowed == true) {
             this.studentGridServerErrorMessage = "";
             this.showStudentGridServerErrorMessage = false;
             this.studentGridServerWarningMessage = "";
@@ -350,7 +367,7 @@ export class AttendanceComponent  implements OnInit {
 				this.isStudentWeekGradeGridSaving = false;
 				this.showStudentGridServerErrorMessage = true;
 				this.studentGridServerSuccessMessage = "";
-				this.studentGridServerErrorMessage = "Save failed. " + err.statusText;
+				this.studentGridServerErrorMessage = "Save failed. ";
 			});
 
 	}

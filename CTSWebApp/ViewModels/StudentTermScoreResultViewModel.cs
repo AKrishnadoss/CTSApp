@@ -33,7 +33,6 @@ namespace CTSWebApp.ViewModels
         public decimal? InternalScore { get; set; }
         [Required]
         public decimal? TermScore { get; set; }
-        [Required]
         public decimal? TotalScore { get; set; }
         [MinLength(0)]
         [MaxLength(100, ErrorMessage = "Notes cannot exceed 100 characters")]

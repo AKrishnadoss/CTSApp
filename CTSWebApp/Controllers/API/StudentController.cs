@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace CTSWebApp.Controllers.API
@@ -81,14 +82,14 @@ namespace CTSWebApp.Controllers.API
 
         [HttpPost]
         [ActionName("SaveStudentWeekGrades")]
-        public ActionResult<StudentWeekGradeResult> SaveStudentWeekGrades([FromBody]IEnumerable<StudentWeekGradeViewModel> viewModel)
+        public ActionResult<StudentErrorResult> SaveStudentWeekGrades([FromBody]IEnumerable<StudentWeekGradeViewModel> viewModel)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    //System.Threading.Thread.Sleep(2000);
-                    var result = _studentBLL.SaveStudentWeekGrades(_mapper.Map<IEnumerable<StudentWeekGradeViewModel>, IEnumerable<StudentWeekGrade>>(viewModel));
+                    int ctsUserID = GetLoggedOnCTSUserID();
+                    var result = _studentBLL.SaveStudentWeekGrades(ctsUserID, _mapper.Map<IEnumerable<StudentWeekGradeViewModel>, IEnumerable<StudentWeekGrade>>(viewModel));
                     if (result.Result == true)
                     {
                         return Created("student/savestudentweekgrades", result);
@@ -109,6 +110,50 @@ namespace CTSWebApp.Controllers.API
                 _logger.LogError($"Exception occurred in SaveStudentWeekGrades() => {exception}");
                 return BadRequest("Exception occurred in student/savestudentweekgrades");
             }
+        }
+
+        [HttpPost]
+        [ActionName("SaveStudentTermScores")]
+        public ActionResult<StudentErrorResult> SaveStudentTermScores([FromBody]IEnumerable<StudentTermScoreViewModel> viewModel)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    int ctsUserID = GetLoggedOnCTSUserID();
+                    var result = _studentBLL.SaveStudentTermScores(ctsUserID, _mapper.Map<IEnumerable<StudentTermScoreViewModel>, IEnumerable<StudentTermScore>>(viewModel));
+                    if (result.Result == true)
+                    {
+                        return Created("student/savestudenttermscores", result);
+                    }
+                    else
+                    {
+                        return BadRequest(result);
+                    }
+                }
+                else
+                {
+                    return BadRequest(ModelState);
+                }
+
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError($"Exception occurred in SaveStudentTermScores() => {exception}");
+                return BadRequest("Exception occurred in student/savestudenttermscores");
+            }
+        }
+
+        private int GetLoggedOnCTSUserID()
+        {
+            int ctsUserID = -1;
+            List<Claim> claims = HttpContext.User.Claims.ToList();
+            Claim claim = claims.Where(x => x.Type == "CTSUserID").FirstOrDefault();
+            if (claim != null && !string.IsNullOrEmpty(claim.Value))
+            {
+                ctsUserID = int.Parse(claim.Value);
+            }
+            return ctsUserID;
         }
     }
 }
