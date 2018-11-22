@@ -23,6 +23,7 @@ var HomeComponent = /** @class */ (function () {
         var _this = this;
         this.isLoggedOn = this._authService.getIsLoggedOn();
         this.userName = this._authService.getUserName();
+        this.appTitle = "Cary Tamil School - Attendance and Score System";
         if (this.isLoggedOn == false) {
             this.resetLoginControls();
         }

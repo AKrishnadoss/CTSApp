@@ -66,7 +66,7 @@ namespace CTSWebApp.Data
 
         public UserIdentity GetUserIdentity(string email, string password)
         {
-            _logger.LogInformation("CTSDBRepository.GetUserIdentity() called");
+            _logger.LogInformation("CTSDBRepository.GetUserIdentity(email,password) called");
             List<SqlParameter> paramList = new List<SqlParameter>();
             paramList.Add(new SqlParameter
             {
@@ -103,7 +103,7 @@ namespace CTSWebApp.Data
                 if (returnCode != 1)
                 {
                     string errorMessage = paramList[2].SqlValue != null ? paramList[2].SqlValue.ToString() : "Error Occurred";
-                    _logger.LogError("CTSDBRepository.GetUserIdentity() failed. Error Message = " + errorMessage);
+                    _logger.LogError("CTSDBRepository.GetUserIdentity(email,password) failed. Error Message = " + errorMessage);
                     return null;
                 }
             }
@@ -114,6 +114,71 @@ namespace CTSWebApp.Data
                 userIdentity = result.ToList()[0];
             }
             */
+            return userIdentity;
+        }
+
+        public UserIdentity GetUserIdentity(string email, string familyID, string primaryPhone)
+        {
+            _logger.LogInformation("CTSDBRepository.GetUserIdentity(email,familyID,primaryPhone) called");
+            List<SqlParameter> paramList = new List<SqlParameter>();
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@Email",
+                SqlDbType = System.Data.SqlDbType.VarChar,
+                Size = 250,
+                SqlValue = email.ToLower()
+            });
+
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@familyID",
+                SqlDbType = System.Data.SqlDbType.VarChar,
+                Size = 11,
+                SqlValue = familyID
+            });
+
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@primaryPhone",
+                SqlDbType = System.Data.SqlDbType.VarChar,
+                Size = 4,
+                SqlValue = primaryPhone
+            });
+
+
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@Result",
+                SqlDbType = System.Data.SqlDbType.Int,
+                Direction = System.Data.ParameterDirection.Output
+            });
+
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@ErrorMessage",
+                SqlDbType = System.Data.SqlDbType.VarChar,
+                Direction = System.Data.ParameterDirection.Output,
+                Size = 100
+            });
+
+
+            var result = _dbContext.UserIdentity.FromSql("EXEC VALIDATE_FAMILYCTSUSER @Email, @familyID, @primaryPhone, @Result OUT, @ErrorMessage OUT", paramList.ToArray());
+            UserIdentity userIdentity = null;
+            if (result != null && result.ToList().Count > 0)
+            {
+                userIdentity = result.ToList()[0];
+            }
+            else
+            {
+
+                int returnCode = paramList[3].SqlValue != null ? int.Parse(paramList[3].SqlValue.ToString()) : 0;
+                if (returnCode != 1)
+                {
+                    string errorMessage = paramList[4].SqlValue != null ? paramList[4].SqlValue.ToString() : "Error Occurred";
+                    _logger.LogError("CTSDBRepository.GetUserIdentity(email,familyID,primaryPhone) failed. Error Message = " + errorMessage);
+                    return null;
+                }
+            }
             return userIdentity;
         }
 
@@ -154,49 +219,62 @@ namespace CTSWebApp.Data
 
         public bool UpdatePassword(int ctsUserId, string email, byte[] hash, string hashedPassword)
         {
-            SqlParameter[] sqlParams = new SqlParameter[7];
+            List<SqlParameter> paramList = new List<SqlParameter>();
+            paramList.Add(new SqlParameter
+            {
+                SqlDbType = System.Data.SqlDbType.Int,
+                ParameterName = "@CTSUserID",
+                Value = ctsUserId
+            });
 
-            sqlParams[0] = new SqlParameter();
-            sqlParams[0].SqlDbType = System.Data.SqlDbType.Int;
-            sqlParams[0].ParameterName = "@CTSUserID";
-            sqlParams[0].Value = ctsUserId;
+            paramList.Add(new SqlParameter
+            {
+                SqlDbType = System.Data.SqlDbType.VarChar,
+                ParameterName = "@Password",
+                Value = hashedPassword
+            });
 
-            sqlParams[1] = new SqlParameter();
-            sqlParams[1].SqlDbType = System.Data.SqlDbType.VarChar;
-            sqlParams[1].ParameterName = "@Password";
-            sqlParams[1].Value = hashedPassword;
+            paramList.Add(new SqlParameter
+            {
+                SqlDbType = System.Data.SqlDbType.VarChar,
+                ParameterName = "@Hash",
+                Value = Convert.ToBase64String(hash)
+            });
 
-            sqlParams[2] = new SqlParameter();
-            sqlParams[1].SqlDbType = System.Data.SqlDbType.VarChar;
-            sqlParams[2].ParameterName = "@Hash";
-            sqlParams[2].Value = Convert.ToBase64String(hash);
+            paramList.Add(new SqlParameter
+            {
+                SqlDbType = System.Data.SqlDbType.VarChar,
+                ParameterName = "@Locked",
+                Value = "N"
+            });
 
-            sqlParams[3] = new SqlParameter();
-            sqlParams[1].SqlDbType = System.Data.SqlDbType.VarChar;
-            sqlParams[3].ParameterName = "@Locked";
-            sqlParams[3].Value = "N";
+            paramList.Add(new SqlParameter
+            {
+                SqlDbType = System.Data.SqlDbType.DateTime,
+                ParameterName = "@LastLogin",
+                Value = DateTime.Now
+            });
 
-            sqlParams[4] = new SqlParameter();
-            sqlParams[4].SqlDbType = System.Data.SqlDbType.DateTime;
-            sqlParams[4].ParameterName = "@LastLogin";
-            sqlParams[4].Value = DateTime.Now;
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@Result",
+                SqlDbType = System.Data.SqlDbType.Int,
+                Direction = System.Data.ParameterDirection.Output
+            });
 
-            sqlParams[5] = new SqlParameter();
-            sqlParams[5].SqlDbType = System.Data.SqlDbType.Int;
-            sqlParams[5].ParameterName = "@Result";
-            sqlParams[5].Direction = System.Data.ParameterDirection.Output;
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@ErrorMessage",
+                SqlDbType = System.Data.SqlDbType.VarChar,
+                Direction = System.Data.ParameterDirection.Output,
+                Size = 100
+            });
 
-            sqlParams[6] = new SqlParameter();
-            sqlParams[1].SqlDbType = System.Data.SqlDbType.VarChar;
-            sqlParams[6].ParameterName = "@Error";
-            sqlParams[6].Size = 100;
-            sqlParams[6].Direction = System.Data.ParameterDirection.Output;
-
-            int rowsAffected = _dbContext.Database.ExecuteSqlCommand("EXEC SAVE_CTSUSERCRED @CTSUserID, @Password, @Hash, @Locked, @LastLogin, @Result OUT, @Error OUT", sqlParams.ToArray());
-            int returnCode = sqlParams[5].SqlValue != null ? int.Parse(sqlParams[5].SqlValue.ToString()) : 0;
+            int rowsAffected = _dbContext.Database.ExecuteSqlCommand("EXEC SAVE_CTSUSERCRED @CTSUserID, @Password, @Hash, @Locked, @LastLogin, @Result OUT, @Error OUT", paramList.ToArray());
+            int returnCode = paramList[5].SqlValue != null ? int.Parse(paramList[5].SqlValue.ToString()) : 0;
             if (returnCode != 1)
             {
-                string errorMessage = sqlParams[6].SqlValue != null ? sqlParams[6].SqlValue.ToString() : "Error Occurred";
+                string errorMessage = paramList[6].SqlValue != null ? paramList[6].SqlValue.ToString() : "Error Occurred";
                 _logger.LogError("CTSDBRepository.UpdatePassword() failed. Error Message = " + errorMessage);
                 return false;
             }

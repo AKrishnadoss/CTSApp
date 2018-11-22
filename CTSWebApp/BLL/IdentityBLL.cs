@@ -34,6 +34,19 @@ namespace CTSWebApp.BLL
             return userIdentity;
         }
 
+        public UserIdentity ValidateUser(string email, string familyID, string primaryPhone)
+        {
+            UserIdentity userIdentity = _ctsDBRepository.GetUserIdentity(email, familyID, primaryPhone);
+            if (userIdentity == null)
+            {
+                return null;
+            }
+
+            // Additional logic?
+
+            return userIdentity;
+        }
+
         public IEnumerable<string> GetUserRoles(int ctsUserId)
         {
             return _ctsDBRepository.GetUserRoles(ctsUserId);

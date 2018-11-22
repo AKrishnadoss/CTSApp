@@ -14,8 +14,8 @@ namespace CTSWebApp.ViewModels
         [MaxLength(250, ErrorMessage = "Invalid Email")]
         public string Email { get; set; }
         [Required(ErrorMessage = "Password cannot be empty")]
-        [MinLength(8, ErrorMessage = "Invalid Email or wrong password")]
-        [MaxLength(25, ErrorMessage = "Invalid Email or wrong password")]
+        [MinLength(8, ErrorMessage = "Invalid Password")]
+        [MaxLength(25, ErrorMessage = "Invalid Password")]
         public string Password { get; set; }
         public string UserName { get; set; }
         public string ErrorMessage { get; set; }

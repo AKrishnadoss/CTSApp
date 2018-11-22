@@ -36,8 +36,16 @@ namespace CTSWebApp.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            ViewBag.AppName = "Cary Tamil School";
+            ViewBag.AppName = "Cary Tamil School - Attendance & Scores";
             UserIdentityViewModel model = new UserIdentityViewModel();
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult Forgot()
+        {
+            ViewBag.AppName = "Cary Tamil School - Attendance & Scores";
+            ForgotPasswordViewModel model = new ForgotPasswordViewModel();
             return View(model);
         }
 
@@ -77,7 +85,7 @@ namespace CTSWebApp.Controllers
             {
                 model.ErrorMessage = "Invalid Email or bad password";
             }
-            ViewBag.AppName = "Cary Tamil School";
+            ViewBag.AppName = "Cary Tamil School - Attendance & Scores";
             return View(model);
         }
 
@@ -114,8 +122,41 @@ namespace CTSWebApp.Controllers
             {
                 model.ErrorMessage = "Invalid logon data";
             }
-            ViewBag.AppName = "Cary Tamil School";
+            ViewBag.AppName = "Cary Tamil School - Attendance & Scores";
             return View("reset", model);
+        }
+
+        [HttpPost]
+        [ActionName("forgotpassword")]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            model.ErrorMessage = string.Empty;
+            if (ModelState.IsValid)
+            {
+                var result = await _authService.AuthorizeAsync(model);
+                if (result != null && result.IsSucceeded)
+                {
+                    if (result.Locked)
+                    {
+                        model.ErrorMessage = "Account locked out, Please contact system administrator !";
+                    }
+                    else
+                    {
+                        // Redirect to Login Page
+                        return RedirectToAction("Login", "Logon");
+                    }
+                }
+                else
+                {
+                    model.ErrorMessage = "Password Update failed, Contact system administrator !";
+                }
+            }
+            else
+            {
+                model.ErrorMessage = "Invalid logon data";
+            }
+            ViewBag.AppName = "Cary Tamil School - Attendance & Scores";
+            return View("forgot", model);
         }
 
 

@@ -52,158 +52,75 @@ namespace CTSWebApp.Services
             });
         }
 
+        public async Task<AuthServiceAuthorizeResult> AuthorizeAsync(ForgotPasswordViewModel model)
+        {
+            _logger.LogInformation($"AuthorizeAsync Started");
+            return await Task.Run<AuthServiceAuthorizeResult>(() =>
+            {
+                return AuthorizeInternalAsync(model);
+            });
+        }
+
         private AuthServiceAuthorizeResult AuthorizeInternalAsync(string email, string password)
         {
             return AuthenticateUser(email, password);
-
-            //// Check user in DB
-            //AuthServiceAuthorizeResult errorResult = new AuthServiceAuthorizeResult
-            //{
-            //    IsSucceeded = false,
-            //    ErrorMessage = "Logon attempt failed. Invalid user id or bad password. Contact System adminstrator !."
-            //};
-
-            //var userIdentity = _idenityBLL.ValidateUser(email, password);
-            //if (userIdentity != null )
-            //{
-            //    bool acctLocked = (string.IsNullOrEmpty(userIdentity.Locked) || (userIdentity.Locked.ToUpper()) == "Y") ? true : false;
-
-            //    if ( acctLocked)
-            //    {
-            //        return errorResult;
-            //    }
-
-            //    // Validate the password 
-            //    if ( !ValidatePassword(password, userIdentity))
-            //    {
-            //        return errorResult;
-            //    }
-
-            //    // GetUserRoles
-            //    var roles = _idenityBLL.GetUserRoles(userIdentity.CTSUserID);
-            //    string roleString = string.Join(",", roles.ToArray());
-
-            //    // Create Claims
-            //    var claims = new[]
-            //        {
-            //        new Claim("CTSUserID", userIdentity.CTSUserID.ToString()),
-            //        new Claim("UserName", userIdentity.UserName),
-            //        new Claim("Email", userIdentity.Email),
-            //        new Claim("Roles", roleString),
-            //        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            //    };
-
-            //    // Create JWT
-            //    var secret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Token:Key"]));
-            //    var cred = new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
-            //    int days = int.Parse(_configuration["Token:expiryDays"]);
-            //    var expiryDate = DateTime.Now.AddDays(days);
-
-            //    JwtSecurityToken jwtSecToken = new JwtSecurityToken(
-            //        _configuration["Token:Issuer"],
-            //        _configuration["Token:Audience"],
-            //        claims,
-            //        expires: expiryDate,
-            //        signingCredentials: cred);
-
-            //    // Create Result object
-            //    AuthServiceAuthorizeResult result = new AuthServiceAuthorizeResult
-            //    {
-            //        Token = new JwtSecurityTokenHandler().WriteToken(jwtSecToken),
-            //        Expires = expiryDate,
-            //        UserName = userIdentity.UserName,
-            //        Email = userIdentity.Email,
-            //        Locked = acctLocked,
-            //        ResetPassword = (!string.IsNullOrEmpty(userIdentity.ResetPassword) && userIdentity.ResetPassword.ToUpper() == "Y") ? true : false,
-            //        Roles = roleString,
-            //        IsSucceeded = true,
-            //        ErrorMessage = string.Empty
-            //    };
-
-            //    return result;
-            //}
-
-            //return errorResult;
         }
 
         private AuthServiceAuthorizeResult AuthorizeInternalAsync(ResetPasswordViewModel model)
         {
             return AuthenticateUser(model.Email, model.OldPassword);
-            //// Check user in DB
-            //AuthServiceAuthorizeResult errorResult = new AuthServiceAuthorizeResult
-            //{
-            //    IsSucceeded = false,
-            //    ErrorMessage = "Reset Password attempt failed. Invalid user id or bad password. Contact System adminstrator !."
-            //};
+        }
 
-            //var userIdentity = _idenityBLL.ValidateUser(model.Email, model.OldPassword);
-            //if (userIdentity != null)
-            //{
-            //    bool acctLocked = (string.IsNullOrEmpty(userIdentity.Locked) || (userIdentity.Locked.ToUpper()) == "Y") ? true : false;
+        private AuthServiceAuthorizeResult AuthorizeInternalAsync(ForgotPasswordViewModel model)
+        {
+            // Check user in DB
+            AuthServiceAuthorizeResult authResult = new AuthServiceAuthorizeResult
+            {
+                IsSucceeded = false,
+                ErrorMessage = "Logon attempt failed. Invalid user id or bad password. Contact System adminstrator !."
+            };
 
-            //    if (acctLocked)
-            //    {
-            //        return errorResult;
-            //    }
+            var userIdentity = _idenityBLL.ValidateUser(model.Email, model.FamilyID, model.PrimaryPhone4Digits);
+            if (userIdentity != null)
+            {
+                bool logonAccess = (!string.IsNullOrEmpty(userIdentity.LogonAccess) && (userIdentity.LogonAccess.ToUpper()) == "Y") ? true : false;
+                if (!logonAccess)
+                {
+                    authResult.ErrorMessage = "Logon Access denied. Contact System adminstrator !.";
+                    return authResult;
+                }
 
-            //    // Validate the password 
-            //    if (!ValidatePassword(model.OldPassword, userIdentity))
-            //    {
-            //        return errorResult;
-            //    }
+                bool acctLocked = (!string.IsNullOrEmpty(userIdentity.Locked) && (userIdentity.Locked.ToUpper()) == "Y") ? true : false;
+                if (acctLocked)
+                {
+                    authResult.IsSucceeded = false;
+                    authResult.UserName = userIdentity.UserName;
+                    authResult.Email = userIdentity.Email;
+                    authResult.Locked = acctLocked;
+                    authResult.ErrorMessage = "Account locked out. Contact System adminstrator !.";
+                    return authResult;
+                }
 
-            //    // GetUserRoles
-            //    var roles = _idenityBLL.GetUserRoles(userIdentity.CTSUserID);
-            //    string roleString = string.Join(",", roles.ToArray());
+                // Get New hashed password
+                byte[] salt = GetPasswordHash();
+                string hashedPassword = GeneratePassword(model.ConfirmNewPassword, salt);
 
-            //    // Update the New password in db
-            //    byte[] newHash = GetPasswordHash();
-            //    string hashedPassword = GeneratePassword(model.NewPassword, newHash);
-            //    if ( ! _idenityBLL.UpdatePassword(userIdentity.CTSUserID, model.Email, newHash, hashedPassword) )
-            //    {
-            //        return errorResult;
-            //    }
-
-
-            //    // Create Claims
-            //    var claims = new[]
-            //        {
-            //        new Claim("CTSUserID", userIdentity.CTSUserID.ToString()),
-            //        new Claim("UserName", userIdentity.UserName),
-            //        new Claim("Email", userIdentity.Email),
-            //        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            //    };
-
-            //    // Create JWT
-            //    var secret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Token:Key"]));
-            //    var cred = new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
-            //    int days = int.Parse(_configuration["Token:expiryDays"]);
-            //    var expiryDate = DateTime.Now.AddDays(days);
-
-            //    JwtSecurityToken jwtSecToken = new JwtSecurityToken(
-            //        _configuration["Token:Issuer"],
-            //        _configuration["Token:Audience"],
-            //        claims,
-            //        expires: expiryDate,
-            //        signingCredentials: cred);
-
-            //    // Create Result object
-            //    AuthServiceAuthorizeResult result = new AuthServiceAuthorizeResult
-            //    {
-            //        Token = new JwtSecurityTokenHandler().WriteToken(jwtSecToken),
-            //        Expires = expiryDate,
-            //        UserName = userIdentity.UserName,
-            //        Email = userIdentity.Email,
-            //        Locked = acctLocked,
-            //        ResetPassword = (!string.IsNullOrEmpty(userIdentity.ResetPassword) && userIdentity.ResetPassword.ToUpper() == "Y") ? true : false,
-            //        IsSucceeded = true,
-            //        ErrorMessage = string.Empty
-            //    };
-
-            //    return result;
-            //}
-
-            //return errorResult;
+                // Save New Credentials
+                bool result = _idenityBLL.UpdatePassword(userIdentity.CTSUserID, userIdentity.Email, salt, hashedPassword);
+                if (result == true)
+                {
+                    authResult.IsSucceeded = true;
+                    authResult.UserName = userIdentity.UserName;
+                    authResult.Email = userIdentity.Email;
+                    authResult.Locked = acctLocked;
+                    authResult.ErrorMessage = "";
+                }
+                else
+                {
+                    authResult.ErrorMessage = "Password update failed. Contact System adminstrator !";
+                }
+            }
+            return authResult;
         }
 
         private AuthServiceAuthorizeResult AuthenticateUser(string email, string password)
@@ -212,13 +129,13 @@ namespace CTSWebApp.Services
             AuthServiceAuthorizeResult errorResult = new AuthServiceAuthorizeResult
             {
                 IsSucceeded = false,
-                ErrorMessage = "Logon attempt failed. Invalid user id or bad password. Contact System adminstrator !."
+                ErrorMessage = "Logon attempt failed. Invalid user id or bad password. Contact System adminstrator !"
             };
 
             var userIdentity = _idenityBLL.ValidateUser(email, password);
             if (userIdentity != null)
             {
-                bool acctLocked = (string.IsNullOrEmpty(userIdentity.Locked) || (userIdentity.Locked.ToUpper()) == "Y") ? true : false;
+                bool acctLocked = (!string.IsNullOrEmpty(userIdentity.Locked) && (userIdentity.Locked.ToUpper()) == "Y") ? true : false;
 
                 if (acctLocked)
                 {

@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <AssemblyName>CTSWebApp</AssemblyName>
+    <UserSecretsId>40ba3868-3667-4212-a702-b57fe9092028</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

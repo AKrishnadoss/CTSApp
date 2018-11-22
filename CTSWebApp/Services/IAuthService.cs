@@ -10,5 +10,6 @@ namespace CTSWebApp.Services
     {
         Task<AuthServiceAuthorizeResult> AuthorizeAsync(UserIdentityViewModel model);
         Task<AuthServiceAuthorizeResult> AuthorizeAsync(ResetPasswordViewModel model);
+        Task<AuthServiceAuthorizeResult> AuthorizeAsync(ForgotPasswordViewModel model);
     }
 }

@@ -36,12 +36,13 @@ var AttendanceComponent = /** @class */ (function () {
             this._router.navigate(["loggedOut"]);
             return;
         }
-        if (!this._authService.hasAccess("Attendance")) {
-            this._loggerService.log("Unauthorized access");
-            this._router.navigate(["accessDenied"]);
-            return;
-        }
-        this._loggerService.log("Attendance Access is authorized");
+        this._authService.hasAccess("Attendance")
+            .then(function (x) {
+            if (x == false) {
+                _this._loggerService.log("Unauthorized access");
+                _this._router.navigate(["accessDenied"]);
+            }
+        });
         this.userName = this._authService.getUserName();
         this.Scores = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
         this.isSelectCalendarWeekLoading = false;

@@ -21,10 +21,10 @@
     <div class="row m5 p5">
         <div class="col-md-3">
             <h5 *ngIf="isLoggedOn">Vanakkam {{userName}}</h5>
-            <p *ngIf="!isLoggedOn">
+            <p *ngIf="!isLoggedOn" class="paraStyle">
                 Welcome to <strong>{{appTitle}}</strong>. Once you are authenticated, You can enter your weekly attendance for your class in "Attendance" page. Term scores can be entered in "Term Scores" page. Contact system administrator to get access.
             </p>
-            <p *ngIf="isLoggedOn">
+            <p *ngIf="isLoggedOn" class="paraStyle">
                 Welcome to <strong>{{appTitle}}</strong>. You can enter your weekly attendance for your class in "Attendance" page. Term scores can be entered in "Term Scores" page. 
             </p>
         </div>
@@ -64,8 +64,8 @@
                 </a>
             </div>
         </div>
-        <div class="col-md-3">
-            <p>
+        <div class="col-md-3" >
+            <p class="paraStyle">
                 More features are coming soon. Stay tuned!
             </p>
         </div>

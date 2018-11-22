@@ -12,6 +12,7 @@ namespace CTSWebApp.Data
         CTSUser GetCTSUserById(int id);
 
         UserIdentity GetUserIdentity(string email, string password);
+        UserIdentity GetUserIdentity(string email, string familyID, string primaryPhone);
         IEnumerable<string> GetUserRoles(int ctsUserId);
         //UserIdentity ValidateUser(string email, string password);
         bool UpdatePassword(int ctsUserId, string email, byte[] hash, string hashedPassword);

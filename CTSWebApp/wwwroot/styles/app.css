@@ -93,6 +93,12 @@
     font-weight: bold;
 }
 
+.paraStyle{
+    background:#EFEFEF;
+    border-radius:5px;
+    padding:5px;
+}
+
 /*styling for radio button*/
 /* Custom Radio Button Start*/
 
