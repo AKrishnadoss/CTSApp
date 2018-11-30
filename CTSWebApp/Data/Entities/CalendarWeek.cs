@@ -18,5 +18,6 @@ namespace CTSWebApp.Data.Entities
         public DateTime WeekDate { get; set; }
         public int TermNo { get; set; }
         public string Active { get; set; }
+        public string TestWeek { get; set; }
     }
 }

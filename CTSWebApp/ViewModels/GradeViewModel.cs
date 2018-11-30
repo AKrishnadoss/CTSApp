@@ -9,5 +9,6 @@ namespace CTSWebApp.ViewModels
     {
         public string CTSGrade { get; set; }
         public string CountyGrade { get; set; }
+        public string GradeLevel { get; set; }
     }
 }

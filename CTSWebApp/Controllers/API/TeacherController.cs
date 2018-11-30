@@ -181,15 +181,15 @@ namespace CTSWebApp.Controllers.API
         }
 
         [HttpGet]
-        [Route("assignmentById/{teacherId:int}/studentgrades/{weekId:int}")]
+        [Route("assignmentById/{teacherId:int}/{gradeLevel}/studentgrades/{weekId:int}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public ActionResult<IEnumerable<StudentWeekGradeViewModel>> GetAssignedStudentsWeekGrade(int teacherId,int weekId)
+        public ActionResult<IEnumerable<StudentWeekGradeViewModel>> GetAssignedStudentsWeekGrade(int teacherId, string gradeLevel, int weekId)
         {
             try
             {
-                //System.Threading.Thread.Sleep(2000);
-                var result = _teacherBLL.GetAssignedStudentsWeekGrade(teacherId, weekId);
+                System.Threading.Thread.Sleep(1000);
+                var result = _teacherBLL.GetAssignedStudentsWeekGrade(teacherId, weekId, gradeLevel);
                 if (result != null && result.Count() > 0)
                 {
                     return Ok(_mapper.Map<IEnumerable<StudentWeekGrade>, IEnumerable<StudentWeekGradeViewModel>>(result));
@@ -211,7 +211,7 @@ namespace CTSWebApp.Controllers.API
         {
             try
             {
-                //System.Threading.Thread.Sleep(2000);
+                System.Threading.Thread.Sleep(1000);
                 var result = _teacherBLL.GetAssignedStudentsTermScore(teacherId, termNo, weekId);
                 if (result != null && result.Count() > 0)
                 {

@@ -8,6 +8,6 @@ namespace CTSWebApp.BLL
 {
     public interface IGradeBLL
     {
-        IEnumerable<Grade> GetGrades();
+        IEnumerable<Grade> GetGrades(bool includeAll);
     }
 }

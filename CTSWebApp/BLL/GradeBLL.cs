@@ -24,7 +24,7 @@ namespace CTSWebApp.BLL
             this._memoryCache = memoryCache;
         }
 
-        public IEnumerable<Grade> GetGrades()
+        public IEnumerable<Grade> GetGrades(bool includeAll)
         {
             IEnumerable<Grade> dataFromCache = null;
             if (!_memoryCache.TryGetValue("Grades", out dataFromCache))
@@ -38,7 +38,20 @@ namespace CTSWebApp.BLL
 
                 dataFromCache = grades;
             }
-            return dataFromCache;
+
+            if (includeAll == true)
+            {
+                // return all Grades
+                return dataFromCache.ToList();
+            }
+            else
+            {
+                // return only Level Grades
+                return dataFromCache
+                    .Where(s => ! string.IsNullOrEmpty(s.GradeLevel))
+                    .ToList();
+            }
+
             //return this._ctsDBRepository.GetGrades();
         }
     }

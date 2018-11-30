@@ -15,5 +15,6 @@ namespace CTSWebApp.Data.Entities
         public int ID { get; set; }
         public string CTSGrade { get; set; }
         public string CountyGrade { get; set; }
+        public string GradeLevel { get; set; }
     }
 }

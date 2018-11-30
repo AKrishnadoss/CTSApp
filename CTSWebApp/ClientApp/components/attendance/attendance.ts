@@ -31,24 +31,34 @@ export class AttendanceComponent  implements OnInit {
 	isSelectGradeLoading : boolean;
 	isSelectTeacherLoading : boolean;
 	isStudentWeekGradeGridLoading :boolean;
-	showStudentWeekGradeGrid : boolean;
-	showStudentGridServerErrorMessage : boolean;
-	studentGridServerErrorMessage : string;
-	isStudentWeekGradeGridSaving : boolean;
-	studentGridServerSuccessMessage : string;
+	
+
+    studentGridServerErrorMessage: string;
+    studentGridServerSuccessMessage: string;
+    studentGridServerWarningMessage: string;
+    isGridSaving: boolean;
+
+    showL1Grid: boolean;
+    isL1GridReadOnly: boolean;
+
+    showL2Grid: boolean;
+    isL2GridReadOnly: boolean;
+
+    showL3Grid: boolean;
+    isL3GridReadOnly: boolean;
+
 
 	calendarWeekLoadError : string;
     gradeLoadError: string;
 
     selectGradeEnabled: boolean;
     selectTeachedEnabled: boolean;
-
-    isStudentWeekGradeGridReadOnly: boolean;
-    studentGridServerWarningMessage: string;
+    
 
     // Search criteria
     calendarWeekId: number;
     selectedGrade: string;
+    selectedGradeLevel: string;
     selectedTeacherId: number;
 
     gradeSelectionAllowed: boolean;
@@ -87,13 +97,16 @@ export class AttendanceComponent  implements OnInit {
         this.isSelectGradeLoading = false;
         this.isSelectTeacherLoading = false;
         this.isStudentWeekGradeGridLoading = false;
-        this.showStudentWeekGradeGrid = false;
-        this.showStudentGridServerErrorMessage = false;
-        this.isStudentWeekGradeGridSaving = false;
+        this.showL1Grid = false;
+        this.showL2Grid = false;
+        this.showL3Grid = false;
+
+        this.isGridSaving = false;
         this.studentGridServerSuccessMessage = "";
 
         this.calendarWeekId = 0;
         this.selectedGrade = "0";
+        this.selectedGradeLevel = "";
         this.selectedTeacherId = 0;
 
         this.calendarWeekLoadError = "";
@@ -171,9 +184,10 @@ export class AttendanceComponent  implements OnInit {
 
                     //populate grade from result
                     let gr: Array<Grade> = new Array<Grade>();
-                    gr.push(new Grade(this.Teachers[0].ctsGrade, this.Teachers[0].ctsGrade));
+                    gr.push(new Grade(this.Teachers[0].ctsGrade, this.Teachers[0].ctsGrade, null));
                     this.Grades = gr;
                     this.selectedGrade = this.Teachers[0].ctsGrade;
+                    this.selectedGradeLevel = ""; // TODO: Get GradeLevel
                     this.selectGradeEnabled = false;
 
                     if (this.Teachers.length > 1) {
@@ -200,6 +214,7 @@ export class AttendanceComponent  implements OnInit {
         if (this.gradeSelectionAllowed == true) {
             this.selectedGrade = "0";
             this.selectedTeacherId = 0;
+            this.selectedGradeLevel = ""; 
         }
         else {
             this.getGradeAndTeacherDetails();
@@ -208,10 +223,14 @@ export class AttendanceComponent  implements OnInit {
     }
 
     onSelectGrade(value: any) {
+        if (value != "0") {
+            var selectedGrade = this.Grades.find(x => x.ctsGrade == value);
+            this.selectedGradeLevel = selectedGrade.gradeLevel;
+        }
 
         if (this.teacherSelectionAllowed == true) {
             this.studentGridServerErrorMessage = "";
-            this.showStudentGridServerErrorMessage = false;
+
             this.studentGridServerWarningMessage = "";
             this.Teachers = null;
             this.selectedTeacherId = 0;
@@ -252,46 +271,147 @@ export class AttendanceComponent  implements OnInit {
 		this.studentGridServerSuccessMessage = "";
         if (this.calendarWeekId != 0 && this.selectedTeacherId != 0){
 			this.studentGridServerErrorMessage = "";
-            this.showStudentGridServerErrorMessage = false;
             this.studentGridServerWarningMessage = "";
-            this.showStudentWeekGradeGrid = true;
-            this.getStudentWeekGrades();
+            if (this.selectedGradeLevel == "L1") {
+                this.showL2Grid = false;
+                this.showL3Grid = false;
+                this.getL1WeekGrades();
+            }
+            else if (this.selectedGradeLevel == "L2") {
+                this.showL1Grid = false;
+                this.showL3Grid = false;
+                this.getL2WeekGrades();
+            }
+            else if (this.selectedGradeLevel == "L3") {
+                this.showL1Grid = false;
+                this.showL2Grid = false;
+                this.getL3WeekGrades();
+            }
 		}
 		else {
-			this.showStudentWeekGradeGrid = false;
+            this.showL1Grid = false;
+            this.showL2Grid = false;
+            this.showL3Grid = false;
 		}
 	}
 
-	getStudentWeekGrades(){
-		this.isStudentWeekGradeGridLoading = true;
-		this.showStudentWeekGradeGrid = false;
-		this.studentGridServerErrorMessage = "";
-        this.showStudentGridServerErrorMessage = false;
+    getL1WeekGrades() {
+        this.isStudentWeekGradeGridLoading = true;
+        this.showL1Grid = false;
+        this.studentGridServerErrorMessage = "";
+
         this.studentGridServerWarningMessage = "";
-        this._teacherService.getStudentWeekGrades(this.selectedTeacherId, this.calendarWeekId)
+        this._teacherService.getWeekGrades(this.selectedTeacherId, this.selectedGradeLevel, this.calendarWeekId)
             .subscribe(result => {
                 this.isStudentWeekGradeGridLoading = false;
                 this.StudentWeekGrades = result;
-				if ( this.StudentWeekGrades == null ){
-					this.showStudentGridServerErrorMessage = true;
-					this.showStudentWeekGradeGrid = false;
-					this.studentGridServerErrorMessage = "No Student(s) assigned to selected teacher.";
-				}
+                if (this.StudentWeekGrades == null) {
+
+                    this.showL1Grid = false;
+                    this.studentGridServerErrorMessage = "No Student(s) assigned to selected teacher.";
+                }
                 else {
                     if (result.length > 0) {
                         if (result[0].dataFreeze == 'Y') {
-                            this.isStudentWeekGradeGridReadOnly = true;
+                            this.isL1GridReadOnly = true;
                         }
                         else {
-                            this.isStudentWeekGradeGridReadOnly = false;
+                            this.isL1GridReadOnly = false;
                         }
                         if (result[0].id == 0) {
                             this.studentGridServerWarningMessage = "Note: Data not entered for this week, showing default entries";
                             console.log(this.studentGridServerWarningMessage);
                         }
                     }
-					this.showStudentGridServerErrorMessage = false;
-					this.showStudentWeekGradeGrid = true;
+
+                    this.showL1Grid = true;
+                }
+
+            },
+                err => {
+                    this.isStudentWeekGradeGridLoading = false;
+                    console.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+                    this.StudentWeekGrades = null;
+                    this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.statusText;
+
+                    this.showL2Grid = false;
+                });
+    }
+
+    getL2WeekGrades() {
+        this.isStudentWeekGradeGridLoading = true;
+        this.showL2Grid = false;
+        this.studentGridServerErrorMessage = "";
+
+        this.studentGridServerWarningMessage = "";
+        this._teacherService.getWeekGrades(this.selectedTeacherId, this.selectedGradeLevel, this.calendarWeekId)
+            .subscribe(result => {
+                this.isStudentWeekGradeGridLoading = false;
+                this.StudentWeekGrades = result;
+                if (this.StudentWeekGrades == null) {
+
+                    this.showL2Grid = false;
+                    this.studentGridServerErrorMessage = "No Student(s) assigned to selected teacher.";
+                }
+                else {
+                    if (result.length > 0) {
+                        if (result[0].dataFreeze == 'Y') {
+                            this.isL2GridReadOnly = true;
+                        }
+                        else {
+                            this.isL2GridReadOnly = false;
+                        }
+                        if (result[0].id == 0) {
+                            this.studentGridServerWarningMessage = "Note: Data not entered for this week, showing default entries";
+                            console.log(this.studentGridServerWarningMessage);
+                        }
+                    }
+
+                    this.showL2Grid = true;
+                }
+
+            },
+                err => {
+                    this.isStudentWeekGradeGridLoading = false;
+                    console.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+                    this.StudentWeekGrades = null;
+                    this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.statusText;
+
+                    this.showL2Grid = false;
+                });
+    }
+
+
+	getL3WeekGrades(){
+		this.isStudentWeekGradeGridLoading = true;
+        this.showL3Grid = false;
+		this.studentGridServerErrorMessage = "";
+
+        this.studentGridServerWarningMessage = "";
+        this._teacherService.getWeekGrades(this.selectedTeacherId, this.selectedGradeLevel, this.calendarWeekId)
+            .subscribe(result => {
+                this.isStudentWeekGradeGridLoading = false;
+                this.StudentWeekGrades = result;
+				if ( this.StudentWeekGrades == null ){
+
+                    this.showL3Grid = false;
+					this.studentGridServerErrorMessage = "No Student(s) assigned to selected teacher.";
+				}
+                else {
+                    if (result.length > 0) {
+                        if (result[0].dataFreeze == 'Y') {
+                            this.isL3GridReadOnly = true;
+                        }
+                        else {
+                            this.isL3GridReadOnly = false;
+                        }
+                        if (result[0].id == 0) {
+                            this.studentGridServerWarningMessage = "Note: Data not entered for this week, showing default entries";
+                            console.log(this.studentGridServerWarningMessage);
+                        }
+                    }
+
+                    this.showL3Grid = true;
 				}
 
             },
@@ -300,8 +420,8 @@ export class AttendanceComponent  implements OnInit {
 				console.log("Error occurred : Code=" + err.status + ",Error="+err.statusText);
 				this.StudentWeekGrades = null;
 				this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.statusText;
-				this.showStudentGridServerErrorMessage = true;
-				this.showStudentWeekGradeGrid = false;
+
+                this.showL3Grid = false;
             });
 	}
 
@@ -324,7 +444,10 @@ export class AttendanceComponent  implements OnInit {
 				break;
 			case 'quiz':
 				weekGrade.quiz = value;
-				break;
+                break;
+            case 'participation':
+                weekGrade.participation = value;
+                break;
 		}
 		
 	}
@@ -337,13 +460,17 @@ export class AttendanceComponent  implements OnInit {
 			weekGrade.writing = 0;
 			weekGrade.speaking = 0;
 			weekGrade.behavior = 0;
-			weekGrade.quiz = 0;
+            weekGrade.quiz = 0;
+            weekGrade.participation = 0;
 			weekGrade.notes = null;
 		}
 	}
 
 	cancelClick(){
-		this.showStudentWeekGradeGrid = false;
+        this.showL1Grid = false;
+        this.showL2Grid = false;
+        this.showL3Grid = false;
+
 		this.studentGridServerSuccessMessage = "";
         this.studentGridServerErrorMessage = "";
         this.studentGridServerWarningMessage = "";
@@ -352,20 +479,20 @@ export class AttendanceComponent  implements OnInit {
 	}
 
 	saveClick(){
-		this.isStudentWeekGradeGridSaving = true;
-		this.showStudentGridServerErrorMessage = false;
+        this.isGridSaving = true;
+
 		this.studentGridServerErrorMessage = "";
         this.studentGridServerSuccessMessage = "";
         this.studentGridServerWarningMessage = "";
 		this._studentService.saveStudentWeekGrades(this.StudentWeekGrades)
 			.subscribe(result=> {
-				this.isStudentWeekGradeGridSaving = false;
+                this.isGridSaving = false;
 				this.studentGridServerSuccessMessage = "Student Week Grades saved successfully !";
 			},
 			err=> {
 				console.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
-				this.isStudentWeekGradeGridSaving = false;
-				this.showStudentGridServerErrorMessage = true;
+                this.isGridSaving = false;
+
 				this.studentGridServerSuccessMessage = "";
 				this.studentGridServerErrorMessage = "Save failed. ";
 			});

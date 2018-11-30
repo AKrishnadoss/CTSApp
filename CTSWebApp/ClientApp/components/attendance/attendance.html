@@ -19,12 +19,12 @@
 </header>
 <div class="container p0 mt10">
     <!--<h4 class="text-center">{{pageTitle}}</h4>-->
-    
+
     <div class="row bgBar br5 m5 p5">
         <div class="col-md-4">
             <div class="input-group">
                 <label for="selectCalenderWeek" class="mt5">Week</label>
-                <img *ngIf="isSelectCalendarWeekLoading" src="/img/Loading.gif" height="40" width="40" class="ml10"/>
+                <img *ngIf="isSelectCalendarWeekLoading" src="/img/Loading.gif" height="40" width="40" class="ml10" />
                 <i *ngIf="calendarWeekLoadError" class="fa fa-exclamation-triangle form-control errorText"> {{calendarWeekLoadError}}</i>
                 <select *ngIf="!isSelectCalendarWeekLoading && !calendarWeekLoadError" name="selectCalenderWeek" class="ml10 selectpicker form-control selectWidth" (change)="onSelectCalendarWeek($event.target.value)">
                     <option value="0">--Select Week--</option>
@@ -37,9 +37,9 @@
         <div class="col-md-4">
             <div class="input-group">
                 <label for="selectGrade" class="mt5">Grade</label>
-                <img *ngIf="isSelectGradeLoading" src="/img/Loading.gif" height="40" width="40" class="ml10"/>
+                <img *ngIf="isSelectGradeLoading" src="/img/Loading.gif" height="40" width="40" class="ml10" />
                 <i *ngIf="gradeLoadError" class="fa fa-exclamation-triangle form-control errorText"> {{gradeLoadError}}</i>
-                <select *ngIf="!isSelectGradeLoading && !gradeLoadError" name="selectGrade" class="ml10 selectpicker form-control selectWidth" 
+                <select *ngIf="!isSelectGradeLoading && !gradeLoadError" name="selectGrade" class="ml10 selectpicker form-control selectWidth"
                         (change)="onSelectGrade($event.target.value)" [(ngModel)]="selectedGrade" [disabled]="!selectGradeEnabled">
                     <option value="0">--Select Grade--</option>
                     <option *ngFor="let grade of Grades" value={{grade.ctsGrade}}>
@@ -53,11 +53,11 @@
             <div class="input-group">
                 <label for="selectTeacher" class="mt5">Teacher</label>
                 <img *ngIf="isSelectTeacherLoading" src="/img/Loading.gif" height="40" width="40" class="ml10" />
-                <select *ngIf="!isSelectTeacherLoading" name="selectTeacher" class="ml10 selectpicker form-control selectWidth" 
+                <select *ngIf="!isSelectTeacherLoading" name="selectTeacher" class="ml10 selectpicker form-control selectWidth"
                         (change)="onSelectTeacher($event.target.value)" [(ngModel)]="selectedTeacherId" [disabled]="!selectTeachedEnabled">
                     <option value="0">--Select Teacher--</option>
                     <option *ngFor="let teacher of Teachers" value={{teacher.id}}>
-                        {{teacher.firstName}} {{teacher.lastName}} 
+                        {{teacher.firstName}} {{teacher.lastName}}
                     </option>
                 </select>
             </div>
@@ -70,7 +70,120 @@
         <div *ngIf="isStudentWeekGradeGridLoading" class="col-md-12">Loading Student Grades. Please wait.<img src="/img/Loading.gif" height="40" width="40" class="ml10" /></div>
         <div *ngIf="studentGridServerWarningMessage" class="col-md-12 mt10 ml10 errorText"><i class="fa fa-exclamation-triangle"></i> {{studentGridServerWarningMessage}} </div>
     </div>
-    <div class="row" *ngIf="showStudentWeekGradeGrid">
+
+    <div class="row" *ngIf="showL1Grid">
+        <div class="col-md-12" id="no-more-tables">
+            <table class="table-bordered table-condensed cf" id="dev-table">
+                <thead class="bgTableHead cf">
+                    <tr>
+                        <th class="fw">ID</th>
+                        <th class="fw w150">First Name</th>
+                        <th class="fw w150">Last Name</th>
+                        <th class="fw">Attendance</th>
+                        <th class="fw">Participation</th>
+                        <th class="fw w200">Notes</th>
+
+                    </tr>
+                </thead>
+                <tbody *ngIf="!isL1GridReadOnly">
+
+                    <tr *ngFor="let weekGrade of StudentWeekGrades">
+                        <td data-title="ID">{{weekGrade.studentID}}</td>
+                        <td data-title="First Name">{{weekGrade.firstName}}</td>
+                        <td data-title="Last Name">{{weekGrade.lastName}}</td>
+                        <td data-title="Attendance">
+                            <select class="selectpicker form-control" (change)="selectAttendance(weekGrade, $event.target.value)" [(ngModel)]="weekGrade.attendance" required>
+                                <option value="10">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </td>
+                        <td data-title="Participation">
+                            <select class="selectpicker form-control" (change)="selectScore(weekGrade, 'participation', $event.target.value)" [(ngModel)]="weekGrade.participation">
+                                <option *ngFor="let score of Scores" value={{score}}>
+                                    {{score}}
+                                </option>
+                            </select>
+                        </td>
+
+                        <td data-title="Notes"><textarea class="form-control rounded-3" rows="1" [(ngModel)]="weekGrade.notes" maxlength="100">{{weekGrade.notes}}</textarea></td>
+                    </tr>
+                </tbody>
+                <tbody *ngIf="isL1GridReadOnly">
+                    <tr *ngFor="let weekGrade of StudentWeekGrades">
+                        <td data-title="ID">{{weekGrade.studentID}}</td>
+                        <td data-title="First Name">{{weekGrade.firstName}}</td>
+                        <td data-title="Last Name">{{weekGrade.lastName}}</td>
+                        <td data-title="Attendance">{{weekGrade.attendance}}</td>
+                        <td data-title="Participation">{{weekGrade.participation}}</td>
+                        <td data-title="Notes">{{weekGrade.notes}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row" *ngIf="showL2Grid">
+        <div class="col-md-12" id="no-more-tables">
+            <table class="table-bordered table-condensed cf" id="dev-table">
+                <thead class="bgTableHead cf">
+                    <tr>
+                        <th class="fw">ID</th>
+                        <th class="fw w150">First Name</th>
+                        <th class="fw w150">Last Name</th>
+                        <th class="fw">Attendance</th>
+                        <th class="fw">Homework</th>
+                        <th class="fw">Participation</th>
+                        <th class="fw w200">Notes</th>
+
+                    </tr>
+                </thead>
+                <tbody *ngIf="!isL2GridReadOnly">
+
+                    <tr *ngFor="let weekGrade of StudentWeekGrades">
+                        <td data-title="ID">{{weekGrade.studentID}}</td>
+                        <td data-title="First Name">{{weekGrade.firstName}}</td>
+                        <td data-title="Last Name">{{weekGrade.lastName}}</td>
+                        <td data-title="Attendance">
+                            <select class="selectpicker form-control" (change)="selectAttendance(weekGrade, $event.target.value)" [(ngModel)]="weekGrade.attendance" required>
+                                <option value="10">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </td>
+                        <td data-title="Homework">
+                            <select class="selectpicker form-control" (change)="selectScore(weekGrade, 'homework', $event.target.value)" [(ngModel)]="weekGrade.homework">
+                                <option *ngFor="let score of Scores" value={{score}}>
+                                    {{score}}
+                                </option>
+                            </select>
+                        </td>
+                        <td data-title="Participation">
+                            <select class="selectpicker form-control" (change)="selectScore(weekGrade, 'participation', $event.target.value)" [(ngModel)]="weekGrade.participation">
+                                <option *ngFor="let score of Scores" value={{score}}>
+                                    {{score}}
+                                </option>
+                            </select>
+                        </td>
+
+                        <td data-title="Notes"><textarea class="form-control rounded-3" rows="1" [(ngModel)]="weekGrade.notes" maxlength="100">{{weekGrade.notes}}</textarea></td>
+                    </tr>
+                </tbody>
+                <tbody *ngIf="isL2GridReadOnly">
+                    <tr *ngFor="let weekGrade of StudentWeekGrades">
+                        <td data-title="ID">{{weekGrade.studentID}}</td>
+                        <td data-title="First Name">{{weekGrade.firstName}}</td>
+                        <td data-title="Last Name">{{weekGrade.lastName}}</td>
+                        <td data-title="Attendance">{{weekGrade.attendance}}</td>
+                        <td data-title="Homework">{{weekGrade.homework}}</td>
+                        <td data-title="Participation">{{weekGrade.participation}}</td>
+                        <td data-title="Notes">{{weekGrade.notes}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+    <div class="row" *ngIf="showL3Grid">
         <div class="col-md-12" id="no-more-tables">
             <table class="table-bordered table-condensed cf" id="dev-table">
                 <thead class="bgTableHead cf">
@@ -89,7 +202,7 @@
 
                     </tr>
                 </thead>
-                <tbody *ngIf="!isStudentWeekGradeGridReadOnly">
+                <tbody *ngIf="!isL3GridReadOnly">
 
                     <tr *ngFor="let weekGrade of StudentWeekGrades">
                         <td data-title="ID">{{weekGrade.studentID}}</td>
@@ -146,7 +259,7 @@
                         <td data-title="Notes"><textarea class="form-control rounded-3" rows="1" [(ngModel)]="weekGrade.notes" maxlength="100">{{weekGrade.notes}}</textarea></td>
                     </tr>
                 </tbody>
-                <tbody *ngIf="isStudentWeekGradeGridReadOnly">
+                <tbody *ngIf="isL2GridReadOnly">
                     <tr *ngFor="let weekGrade of StudentWeekGrades">
                         <td data-title="ID">{{weekGrade.studentID}}</td>
                         <td data-title="First Name">{{weekGrade.firstName}}</td>
@@ -168,16 +281,16 @@
         <div *ngIf="studentGridServerErrorMessage" class="col-md-12 mt10 ml10 errorText"><i class="fa fa-exclamation-triangle"></i> {{studentGridServerErrorMessage}} </div>
         <div *ngIf="studentGridServerSuccessMessage" class="col-md-12 mt10 ml10 successText"><i class="fa fa-check-circle"></i>  {{studentGridServerSuccessMessage}}</div>
     </div>
-    <div class="row bgBar br5 m5 p5" *ngIf="isStudentWeekGradeGridSaving">
+    <div class="row bgBar br5 m5 p5" *ngIf="isGridSaving">
         <div class="col-md-12">Saving Student Grades. Please wait.<img src="/img/Loading.gif" height="40" width="40" class="ml10" /></div>
     </div>
-    <div class="row bgBar br5 m5 p5" *ngIf="showStudentWeekGradeGrid && !isStudentWeekGradeGridSaving">
-        
-        <div class="col-md-4" ></div>
-        <div class="col-md-4 " >
+    <div class="row bgBar br5 m5 p5" *ngIf="showL3Grid && !isGridSaving">
+
+        <div class="col-md-4"></div>
+        <div class="col-md-4 ">
             <button class="btn btn-primary btn-sm" type="button" (click)="cancelClick()"><strong><i class="fa fa-times-circle"></i> Cancel</strong></button>
-            <button class="btn btn-primary btn-sm ml10" (click)="saveClick()" type="submit" *ngIf="!isStudentWeekGradeGridReadOnly"><strong><i class="fa fa-save" ></i> Save</strong></button>
+            <button class="btn btn-primary btn-sm ml10" (click)="saveClick()" type="submit" *ngIf="!isL3GridReadOnly"><strong><i class="fa fa-save"></i> Save</strong></button>
         </div>
-        <div class="col-md-4" ></div>
+        <div class="col-md-4"></div>
     </div>
 </div>

@@ -459,7 +459,7 @@ namespace CTSWebApp.Data
         }
 
 
-        public IEnumerable<StudentWeekGrade> GetAssignedStudentsWeekGrade(int teacherId, int weekId)
+        public IEnumerable<StudentWeekGrade> GetAssignedStudentsWeekGrade(int teacherId, int weekId, string gradeLevel)
         {
             _logger.LogInformation("CTSDBRepository.GetAssignedStudentsWeekGrade() called");
 
@@ -478,6 +478,29 @@ namespace CTSWebApp.Data
                 SqlValue = weekId
             });
 
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@gradeLevel",
+                SqlDbType = System.Data.SqlDbType.VarChar,
+                Size = 2,
+                SqlValue = gradeLevel
+            });
+
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@Result",
+                SqlDbType = System.Data.SqlDbType.Int,
+                Direction = System.Data.ParameterDirection.Output
+            });
+
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@ErrorMessage",
+                SqlDbType = System.Data.SqlDbType.VarChar,
+                Direction = System.Data.ParameterDirection.Output,
+                Size = 100
+            });
+
             // Below query is for populating student week grade grid population based on teacher and week
             /*string sql = "SELECT ISNULL(SWG.ID,0) ID, S.STUDENTID STUDENTID, ISNULL(CW.ID,@weekId) AS CALENDARWEEKID, SE.TEACHERID, S.FIRSTNAME FIRSTNAME, S.LASTNAME LASTNAME, S.ACTIVE ACTIVE, "
                     + " SE.CTSGRADE CTSGRADE, SE.COUNTYGRADE COUNTYGRADE, SE.STARTDATE, SE.ENDDATE, "
@@ -491,6 +514,7 @@ namespace CTSWebApp.Data
                     + "ORDER BY S.FIRSTNAME , S.LASTNAME";
             */
 
+            /*
             string sql = "SELECT ISNULL(SWG.ID,0) ID, S.STUDENTID STUDENTID, ISNULL(CW.ID,1) AS CALENDARWEEKID, TSA.TEACHERID, S.FIRSTNAME FIRSTNAME, S.LASTNAME LASTNAME, S.ACTIVE ACTIVE, "
                 + "ISNULL(SWG.ATTENDANCE,10) ATTENDANCE, ISNULL(SWG.HOMEWORK,10) HOMEWORK, ISNULL(SWG.READING,10) READING, ISNULL(SWG.WRITING,10) WRITING, ISNULL(SWG.SPEAKING,10) SPEAKING, "
                 + "ISNULL(SWG.BEHAVIOR,10) BEHAVIOR, ISNULL(SWG.QUIZ,10) QUIZ, SWG.NOTES, ISNULL(CW.DATAFREEZE,'N') DATAFREEZE "
@@ -505,12 +529,25 @@ namespace CTSWebApp.Data
                 + "AND (TSA.ENDDATE IS NULL OR TSA.ENDDATE >= CW.WEEKDATE) "
                 + "LEFT JOIN STUDENTWEEKGRADE SWG ON SWG.STUDENTID = S.STUDENTID "
                 + "AND SWG.CalendarWeekID = CW.ID ";
-
+            
             var result = _dbContext.StudentWeekGrade.FromSql(sql, paramList.ToArray());
 
-            if (result != null)
+            */
+
+            var result = _dbContext.StudentWeekGrade.FromSql("EXEC SELECT_STUDENTWEEKGRADE @teacherId, @weekId, @gradeLevel, @Result OUT, @ErrorMessage OUT", paramList.ToArray());
+            if (result != null && result.ToList().Count > 0)
             {
                 return result.ToList();
+            }
+            else
+            {
+
+                int returnCode = paramList[3].SqlValue != null ? int.Parse(paramList[3].SqlValue.ToString()) : 0;
+                if (returnCode != 1)
+                {
+                    string errorMessage = paramList[4].SqlValue != null ? paramList[4].SqlValue.ToString() : "Error Occurred";
+                    _logger.LogError("CTSDBRepository.GetAssignedStudentsWeekGrade() failed. Error Message = " + errorMessage);
+                }
             }
 
             return null;
@@ -620,10 +657,10 @@ namespace CTSWebApp.Data
         {
             //Below query is to populate test weeks grouping by term numbers/weekdate - needs to be refined
             _logger.LogInformation("CTSDBRepository.GetCalendarTestWeeks() called");
-            string sql = "SELECT ID,CALENDARYEARID,WEEKNO, 'Term ' + CONVERT(VARCHAR, TERMNO) AS DESCRIPTION, WEEKDATE, TERMNO, ACTIVE "
-                        + " FROM CALENDARWEEK WHERE WEEKDATE IN (SELECT MAX(WEEKDATE) FROM CALENDARWEEK GROUP BY TERMNO)";
+            //string sql = "SELECT ID,CALENDARYEARID,WEEKNO, 'Term ' + CONVERT(VARCHAR, TERMNO) AS DESCRIPTION, WEEKDATE, TERMNO, ACTIVE "
+            //            + " FROM CALENDARWEEK WHERE TESTWEEK = 'Y'";
 
-            var result = _dbContext.CalendarWeeks.FromSql(sql);
+            var result = _dbContext.CalendarWeeks.Where(x => x.TestWeek == "Y");
             if (result != null)
             {
                 return result.ToList();

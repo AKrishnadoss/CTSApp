@@ -230,7 +230,7 @@ export class ScoresComponent implements OnInit {
 
                     //populate grade from result
                     let gr: Array<Grade> = new Array<Grade>();
-                    gr.push(new Grade(this.Teachers[0].ctsGrade, this.Teachers[0].ctsGrade));
+                    gr.push(new Grade(this.Teachers[0].ctsGrade, this.Teachers[0].ctsGrade, null));
                     this.Grades = gr;
                     this.selectedGrade = this.Teachers[0].ctsGrade;
                     this.selectGradeEnabled = false;

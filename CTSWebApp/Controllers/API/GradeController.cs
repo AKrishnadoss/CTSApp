@@ -36,11 +36,11 @@ namespace CTSWebApp.Controllers.API
         [Route("grades")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public ActionResult<IEnumerable<GradeViewModel>> GetAllGrades()
+        public ActionResult<IEnumerable<GradeViewModel>> GetAllGrades(bool includeAll = false)
         {
             try
             {
-                var result = _gradeBLL.GetGrades();
+                var result = _gradeBLL.GetGrades(includeAll);
                 if (result != null)
                 {
                     return Ok(_mapper.Map<IEnumerable<Grade>, IEnumerable<GradeViewModel>>(result));

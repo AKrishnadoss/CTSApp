@@ -37,6 +37,7 @@ namespace CTSWebApp.ViewModels
         public short? Behavior { get; set; }
         [Required]
         public short? Quiz { get; set; }
+        public short? Participation { get; set; }
         [MinLength(0)]
         [MaxLength(100, ErrorMessage = "Notes cannot exceed 100 characters")]
         //[RegularExpression("[@#$%^&*(),?:{}|<>]", ErrorMessage = "Notes cannot contain special characters @#$%^&*(),?:{}|<>")]

@@ -49,12 +49,14 @@ var AttendanceComponent = /** @class */ (function () {
         this.isSelectGradeLoading = false;
         this.isSelectTeacherLoading = false;
         this.isStudentWeekGradeGridLoading = false;
-        this.showStudentWeekGradeGrid = false;
-        this.showStudentGridServerErrorMessage = false;
-        this.isStudentWeekGradeGridSaving = false;
+        this.showL1Grid = false;
+        this.showL2Grid = false;
+        this.showL3Grid = false;
+        this.isGridSaving = false;
         this.studentGridServerSuccessMessage = "";
         this.calendarWeekId = 0;
         this.selectedGrade = "0";
+        this.selectedGradeLevel = "";
         this.selectedTeacherId = 0;
         this.calendarWeekLoadError = "";
         this.gradeLoadError = "";
@@ -122,9 +124,10 @@ var AttendanceComponent = /** @class */ (function () {
                 _this.Teachers = result;
                 //populate grade from result
                 var gr = new Array();
-                gr.push(new Grade(_this.Teachers[0].ctsGrade, _this.Teachers[0].ctsGrade));
+                gr.push(new Grade(_this.Teachers[0].ctsGrade, _this.Teachers[0].ctsGrade, null));
                 _this.Grades = gr;
                 _this.selectedGrade = _this.Teachers[0].ctsGrade;
+                _this.selectedGradeLevel = ""; // TODO: Get GradeLevel
                 _this.selectGradeEnabled = false;
                 if (_this.Teachers.length > 1) {
                     _this.selectedTeacherId = 0;
@@ -149,6 +152,7 @@ var AttendanceComponent = /** @class */ (function () {
         if (this.gradeSelectionAllowed == true) {
             this.selectedGrade = "0";
             this.selectedTeacherId = 0;
+            this.selectedGradeLevel = "";
         }
         else {
             this.getGradeAndTeacherDetails();
@@ -156,9 +160,12 @@ var AttendanceComponent = /** @class */ (function () {
         this.displayStudentWeekGradeGrid();
     };
     AttendanceComponent.prototype.onSelectGrade = function (value) {
+        if (value != "0") {
+            var selectedGrade = this.Grades.find(function (x) { return x.ctsGrade == value; });
+            this.selectedGradeLevel = selectedGrade.gradeLevel;
+        }
         if (this.teacherSelectionAllowed == true) {
             this.studentGridServerErrorMessage = "";
-            this.showStudentGridServerErrorMessage = false;
             this.studentGridServerWarningMessage = "";
             this.Teachers = null;
             this.selectedTeacherId = 0;
@@ -194,54 +201,138 @@ var AttendanceComponent = /** @class */ (function () {
         this.studentGridServerSuccessMessage = "";
         if (this.calendarWeekId != 0 && this.selectedTeacherId != 0) {
             this.studentGridServerErrorMessage = "";
-            this.showStudentGridServerErrorMessage = false;
             this.studentGridServerWarningMessage = "";
-            this.showStudentWeekGradeGrid = true;
-            this.getStudentWeekGrades();
+            if (this.selectedGradeLevel == "L1") {
+                this.showL2Grid = false;
+                this.showL3Grid = false;
+                this.getL1WeekGrades();
+            }
+            else if (this.selectedGradeLevel == "L2") {
+                this.showL1Grid = false;
+                this.showL3Grid = false;
+                this.getL2WeekGrades();
+            }
+            else if (this.selectedGradeLevel == "L3") {
+                this.showL1Grid = false;
+                this.showL2Grid = false;
+                this.getL3WeekGrades();
+            }
         }
         else {
-            this.showStudentWeekGradeGrid = false;
+            this.showL1Grid = false;
+            this.showL2Grid = false;
+            this.showL3Grid = false;
         }
     };
-    AttendanceComponent.prototype.getStudentWeekGrades = function () {
+    AttendanceComponent.prototype.getL1WeekGrades = function () {
         var _this = this;
         this.isStudentWeekGradeGridLoading = true;
-        this.showStudentWeekGradeGrid = false;
+        this.showL1Grid = false;
         this.studentGridServerErrorMessage = "";
-        this.showStudentGridServerErrorMessage = false;
         this.studentGridServerWarningMessage = "";
-        this._teacherService.getStudentWeekGrades(this.selectedTeacherId, this.calendarWeekId)
+        this._teacherService.getWeekGrades(this.selectedTeacherId, this.selectedGradeLevel, this.calendarWeekId)
             .subscribe(function (result) {
             _this.isStudentWeekGradeGridLoading = false;
             _this.StudentWeekGrades = result;
             if (_this.StudentWeekGrades == null) {
-                _this.showStudentGridServerErrorMessage = true;
-                _this.showStudentWeekGradeGrid = false;
+                _this.showL1Grid = false;
                 _this.studentGridServerErrorMessage = "No Student(s) assigned to selected teacher.";
             }
             else {
                 if (result.length > 0) {
                     if (result[0].dataFreeze == 'Y') {
-                        _this.isStudentWeekGradeGridReadOnly = true;
+                        _this.isL1GridReadOnly = true;
                     }
                     else {
-                        _this.isStudentWeekGradeGridReadOnly = false;
+                        _this.isL1GridReadOnly = false;
                     }
                     if (result[0].id == 0) {
                         _this.studentGridServerWarningMessage = "Note: Data not entered for this week, showing default entries";
                         console.log(_this.studentGridServerWarningMessage);
                     }
                 }
-                _this.showStudentGridServerErrorMessage = false;
-                _this.showStudentWeekGradeGrid = true;
+                _this.showL1Grid = true;
             }
         }, function (err) {
             _this.isStudentWeekGradeGridLoading = false;
             console.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
             _this.StudentWeekGrades = null;
             _this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.statusText;
-            _this.showStudentGridServerErrorMessage = true;
-            _this.showStudentWeekGradeGrid = false;
+            _this.showL2Grid = false;
+        });
+    };
+    AttendanceComponent.prototype.getL2WeekGrades = function () {
+        var _this = this;
+        this.isStudentWeekGradeGridLoading = true;
+        this.showL2Grid = false;
+        this.studentGridServerErrorMessage = "";
+        this.studentGridServerWarningMessage = "";
+        this._teacherService.getWeekGrades(this.selectedTeacherId, this.selectedGradeLevel, this.calendarWeekId)
+            .subscribe(function (result) {
+            _this.isStudentWeekGradeGridLoading = false;
+            _this.StudentWeekGrades = result;
+            if (_this.StudentWeekGrades == null) {
+                _this.showL2Grid = false;
+                _this.studentGridServerErrorMessage = "No Student(s) assigned to selected teacher.";
+            }
+            else {
+                if (result.length > 0) {
+                    if (result[0].dataFreeze == 'Y') {
+                        _this.isL2GridReadOnly = true;
+                    }
+                    else {
+                        _this.isL2GridReadOnly = false;
+                    }
+                    if (result[0].id == 0) {
+                        _this.studentGridServerWarningMessage = "Note: Data not entered for this week, showing default entries";
+                        console.log(_this.studentGridServerWarningMessage);
+                    }
+                }
+                _this.showL2Grid = true;
+            }
+        }, function (err) {
+            _this.isStudentWeekGradeGridLoading = false;
+            console.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+            _this.StudentWeekGrades = null;
+            _this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.statusText;
+            _this.showL2Grid = false;
+        });
+    };
+    AttendanceComponent.prototype.getL3WeekGrades = function () {
+        var _this = this;
+        this.isStudentWeekGradeGridLoading = true;
+        this.showL3Grid = false;
+        this.studentGridServerErrorMessage = "";
+        this.studentGridServerWarningMessage = "";
+        this._teacherService.getWeekGrades(this.selectedTeacherId, this.selectedGradeLevel, this.calendarWeekId)
+            .subscribe(function (result) {
+            _this.isStudentWeekGradeGridLoading = false;
+            _this.StudentWeekGrades = result;
+            if (_this.StudentWeekGrades == null) {
+                _this.showL3Grid = false;
+                _this.studentGridServerErrorMessage = "No Student(s) assigned to selected teacher.";
+            }
+            else {
+                if (result.length > 0) {
+                    if (result[0].dataFreeze == 'Y') {
+                        _this.isL3GridReadOnly = true;
+                    }
+                    else {
+                        _this.isL3GridReadOnly = false;
+                    }
+                    if (result[0].id == 0) {
+                        _this.studentGridServerWarningMessage = "Note: Data not entered for this week, showing default entries";
+                        console.log(_this.studentGridServerWarningMessage);
+                    }
+                }
+                _this.showL3Grid = true;
+            }
+        }, function (err) {
+            _this.isStudentWeekGradeGridLoading = false;
+            console.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+            _this.StudentWeekGrades = null;
+            _this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.statusText;
+            _this.showL3Grid = false;
         });
     };
     AttendanceComponent.prototype.selectScore = function (weekGrade, type, value) {
@@ -264,6 +355,9 @@ var AttendanceComponent = /** @class */ (function () {
             case 'quiz':
                 weekGrade.quiz = value;
                 break;
+            case 'participation':
+                weekGrade.participation = value;
+                break;
         }
     };
     AttendanceComponent.prototype.selectAttendance = function (weekGrade, value) {
@@ -274,11 +368,14 @@ var AttendanceComponent = /** @class */ (function () {
             weekGrade.speaking = 0;
             weekGrade.behavior = 0;
             weekGrade.quiz = 0;
+            weekGrade.participation = 0;
             weekGrade.notes = null;
         }
     };
     AttendanceComponent.prototype.cancelClick = function () {
-        this.showStudentWeekGradeGrid = false;
+        this.showL1Grid = false;
+        this.showL2Grid = false;
+        this.showL3Grid = false;
         this.studentGridServerSuccessMessage = "";
         this.studentGridServerErrorMessage = "";
         this.studentGridServerWarningMessage = "";
@@ -287,19 +384,17 @@ var AttendanceComponent = /** @class */ (function () {
     };
     AttendanceComponent.prototype.saveClick = function () {
         var _this = this;
-        this.isStudentWeekGradeGridSaving = true;
-        this.showStudentGridServerErrorMessage = false;
+        this.isGridSaving = true;
         this.studentGridServerErrorMessage = "";
         this.studentGridServerSuccessMessage = "";
         this.studentGridServerWarningMessage = "";
         this._studentService.saveStudentWeekGrades(this.StudentWeekGrades)
             .subscribe(function (result) {
-            _this.isStudentWeekGradeGridSaving = false;
+            _this.isGridSaving = false;
             _this.studentGridServerSuccessMessage = "Student Week Grades saved successfully !";
         }, function (err) {
             console.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
-            _this.isStudentWeekGradeGridSaving = false;
-            _this.showStudentGridServerErrorMessage = true;
+            _this.isGridSaving = false;
             _this.studentGridServerSuccessMessage = "";
             _this.studentGridServerErrorMessage = "Save failed. ";
         });

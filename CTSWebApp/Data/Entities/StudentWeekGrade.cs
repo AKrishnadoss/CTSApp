@@ -30,6 +30,7 @@ namespace CTSWebApp.Data.Entities
         public short? Speaking { get; set; }
         public short? Behavior { get; set; }
         public short? Quiz { get; set; }
+        public short? Participation { get; set; }
         public string Notes { get; set; }
         public string DataFreeze { get; set; }
     }

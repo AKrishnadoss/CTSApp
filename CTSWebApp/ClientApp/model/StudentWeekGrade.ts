@@ -17,7 +17,8 @@
 	writing:number;
 	speaking:number;
 	behavior:number;
-	quiz:number;
+    quiz: number;
+    participation: number;
     notes: string;
     dataFreeze: string;
 }
