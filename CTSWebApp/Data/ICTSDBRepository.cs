@@ -8,6 +8,7 @@ namespace CTSWebApp.Data
         //IEnumerable<object> CTSUsers { get; }
 
         IEnumerable<CTSUser> GetAllCTSUsers();
+        IEnumerable<CTSUser> GetValidAndLogonUsers();
         IEnumerable<CTSUser> GetAllTeachers();
         CTSUser GetCTSUserById(int id);
 
@@ -32,7 +33,7 @@ namespace CTSWebApp.Data
         IEnumerable<Teacher> GetAssignedTeacher(string grade, int weekId);
         IEnumerable<Teacher> GetAssignedTeacher(int teacherId, int weekId);
 
-        StudentErrorResult SaveStudentWeekGrades(int ctsUserId, IEnumerable<StudentWeekGrade> studentWeekGrades);
+        StudentErrorResult SaveStudentWeekGrades(int ctsUserId, string gradeLevel, IEnumerable<StudentWeekGrade> studentWeekGrades);
         StudentErrorResult SaveStudentTermScores(int ctsUserId, IEnumerable<StudentTermScore> studentTermScores);
     }
 }

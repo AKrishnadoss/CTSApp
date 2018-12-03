@@ -135,7 +135,6 @@ export class AttendanceComponent  implements OnInit {
     }
 
     getGrades() {
-        console.log('Loading grades');
 		this.isSelectGradeLoading = true;
 		this.gradeLoadError = "";
         this._gradeService.getGrades()
@@ -145,13 +144,15 @@ export class AttendanceComponent  implements OnInit {
             },
             err => {
 				this.isSelectGradeLoading = false;
-                this._loggerService.log("Error occurred : Code=" + err.status + ",Error="+err.statusText);
-				if ( err.status == "404")
-				{
-					// data not found
-					this.Grades = null;
-				}
-				this.gradeLoadError = "Error Occured";
+                this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+                this.Grades = null;
+                this.gradeLoadError = "Error Occured : " + err.status + ":" + err.statusText;
+                if (err.status == "401" || err.status == "403") {
+                    this.studentGridServerErrorMessage = "UnAuthorized/Forbidden access or Session Expired. Please log out and login back to access the system."
+                }
+                else {
+                    this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.status + ". Please try later or contact system administrator";
+                }
             });
     }
 
@@ -164,14 +165,16 @@ export class AttendanceComponent  implements OnInit {
                 this.CalendarWeeks = result;
             },
             err => {
-				this.isSelectCalendarWeekLoading = false;
+                this.isSelectCalendarWeekLoading = false;
+                this.CalendarWeeks = null;
                 this._loggerService.log("Error occurred : Code=" + err.status + ",Error="+err.statusText);
-				if ( err.status == "404")
-				{
-					// data not found
-					this.CalendarWeeks = null;
-				}
-				this.calendarWeekLoadError = "Error Occured";
+                this.calendarWeekLoadError = "Error Occured : " + err.status + ":" + err.statusText;
+                if (err.status == "401" || err.status == "403") {
+                    this.studentGridServerErrorMessage = "UnAuthorized/Forbidden access or Session Expired. Please log out and login back to access the system."
+                }
+                else {
+                    this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.status + ". Please try later or contact system administrator";
+                }
             });
     }
 
@@ -184,10 +187,10 @@ export class AttendanceComponent  implements OnInit {
 
                     //populate grade from result
                     let gr: Array<Grade> = new Array<Grade>();
-                    gr.push(new Grade(this.Teachers[0].ctsGrade, this.Teachers[0].ctsGrade, null));
+                    gr.push(new Grade(this.Teachers[0].ctsGrade, this.Teachers[0].ctsGrade, this.Teachers[0].gradeLevel));
                     this.Grades = gr;
                     this.selectedGrade = this.Teachers[0].ctsGrade;
-                    this.selectedGradeLevel = ""; // TODO: Get GradeLevel
+                    this.selectedGradeLevel = this.Teachers[0].gradeLevel;
                     this.selectGradeEnabled = false;
 
                     if (this.Teachers.length > 1) {
@@ -201,9 +204,12 @@ export class AttendanceComponent  implements OnInit {
                 err => {
                     this.isSelectTeacherLoading = false;
                     this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
-                    if (err.status == "404") {
-                        // data not found
-                        this.Teachers = null;
+                    this.Teachers = null;
+                    if (err.status == "401" || err.status == "403") {
+                        this.studentGridServerErrorMessage = "UnAuthorized/Forbidden access or Session Expired. Please log out and login back to access the system."
+                    }
+                    else {
+                        this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.status + ". Please try later or contact system administrator";
                     }
                 });
         }
@@ -211,6 +217,10 @@ export class AttendanceComponent  implements OnInit {
 
     onSelectCalendarWeek(value : any) {
         this.calendarWeekId = value;
+        this.studentGridServerErrorMessage = "";
+        this.studentGridServerWarningMessage = "";
+        this.studentGridServerSuccessMessage = "";
+
         if (this.gradeSelectionAllowed == true) {
             this.selectedGrade = "0";
             this.selectedTeacherId = 0;
@@ -223,6 +233,10 @@ export class AttendanceComponent  implements OnInit {
     }
 
     onSelectGrade(value: any) {
+        this.studentGridServerErrorMessage = "";
+        this.studentGridServerWarningMessage = "";
+        this.studentGridServerSuccessMessage = "";
+
         if (value != "0") {
             var selectedGrade = this.Grades.find(x => x.ctsGrade == value);
             this.selectedGradeLevel = selectedGrade.gradeLevel;
@@ -230,7 +244,6 @@ export class AttendanceComponent  implements OnInit {
 
         if (this.teacherSelectionAllowed == true) {
             this.studentGridServerErrorMessage = "";
-
             this.studentGridServerWarningMessage = "";
             this.Teachers = null;
             this.selectedTeacherId = 0;
@@ -245,7 +258,10 @@ export class AttendanceComponent  implements OnInit {
 
 	onSelectTeacher(value:any){
         this.selectedTeacherId = value;
-		//console.log("selected teacherId = " + value);
+        this.studentGridServerErrorMessage = "";
+        this.studentGridServerWarningMessage = "";
+        this.studentGridServerSuccessMessage = "";
+
 		this.displayStudentWeekGradeGrid();
 	}
 
@@ -257,13 +273,15 @@ export class AttendanceComponent  implements OnInit {
                 this.Teachers = result;
             },
             err => {
-				this.isSelectTeacherLoading = false;
+                this.isSelectTeacherLoading = false;
+                this.Teachers = null;
 				this._loggerService.log("Error occurred : Code=" + err.status + ",Error="+err.statusText);
-				if ( err.status == "404")
-				{
-					// data not found
-					this.Teachers = null;
-				}
+                if (err.status == "401" || err.status == "403") {
+                    this.studentGridServerErrorMessage = "UnAuthorized/Forbidden access or Session Expired. Please log out and login back to access the system."
+                }
+                else {
+                    this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.status + ". Please try later or contact system administrator.";
+                }
             });
     }
 
@@ -320,7 +338,6 @@ export class AttendanceComponent  implements OnInit {
                         }
                         if (result[0].id == 0) {
                             this.studentGridServerWarningMessage = "Note: Data not entered for this week, showing default entries";
-                            console.log(this.studentGridServerWarningMessage);
                         }
                     }
 
@@ -328,13 +345,17 @@ export class AttendanceComponent  implements OnInit {
                 }
 
             },
-                err => {
-                    this.isStudentWeekGradeGridLoading = false;
-                    console.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
-                    this.StudentWeekGrades = null;
-                    this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.statusText;
-
-                    this.showL2Grid = false;
+            err => {
+                this.isStudentWeekGradeGridLoading = false;
+                this.showL1Grid = false;
+                this.StudentWeekGrades = null;
+                this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+                if (err.status == "401" || err.status == "403") {
+                    this.studentGridServerErrorMessage = "UnAuthorized/Forbidden access or Session Expired. Please log out and login back to access the system."
+                }
+                else {
+                    this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.status + ". Please try later or contact system administrator.";
+                }
                 });
     }
 
@@ -363,7 +384,6 @@ export class AttendanceComponent  implements OnInit {
                         }
                         if (result[0].id == 0) {
                             this.studentGridServerWarningMessage = "Note: Data not entered for this week, showing default entries";
-                            console.log(this.studentGridServerWarningMessage);
                         }
                     }
 
@@ -373,11 +393,15 @@ export class AttendanceComponent  implements OnInit {
             },
                 err => {
                     this.isStudentWeekGradeGridLoading = false;
-                    console.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
-                    this.StudentWeekGrades = null;
-                    this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.statusText;
-
                     this.showL2Grid = false;
+                    this.StudentWeekGrades = null;
+                    this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+                    if (err.status == "401" || err.status == "403") {
+                        this.studentGridServerErrorMessage = "UnAuthorized/Forbidden access or Session Expired. Please log out and login back to access the system."
+                    }
+                    else {
+                        this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.status + ". Please try later or contact system administrator.";
+                    }
                 });
     }
 
@@ -407,7 +431,6 @@ export class AttendanceComponent  implements OnInit {
                         }
                         if (result[0].id == 0) {
                             this.studentGridServerWarningMessage = "Note: Data not entered for this week, showing default entries";
-                            console.log(this.studentGridServerWarningMessage);
                         }
                     }
 
@@ -416,12 +439,16 @@ export class AttendanceComponent  implements OnInit {
 
             },
             err => {
-				this.isStudentWeekGradeGridLoading = false;
-				console.log("Error occurred : Code=" + err.status + ",Error="+err.statusText);
-				this.StudentWeekGrades = null;
-				this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.statusText;
-
+                this.isStudentWeekGradeGridLoading = false;
                 this.showL3Grid = false;
+                this.StudentWeekGrades = null;
+                this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+                if (err.status == "401" || err.status == "403") {
+                    this.studentGridServerErrorMessage = "UnAuthorized/Forbidden access or Session Expired. Please log out and login back to access the system."
+                }
+                else {
+                    this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.status + ". Please try later or contact system administrator.";
+                }
             });
 	}
 
@@ -484,18 +511,40 @@ export class AttendanceComponent  implements OnInit {
 		this.studentGridServerErrorMessage = "";
         this.studentGridServerSuccessMessage = "";
         this.studentGridServerWarningMessage = "";
-		this._studentService.saveStudentWeekGrades(this.StudentWeekGrades)
+        this._studentService.saveStudentWeekGrades(this.selectedGradeLevel, this.StudentWeekGrades)
 			.subscribe(result=> {
                 this.isGridSaving = false;
 				this.studentGridServerSuccessMessage = "Student Week Grades saved successfully !";
 			},
 			err=> {
-				console.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
                 this.isGridSaving = false;
-
 				this.studentGridServerSuccessMessage = "";
-				this.studentGridServerErrorMessage = "Save failed. ";
+                this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+                if (err.status == "401" || err.status == "403") {
+                    this.studentGridServerErrorMessage = "UnAuthorized/Forbidden access or Session Expired. Please log out and login back to access the system."
+                }
+                else {
+                    this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.status + ". Please try later or contact system administrator.";
+                }
+
 			});
 
-	}
+    }
+
+    showSaveButton(): boolean {
+        let show: boolean = false;
+        switch (this.selectedGradeLevel) {
+            case "L1":
+                show = !this.isL1GridReadOnly;
+                break;
+            case "L2":
+                show = !this.isL2GridReadOnly;
+                break;
+            case "L3":
+                show = !this.isL3GridReadOnly;
+                break;
+        }
+
+        return show;
+    }
  }

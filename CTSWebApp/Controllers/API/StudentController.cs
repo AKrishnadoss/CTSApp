@@ -82,14 +82,14 @@ namespace CTSWebApp.Controllers.API
 
         [HttpPost]
         [ActionName("SaveStudentWeekGrades")]
-        public ActionResult<StudentErrorResult> SaveStudentWeekGrades([FromBody]IEnumerable<StudentWeekGradeViewModel> viewModel)
+        public ActionResult<StudentErrorResult> SaveStudentWeekGrades([FromBody]SaveStudentWeekGradeViewModel viewModel)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
                     int ctsUserID = GetLoggedOnCTSUserID();
-                    var result = _studentBLL.SaveStudentWeekGrades(ctsUserID, _mapper.Map<IEnumerable<StudentWeekGradeViewModel>, IEnumerable<StudentWeekGrade>>(viewModel));
+                    var result = _studentBLL.SaveStudentWeekGrades(ctsUserID, viewModel.GradeLevel, _mapper.Map<IEnumerable<StudentWeekGradeViewModel>, IEnumerable<StudentWeekGrade>>(viewModel.StudentWeekGradeViewModelList));
                     if (result.Result == true)
                     {
                         return Created("student/savestudentweekgrades", result);

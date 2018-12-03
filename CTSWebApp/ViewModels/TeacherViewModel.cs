@@ -13,5 +13,6 @@ namespace CTSWebApp.ViewModels
         public string Email { get; set; }
         public string PrimaryPhone { get; set; }
         public string CTSGrade { get; set; }
+        public string GradeLevel { get; set; }
     }
 }

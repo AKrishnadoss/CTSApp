@@ -26,7 +26,7 @@ namespace CTSWebApp.BLL
             return _ctsDBRepository.GetAllStudents(includeInActive);
         }
 
-        public StudentErrorResult SaveStudentWeekGrades(int ctsUserId, IEnumerable<StudentWeekGrade> studentWeekGrades)
+        public StudentErrorResult SaveStudentWeekGrades(int ctsUserId, string gradeLevel, IEnumerable<StudentWeekGrade> studentWeekGrades)
         {
             // Do Business Logic Data validation
             if (studentWeekGrades == null || studentWeekGrades.Count() == 0 )
@@ -37,7 +37,7 @@ namespace CTSWebApp.BLL
             List<StudentError> errors = new List<StudentError>();
             foreach (StudentWeekGrade swg in studentWeekGrades)
             {
-                StudentError error = ValidateStudentWeekGrade(swg);
+                StudentError error = ValidateStudentWeekGrade(gradeLevel, swg);
                 if (error != null)
                 {
                     errors.Add(error);
@@ -48,7 +48,7 @@ namespace CTSWebApp.BLL
             {
                 return new StudentErrorResult(false, "Invalid data", errors);
             }
-            return _ctsDBRepository.SaveStudentWeekGrades(ctsUserId, studentWeekGrades);
+            return _ctsDBRepository.SaveStudentWeekGrades(ctsUserId, gradeLevel, studentWeekGrades);
         }
 
         public StudentErrorResult SaveStudentTermScores(int ctsUserId, IEnumerable<StudentTermScore> studentTermScores)
@@ -75,7 +75,7 @@ namespace CTSWebApp.BLL
             return _ctsDBRepository.SaveStudentTermScores(ctsUserId, studentTermScores);
         }
 
-        private StudentError ValidateStudentWeekGrade(StudentWeekGrade swg)
+        private StudentError ValidateStudentWeekGrade(string gradeLevel, StudentWeekGrade swg)
         {
             StringBuilder builder = new StringBuilder();
             if ( swg.Attendance != 0 && swg.Attendance != 10)

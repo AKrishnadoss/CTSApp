@@ -80,7 +80,6 @@ var AttendanceComponent = /** @class */ (function () {
     };
     AttendanceComponent.prototype.getGrades = function () {
         var _this = this;
-        console.log('Loading grades');
         this.isSelectGradeLoading = true;
         this.gradeLoadError = "";
         this._gradeService.getGrades()
@@ -90,11 +89,14 @@ var AttendanceComponent = /** @class */ (function () {
         }, function (err) {
             _this.isSelectGradeLoading = false;
             _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
-            if (err.status == "404") {
-                // data not found
-                _this.Grades = null;
+            _this.Grades = null;
+            _this.gradeLoadError = "Error Occured : " + err.status + ":" + err.statusText;
+            if (err.status == "401" || err.status == "403") {
+                _this.studentGridServerErrorMessage = "UnAuthorized/Forbidden access or Session Expired. Please log out and login back to access the system.";
             }
-            _this.gradeLoadError = "Error Occured";
+            else {
+                _this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.status + ". Please try later or contact system administrator";
+            }
         });
     };
     AttendanceComponent.prototype.getCalendarWeeks = function () {
@@ -107,12 +109,15 @@ var AttendanceComponent = /** @class */ (function () {
             _this.CalendarWeeks = result;
         }, function (err) {
             _this.isSelectCalendarWeekLoading = false;
+            _this.CalendarWeeks = null;
             _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
-            if (err.status == "404") {
-                // data not found
-                _this.CalendarWeeks = null;
+            _this.calendarWeekLoadError = "Error Occured : " + err.status + ":" + err.statusText;
+            if (err.status == "401" || err.status == "403") {
+                _this.studentGridServerErrorMessage = "UnAuthorized/Forbidden access or Session Expired. Please log out and login back to access the system.";
             }
-            _this.calendarWeekLoadError = "Error Occured";
+            else {
+                _this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.status + ". Please try later or contact system administrator";
+            }
         });
     };
     AttendanceComponent.prototype.getGradeAndTeacherDetails = function () {
@@ -124,10 +129,10 @@ var AttendanceComponent = /** @class */ (function () {
                 _this.Teachers = result;
                 //populate grade from result
                 var gr = new Array();
-                gr.push(new Grade(_this.Teachers[0].ctsGrade, _this.Teachers[0].ctsGrade, null));
+                gr.push(new Grade(_this.Teachers[0].ctsGrade, _this.Teachers[0].ctsGrade, _this.Teachers[0].gradeLevel));
                 _this.Grades = gr;
                 _this.selectedGrade = _this.Teachers[0].ctsGrade;
-                _this.selectedGradeLevel = ""; // TODO: Get GradeLevel
+                _this.selectedGradeLevel = _this.Teachers[0].gradeLevel;
                 _this.selectGradeEnabled = false;
                 if (_this.Teachers.length > 1) {
                     _this.selectedTeacherId = 0;
@@ -140,15 +145,21 @@ var AttendanceComponent = /** @class */ (function () {
             }, function (err) {
                 _this.isSelectTeacherLoading = false;
                 _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
-                if (err.status == "404") {
-                    // data not found
-                    _this.Teachers = null;
+                _this.Teachers = null;
+                if (err.status == "401" || err.status == "403") {
+                    _this.studentGridServerErrorMessage = "UnAuthorized/Forbidden access or Session Expired. Please log out and login back to access the system.";
+                }
+                else {
+                    _this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.status + ". Please try later or contact system administrator";
                 }
             });
         }
     };
     AttendanceComponent.prototype.onSelectCalendarWeek = function (value) {
         this.calendarWeekId = value;
+        this.studentGridServerErrorMessage = "";
+        this.studentGridServerWarningMessage = "";
+        this.studentGridServerSuccessMessage = "";
         if (this.gradeSelectionAllowed == true) {
             this.selectedGrade = "0";
             this.selectedTeacherId = 0;
@@ -160,6 +171,9 @@ var AttendanceComponent = /** @class */ (function () {
         this.displayStudentWeekGradeGrid();
     };
     AttendanceComponent.prototype.onSelectGrade = function (value) {
+        this.studentGridServerErrorMessage = "";
+        this.studentGridServerWarningMessage = "";
+        this.studentGridServerSuccessMessage = "";
         if (value != "0") {
             var selectedGrade = this.Grades.find(function (x) { return x.ctsGrade == value; });
             this.selectedGradeLevel = selectedGrade.gradeLevel;
@@ -178,7 +192,9 @@ var AttendanceComponent = /** @class */ (function () {
     };
     AttendanceComponent.prototype.onSelectTeacher = function (value) {
         this.selectedTeacherId = value;
-        //console.log("selected teacherId = " + value);
+        this.studentGridServerErrorMessage = "";
+        this.studentGridServerWarningMessage = "";
+        this.studentGridServerSuccessMessage = "";
         this.displayStudentWeekGradeGrid();
     };
     AttendanceComponent.prototype.getTeachersByGrade = function (grade, weekId) {
@@ -190,10 +206,13 @@ var AttendanceComponent = /** @class */ (function () {
             _this.Teachers = result;
         }, function (err) {
             _this.isSelectTeacherLoading = false;
+            _this.Teachers = null;
             _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
-            if (err.status == "404") {
-                // data not found
-                _this.Teachers = null;
+            if (err.status == "401" || err.status == "403") {
+                _this.studentGridServerErrorMessage = "UnAuthorized/Forbidden access or Session Expired. Please log out and login back to access the system.";
+            }
+            else {
+                _this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.status + ". Please try later or contact system administrator.";
             }
         });
     };
@@ -248,17 +267,21 @@ var AttendanceComponent = /** @class */ (function () {
                     }
                     if (result[0].id == 0) {
                         _this.studentGridServerWarningMessage = "Note: Data not entered for this week, showing default entries";
-                        console.log(_this.studentGridServerWarningMessage);
                     }
                 }
                 _this.showL1Grid = true;
             }
         }, function (err) {
             _this.isStudentWeekGradeGridLoading = false;
-            console.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+            _this.showL1Grid = false;
             _this.StudentWeekGrades = null;
-            _this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.statusText;
-            _this.showL2Grid = false;
+            _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+            if (err.status == "401" || err.status == "403") {
+                _this.studentGridServerErrorMessage = "UnAuthorized/Forbidden access or Session Expired. Please log out and login back to access the system.";
+            }
+            else {
+                _this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.status + ". Please try later or contact system administrator.";
+            }
         });
     };
     AttendanceComponent.prototype.getL2WeekGrades = function () {
@@ -285,17 +308,21 @@ var AttendanceComponent = /** @class */ (function () {
                     }
                     if (result[0].id == 0) {
                         _this.studentGridServerWarningMessage = "Note: Data not entered for this week, showing default entries";
-                        console.log(_this.studentGridServerWarningMessage);
                     }
                 }
                 _this.showL2Grid = true;
             }
         }, function (err) {
             _this.isStudentWeekGradeGridLoading = false;
-            console.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
-            _this.StudentWeekGrades = null;
-            _this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.statusText;
             _this.showL2Grid = false;
+            _this.StudentWeekGrades = null;
+            _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+            if (err.status == "401" || err.status == "403") {
+                _this.studentGridServerErrorMessage = "UnAuthorized/Forbidden access or Session Expired. Please log out and login back to access the system.";
+            }
+            else {
+                _this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.status + ". Please try later or contact system administrator.";
+            }
         });
     };
     AttendanceComponent.prototype.getL3WeekGrades = function () {
@@ -322,17 +349,21 @@ var AttendanceComponent = /** @class */ (function () {
                     }
                     if (result[0].id == 0) {
                         _this.studentGridServerWarningMessage = "Note: Data not entered for this week, showing default entries";
-                        console.log(_this.studentGridServerWarningMessage);
                     }
                 }
                 _this.showL3Grid = true;
             }
         }, function (err) {
             _this.isStudentWeekGradeGridLoading = false;
-            console.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
-            _this.StudentWeekGrades = null;
-            _this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.statusText;
             _this.showL3Grid = false;
+            _this.StudentWeekGrades = null;
+            _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+            if (err.status == "401" || err.status == "403") {
+                _this.studentGridServerErrorMessage = "UnAuthorized/Forbidden access or Session Expired. Please log out and login back to access the system.";
+            }
+            else {
+                _this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.status + ". Please try later or contact system administrator.";
+            }
         });
     };
     AttendanceComponent.prototype.selectScore = function (weekGrade, type, value) {
@@ -388,16 +419,36 @@ var AttendanceComponent = /** @class */ (function () {
         this.studentGridServerErrorMessage = "";
         this.studentGridServerSuccessMessage = "";
         this.studentGridServerWarningMessage = "";
-        this._studentService.saveStudentWeekGrades(this.StudentWeekGrades)
+        this._studentService.saveStudentWeekGrades(this.selectedGradeLevel, this.StudentWeekGrades)
             .subscribe(function (result) {
             _this.isGridSaving = false;
             _this.studentGridServerSuccessMessage = "Student Week Grades saved successfully !";
         }, function (err) {
-            console.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
             _this.isGridSaving = false;
             _this.studentGridServerSuccessMessage = "";
-            _this.studentGridServerErrorMessage = "Save failed. ";
+            _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+            if (err.status == "401" || err.status == "403") {
+                _this.studentGridServerErrorMessage = "UnAuthorized/Forbidden access or Session Expired. Please log out and login back to access the system.";
+            }
+            else {
+                _this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.status + ". Please try later or contact system administrator.";
+            }
         });
+    };
+    AttendanceComponent.prototype.showSaveButton = function () {
+        var show = false;
+        switch (this.selectedGradeLevel) {
+            case "L1":
+                show = !this.isL1GridReadOnly;
+                break;
+            case "L2":
+                show = !this.isL2GridReadOnly;
+                break;
+            case "L3":
+                show = !this.isL3GridReadOnly;
+                break;
+        }
+        return show;
     };
     AttendanceComponent = __decorate([
         Component({

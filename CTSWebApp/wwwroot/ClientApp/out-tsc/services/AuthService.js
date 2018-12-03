@@ -118,10 +118,7 @@ var AuthService = /** @class */ (function () {
                             }
                         }
                         _a.label = 3;
-                    case 3:
-                        console.log("hasAccess=" + fnName);
-                        console.log("allowed=" + allowed);
-                        return [2 /*return*/, allowed];
+                    case 3: return [2 /*return*/, allowed];
                 }
             });
         });

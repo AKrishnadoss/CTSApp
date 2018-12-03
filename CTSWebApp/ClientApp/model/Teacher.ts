@@ -6,4 +6,5 @@
     email: string;
     primaryPhone: string;
     ctsGrade: string;
+    gradeLevel: string;
 }

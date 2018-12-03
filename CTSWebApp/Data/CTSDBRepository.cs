@@ -30,6 +30,16 @@ namespace CTSWebApp.Data
             return results;
         }
 
+        public IEnumerable<CTSUser> GetValidAndLogonUsers()
+        {
+            _logger.LogInformation("CTSDBRepository.GetValidAndLogonUsers called");
+            var results = _dbContext.CTSUsers
+                .Where(t=>  t.Active == "Y" && t.LogonAccess == "Y")
+                .OrderBy(t => t.Id)
+                .ToList();
+            return results;
+        }
+
         public IEnumerable<CTSUser> GetAllTeachers()
         {
             _logger.LogInformation("CTSDBRepository.GetAllTeachers called");
@@ -352,12 +362,13 @@ namespace CTSWebApp.Data
                         + "AND TA.CTSGRADE = @ctsGrade ";*/
 
             //Below query is for teacher drop down box population based on weekid and grade
-            string sql = "SELECT TA.TEACHERID ID, U.FIRSTNAME, U.LASTNAME, U.EMAIL, U.PRIMARYPHONE, TA.CTSGRADE, TA.STARTDATE, TA.ENDDATE, CW.WEEKDATE "
+            string sql = "SELECT TA.TEACHERID ID, U.FIRSTNAME, U.LASTNAME, U.EMAIL, U.PRIMARYPHONE, TA.CTSGRADE, TA.STARTDATE, TA.ENDDATE, CW.WEEKDATE, GM.GRADELEVEL "
                     + " FROM CTSUSER U "
                     + " JOIN TEACHERASSIGNMENT TA ON U.ID = TA.TeacherID "
                     + " JOIN CALENDARYEAR CY ON CY.ID = TA.CalendarYearID "
                     + " AND CY.ACTIVEYEAR = 'Y' "
-                    + " JOIN CALENDARWEEK CW ON CY.ID = CW.CalendarYearID"
+                    + " JOIN CALENDARWEEK CW ON CY.ID = CW.CalendarYearID "
+                    + " JOIN GRADEMASTER GM ON GM.CTSGRADE = TA.CTSGRADE "
                     + " AND CW.ID = @weekId "
                     + " AND TA.StartDate <= CW.WeekDate "
                     + " AND (TA.ENDDATE IS NULL OR TA.ENDDATE >= CW.WEEKDATE) "
@@ -681,7 +692,7 @@ namespace CTSWebApp.Data
             return result;
         }
 
-        public StudentErrorResult SaveStudentWeekGrades(int ctsUserId, IEnumerable<StudentWeekGrade> studentWeekGrades)
+        public StudentErrorResult SaveStudentWeekGrades(int ctsUserId, string gradeLevel, IEnumerable<StudentWeekGrade> studentWeekGrades)
         {
             _logger.LogInformation("CTSDBRepository.SaveStudentWeekGrades() called");
             StudentErrorResult studentWeekGradeResult = new StudentErrorResult(true, "Sucess", new List<StudentError>());
@@ -691,7 +702,7 @@ namespace CTSWebApp.Data
 
                 foreach ( StudentWeekGrade swg in studentWeekGrades)
                 {
-                    StudentError result = SaveStudentWeekGrade(ctsUserId, swg);
+                    StudentError result = SaveStudentWeekGrade(ctsUserId, gradeLevel, swg);
                     if ( result != null)
                     {
                         studentWeekGradeResult.Result = false;
@@ -757,7 +768,7 @@ namespace CTSWebApp.Data
             }
         }
 
-        private StudentError SaveStudentWeekGrade(int ctsUserId, StudentWeekGrade swg)
+        private StudentError SaveStudentWeekGrade(int ctsUserId, string gradeLevel, StudentWeekGrade swg)
         {
             List<SqlParameter> paramList = new List<SqlParameter>();
             paramList.Add(new SqlParameter
@@ -765,6 +776,14 @@ namespace CTSWebApp.Data
                 ParameterName = "@ctsUserID",
                 SqlDbType = System.Data.SqlDbType.Int,
                 SqlValue = ctsUserId
+            });
+
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@gradeLevel",
+                SqlDbType = System.Data.SqlDbType.VarChar,
+                Size = 2,
+                SqlValue = gradeLevel
             });
 
             paramList.Add(new SqlParameter
@@ -831,7 +850,14 @@ namespace CTSWebApp.Data
                 SqlValue = swg.Quiz
             });
 
-            
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@Participation",
+                SqlDbType = System.Data.SqlDbType.SmallInt,
+                SqlValue = swg.Participation
+            });
+
+
             paramList.Add(new SqlParameter
             {
                 ParameterName = "@Notes",
@@ -855,13 +881,13 @@ namespace CTSWebApp.Data
                 Size = 100
             });
 
-            var result = _dbContext.Database.ExecuteSqlCommand("EXEC SAVE_STUDENTWEEKGRADE @ctsUserID, @StudentID, @CalendarWeekID, @Attendance, "
-                + "@Homework, @Reading, @Writing, @Speaking, @Behavior , @Quiz, @Notes, @Result OUT, @ErrorMessage OUT", paramList.ToArray());
+            var result = _dbContext.Database.ExecuteSqlCommand("EXEC SAVE_STUDENTWEEKGRADE @ctsUserID, @gradeLevel, @StudentID, @CalendarWeekID, @Attendance, "
+                + "@Homework, @Reading, @Writing, @Speaking, @Behavior , @Quiz, @Participation, @Notes, @Result OUT, @ErrorMessage OUT", paramList.ToArray());
 
-            int returnCode = paramList[11].SqlValue != null ? int.Parse(paramList[11].SqlValue.ToString()) : 0;
+            int returnCode = paramList[13].SqlValue != null ? int.Parse(paramList[13].SqlValue.ToString()) : 0;
             if (returnCode != 1)
             {
-                string errorMessage = paramList[12].SqlValue != null ? paramList[12].SqlValue.ToString() : "Error Occurred";
+                string errorMessage = paramList[14].SqlValue != null ? paramList[14].SqlValue.ToString() : "Error Occurred";
                 _logger.LogError("CTSDBRepository.SaveStudentWeekGrade() failed. Error Message = " + errorMessage);
                 return new StudentError(swg.StudentID, errorMessage);
             }

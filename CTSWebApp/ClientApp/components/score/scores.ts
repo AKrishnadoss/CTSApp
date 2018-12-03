@@ -322,10 +322,15 @@ export class ScoresComponent implements OnInit {
                 this.studentGridServerSuccessMessage = "Student Term Scores saved successfully !";
             },
                 err => {
-                    console.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
                     this.isStudentTermScoreGridSaving = false;
                     this.studentGridServerSuccessMessage = "";
-                    this.studentGridServerErrorMessage = "Save failed. ";
+                    this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+                    if (err.status == "403") {
+                        this.studentGridServerErrorMessage = "Save failed.Forbidden access or Session Expired. Please log out and login back to access the system."
+                    }
+                    else {
+                        this.studentGridServerErrorMessage = "Save failed. Error Occured while retrieving information : " + err.statusText;
+                    }
                 });
 
     }

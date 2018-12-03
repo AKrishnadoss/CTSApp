@@ -96,8 +96,6 @@ export class AuthService {
                 }
             }
         }
-        console.log("hasAccess=" + fnName);
-        console.log("allowed=" + allowed);
         return allowed;
     }
 

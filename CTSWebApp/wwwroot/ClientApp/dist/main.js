@@ -413,7 +413,6 @@ var AttendanceComponent = /** @class */ (function () {
     };
     AttendanceComponent.prototype.getGrades = function () {
         var _this = this;
-        console.log('Loading grades');
         this.isSelectGradeLoading = true;
         this.gradeLoadError = "";
         this._gradeService.getGrades()
@@ -423,11 +422,14 @@ var AttendanceComponent = /** @class */ (function () {
         }, function (err) {
             _this.isSelectGradeLoading = false;
             _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
-            if (err.status == "404") {
-                // data not found
-                _this.Grades = null;
+            _this.Grades = null;
+            _this.gradeLoadError = "Error Occured : " + err.status + ":" + err.statusText;
+            if (err.status == "401" || err.status == "403") {
+                _this.studentGridServerErrorMessage = "UnAuthorized/Forbidden access or Session Expired. Please log out and login back to access the system.";
             }
-            _this.gradeLoadError = "Error Occured";
+            else {
+                _this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.status + ". Please try later or contact system administrator";
+            }
         });
     };
     AttendanceComponent.prototype.getCalendarWeeks = function () {
@@ -440,12 +442,15 @@ var AttendanceComponent = /** @class */ (function () {
             _this.CalendarWeeks = result;
         }, function (err) {
             _this.isSelectCalendarWeekLoading = false;
+            _this.CalendarWeeks = null;
             _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
-            if (err.status == "404") {
-                // data not found
-                _this.CalendarWeeks = null;
+            _this.calendarWeekLoadError = "Error Occured : " + err.status + ":" + err.statusText;
+            if (err.status == "401" || err.status == "403") {
+                _this.studentGridServerErrorMessage = "UnAuthorized/Forbidden access or Session Expired. Please log out and login back to access the system.";
             }
-            _this.calendarWeekLoadError = "Error Occured";
+            else {
+                _this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.status + ". Please try later or contact system administrator";
+            }
         });
     };
     AttendanceComponent.prototype.getGradeAndTeacherDetails = function () {
@@ -457,10 +462,10 @@ var AttendanceComponent = /** @class */ (function () {
                 _this.Teachers = result;
                 //populate grade from result
                 var gr = new Array();
-                gr.push(new _model_Grade__WEBPACK_IMPORTED_MODULE_5__["Grade"](_this.Teachers[0].ctsGrade, _this.Teachers[0].ctsGrade, null));
+                gr.push(new _model_Grade__WEBPACK_IMPORTED_MODULE_5__["Grade"](_this.Teachers[0].ctsGrade, _this.Teachers[0].ctsGrade, _this.Teachers[0].gradeLevel));
                 _this.Grades = gr;
                 _this.selectedGrade = _this.Teachers[0].ctsGrade;
-                _this.selectedGradeLevel = ""; // TODO: Get GradeLevel
+                _this.selectedGradeLevel = _this.Teachers[0].gradeLevel;
                 _this.selectGradeEnabled = false;
                 if (_this.Teachers.length > 1) {
                     _this.selectedTeacherId = 0;
@@ -473,15 +478,21 @@ var AttendanceComponent = /** @class */ (function () {
             }, function (err) {
                 _this.isSelectTeacherLoading = false;
                 _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
-                if (err.status == "404") {
-                    // data not found
-                    _this.Teachers = null;
+                _this.Teachers = null;
+                if (err.status == "401" || err.status == "403") {
+                    _this.studentGridServerErrorMessage = "UnAuthorized/Forbidden access or Session Expired. Please log out and login back to access the system.";
+                }
+                else {
+                    _this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.status + ". Please try later or contact system administrator";
                 }
             });
         }
     };
     AttendanceComponent.prototype.onSelectCalendarWeek = function (value) {
         this.calendarWeekId = value;
+        this.studentGridServerErrorMessage = "";
+        this.studentGridServerWarningMessage = "";
+        this.studentGridServerSuccessMessage = "";
         if (this.gradeSelectionAllowed == true) {
             this.selectedGrade = "0";
             this.selectedTeacherId = 0;
@@ -493,6 +504,9 @@ var AttendanceComponent = /** @class */ (function () {
         this.displayStudentWeekGradeGrid();
     };
     AttendanceComponent.prototype.onSelectGrade = function (value) {
+        this.studentGridServerErrorMessage = "";
+        this.studentGridServerWarningMessage = "";
+        this.studentGridServerSuccessMessage = "";
         if (value != "0") {
             var selectedGrade = this.Grades.find(function (x) { return x.ctsGrade == value; });
             this.selectedGradeLevel = selectedGrade.gradeLevel;
@@ -511,7 +525,9 @@ var AttendanceComponent = /** @class */ (function () {
     };
     AttendanceComponent.prototype.onSelectTeacher = function (value) {
         this.selectedTeacherId = value;
-        //console.log("selected teacherId = " + value);
+        this.studentGridServerErrorMessage = "";
+        this.studentGridServerWarningMessage = "";
+        this.studentGridServerSuccessMessage = "";
         this.displayStudentWeekGradeGrid();
     };
     AttendanceComponent.prototype.getTeachersByGrade = function (grade, weekId) {
@@ -523,10 +539,13 @@ var AttendanceComponent = /** @class */ (function () {
             _this.Teachers = result;
         }, function (err) {
             _this.isSelectTeacherLoading = false;
+            _this.Teachers = null;
             _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
-            if (err.status == "404") {
-                // data not found
-                _this.Teachers = null;
+            if (err.status == "401" || err.status == "403") {
+                _this.studentGridServerErrorMessage = "UnAuthorized/Forbidden access or Session Expired. Please log out and login back to access the system.";
+            }
+            else {
+                _this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.status + ". Please try later or contact system administrator.";
             }
         });
     };
@@ -581,17 +600,21 @@ var AttendanceComponent = /** @class */ (function () {
                     }
                     if (result[0].id == 0) {
                         _this.studentGridServerWarningMessage = "Note: Data not entered for this week, showing default entries";
-                        console.log(_this.studentGridServerWarningMessage);
                     }
                 }
                 _this.showL1Grid = true;
             }
         }, function (err) {
             _this.isStudentWeekGradeGridLoading = false;
-            console.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+            _this.showL1Grid = false;
             _this.StudentWeekGrades = null;
-            _this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.statusText;
-            _this.showL2Grid = false;
+            _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+            if (err.status == "401" || err.status == "403") {
+                _this.studentGridServerErrorMessage = "UnAuthorized/Forbidden access or Session Expired. Please log out and login back to access the system.";
+            }
+            else {
+                _this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.status + ". Please try later or contact system administrator.";
+            }
         });
     };
     AttendanceComponent.prototype.getL2WeekGrades = function () {
@@ -618,17 +641,21 @@ var AttendanceComponent = /** @class */ (function () {
                     }
                     if (result[0].id == 0) {
                         _this.studentGridServerWarningMessage = "Note: Data not entered for this week, showing default entries";
-                        console.log(_this.studentGridServerWarningMessage);
                     }
                 }
                 _this.showL2Grid = true;
             }
         }, function (err) {
             _this.isStudentWeekGradeGridLoading = false;
-            console.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
-            _this.StudentWeekGrades = null;
-            _this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.statusText;
             _this.showL2Grid = false;
+            _this.StudentWeekGrades = null;
+            _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+            if (err.status == "401" || err.status == "403") {
+                _this.studentGridServerErrorMessage = "UnAuthorized/Forbidden access or Session Expired. Please log out and login back to access the system.";
+            }
+            else {
+                _this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.status + ". Please try later or contact system administrator.";
+            }
         });
     };
     AttendanceComponent.prototype.getL3WeekGrades = function () {
@@ -655,17 +682,21 @@ var AttendanceComponent = /** @class */ (function () {
                     }
                     if (result[0].id == 0) {
                         _this.studentGridServerWarningMessage = "Note: Data not entered for this week, showing default entries";
-                        console.log(_this.studentGridServerWarningMessage);
                     }
                 }
                 _this.showL3Grid = true;
             }
         }, function (err) {
             _this.isStudentWeekGradeGridLoading = false;
-            console.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
-            _this.StudentWeekGrades = null;
-            _this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.statusText;
             _this.showL3Grid = false;
+            _this.StudentWeekGrades = null;
+            _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+            if (err.status == "401" || err.status == "403") {
+                _this.studentGridServerErrorMessage = "UnAuthorized/Forbidden access or Session Expired. Please log out and login back to access the system.";
+            }
+            else {
+                _this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.status + ". Please try later or contact system administrator.";
+            }
         });
     };
     AttendanceComponent.prototype.selectScore = function (weekGrade, type, value) {
@@ -721,16 +752,36 @@ var AttendanceComponent = /** @class */ (function () {
         this.studentGridServerErrorMessage = "";
         this.studentGridServerSuccessMessage = "";
         this.studentGridServerWarningMessage = "";
-        this._studentService.saveStudentWeekGrades(this.StudentWeekGrades)
+        this._studentService.saveStudentWeekGrades(this.selectedGradeLevel, this.StudentWeekGrades)
             .subscribe(function (result) {
             _this.isGridSaving = false;
             _this.studentGridServerSuccessMessage = "Student Week Grades saved successfully !";
         }, function (err) {
-            console.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
             _this.isGridSaving = false;
             _this.studentGridServerSuccessMessage = "";
-            _this.studentGridServerErrorMessage = "Save failed. ";
+            _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+            if (err.status == "401" || err.status == "403") {
+                _this.studentGridServerErrorMessage = "UnAuthorized/Forbidden access or Session Expired. Please log out and login back to access the system.";
+            }
+            else {
+                _this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.status + ". Please try later or contact system administrator.";
+            }
         });
+    };
+    AttendanceComponent.prototype.showSaveButton = function () {
+        var show = false;
+        switch (this.selectedGradeLevel) {
+            case "L1":
+                show = !this.isL1GridReadOnly;
+                break;
+            case "L2":
+                show = !this.isL2GridReadOnly;
+                break;
+            case "L3":
+                show = !this.isL3GridReadOnly;
+                break;
+        }
+        return show;
     };
     AttendanceComponent = __decorate([
         Object(_angular_core__WEBPACK_IMPORTED_MODULE_0__["Component"])({
@@ -758,7 +809,7 @@ var AttendanceComponent = /** @class */ (function () {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<header class=\"container-fluid p0\">\r\n    <nav class=\"navbar navbar-light navbar-expand-md bgcolorMenu\">\r\n        <div class=\"row \">\r\n            <button class=\"navbar-toggler\" data-toggle=\"collapse\" data-target=\"#menuBar\">\r\n                <span class=\"navbar-toggler-icon\"></span>\r\n            </button>\r\n            <div id=\"menuBar\" class=\"navbar-collapse collapse\">\r\n                <ul class=\"navbar-nav\">\r\n                    <li class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/home\">Home</a></li>\r\n                    <li *ngIf=\"isLoggedOn\" class=\"nav-item active\"><a class=\"nav-link py-0\" routerLink=\"/attendance\">Attendance</a></li>\r\n                    <li *ngIf=\"isLoggedOn\" class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/scores\">Term Scores</a></li>\r\n                    <!--<li class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/contactus\">Contact Us</a></li>\r\n    <li class=\"nav-item\"><a class=\"nav-link py-0\">About Us</a></li>-->\r\n                </ul>\r\n            </div>\r\n        </div>\r\n    </nav>\r\n\r\n</header>\r\n<div class=\"container p0 mt10\">\r\n    <!--<h4 class=\"text-center\">{{pageTitle}}</h4>-->\r\n\r\n    <div class=\"row bgBar br5 m5 p5\">\r\n        <div class=\"col-md-4\">\r\n            <div class=\"input-group\">\r\n                <label for=\"selectCalenderWeek\" class=\"mt5\">Week</label>\r\n                <img *ngIf=\"isSelectCalendarWeekLoading\" src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" />\r\n                <i *ngIf=\"calendarWeekLoadError\" class=\"fa fa-exclamation-triangle form-control errorText\"> {{calendarWeekLoadError}}</i>\r\n                <select *ngIf=\"!isSelectCalendarWeekLoading && !calendarWeekLoadError\" name=\"selectCalenderWeek\" class=\"ml10 selectpicker form-control selectWidth\" (change)=\"onSelectCalendarWeek($event.target.value)\">\r\n                    <option value=\"0\">--Select Week--</option>\r\n                    <option *ngFor=\"let week of CalendarWeeks\" value={{week.id}}>\r\n                        {{week.description}} - {{week.weekDate | date: 'MM/dd/yyyy'}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n        </div>\r\n        <div class=\"col-md-4\">\r\n            <div class=\"input-group\">\r\n                <label for=\"selectGrade\" class=\"mt5\">Grade</label>\r\n                <img *ngIf=\"isSelectGradeLoading\" src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" />\r\n                <i *ngIf=\"gradeLoadError\" class=\"fa fa-exclamation-triangle form-control errorText\"> {{gradeLoadError}}</i>\r\n                <select *ngIf=\"!isSelectGradeLoading && !gradeLoadError\" name=\"selectGrade\" class=\"ml10 selectpicker form-control selectWidth\"\r\n                        (change)=\"onSelectGrade($event.target.value)\" [(ngModel)]=\"selectedGrade\" [disabled]=\"!selectGradeEnabled\">\r\n                    <option value=\"0\">--Select Grade--</option>\r\n                    <option *ngFor=\"let grade of Grades\" value={{grade.ctsGrade}}>\r\n                        {{grade.ctsGrade}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n\r\n        </div>\r\n        <div class=\"col-md-4\">\r\n            <div class=\"input-group\">\r\n                <label for=\"selectTeacher\" class=\"mt5\">Teacher</label>\r\n                <img *ngIf=\"isSelectTeacherLoading\" src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" />\r\n                <select *ngIf=\"!isSelectTeacherLoading\" name=\"selectTeacher\" class=\"ml10 selectpicker form-control selectWidth\"\r\n                        (change)=\"onSelectTeacher($event.target.value)\" [(ngModel)]=\"selectedTeacherId\" [disabled]=\"!selectTeachedEnabled\">\r\n                    <option value=\"0\">--Select Teacher--</option>\r\n                    <option *ngFor=\"let teacher of Teachers\" value={{teacher.id}}>\r\n                        {{teacher.firstName}} {{teacher.lastName}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n        </div>\r\n        <!--<div class=\"col-md-2\">\r\n            <button class=\"btn btn-primary btn-sm right mt5\"><strong><i class=\"fa fa-list-ul\"></i> List Students</strong></button>\r\n        </div>-->\r\n    </div>\r\n    <div class=\"row\">\r\n        <div *ngIf=\"isStudentWeekGradeGridLoading\" class=\"col-md-12\">Loading Student Grades. Please wait.<img src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" /></div>\r\n        <div *ngIf=\"studentGridServerWarningMessage\" class=\"col-md-12 mt10 ml10 errorText\"><i class=\"fa fa-exclamation-triangle\"></i> {{studentGridServerWarningMessage}} </div>\r\n    </div>\r\n\r\n    <div class=\"row\" *ngIf=\"showL1Grid\">\r\n        <div class=\"col-md-12\" id=\"no-more-tables\">\r\n            <table class=\"table-bordered table-condensed cf\" id=\"dev-table\">\r\n                <thead class=\"bgTableHead cf\">\r\n                    <tr>\r\n                        <th class=\"fw\">ID</th>\r\n                        <th class=\"fw w150\">First Name</th>\r\n                        <th class=\"fw w150\">Last Name</th>\r\n                        <th class=\"fw\">Attendance</th>\r\n                        <th class=\"fw\">Participation</th>\r\n                        <th class=\"fw w200\">Notes</th>\r\n\r\n                    </tr>\r\n                </thead>\r\n                <tbody *ngIf=\"!isL1GridReadOnly\">\r\n\r\n                    <tr *ngFor=\"let weekGrade of StudentWeekGrades\">\r\n                        <td data-title=\"ID\">{{weekGrade.studentID}}</td>\r\n                        <td data-title=\"First Name\">{{weekGrade.firstName}}</td>\r\n                        <td data-title=\"Last Name\">{{weekGrade.lastName}}</td>\r\n                        <td data-title=\"Attendance\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectAttendance(weekGrade, $event.target.value)\" [(ngModel)]=\"weekGrade.attendance\" required>\r\n                                <option value=\"10\">Yes</option>\r\n                                <option value=\"0\">No</option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Participation\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'participation', $event.target.value)\" [(ngModel)]=\"weekGrade.participation\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n\r\n                        <td data-title=\"Notes\"><textarea class=\"form-control rounded-3\" rows=\"1\" [(ngModel)]=\"weekGrade.notes\" maxlength=\"100\">{{weekGrade.notes}}</textarea></td>\r\n                    </tr>\r\n                </tbody>\r\n                <tbody *ngIf=\"isL1GridReadOnly\">\r\n                    <tr *ngFor=\"let weekGrade of StudentWeekGrades\">\r\n                        <td data-title=\"ID\">{{weekGrade.studentID}}</td>\r\n                        <td data-title=\"First Name\">{{weekGrade.firstName}}</td>\r\n                        <td data-title=\"Last Name\">{{weekGrade.lastName}}</td>\r\n                        <td data-title=\"Attendance\">{{weekGrade.attendance}}</td>\r\n                        <td data-title=\"Participation\">{{weekGrade.participation}}</td>\r\n                        <td data-title=\"Notes\">{{weekGrade.notes}}</td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n    </div>\r\n\r\n    <div class=\"row\" *ngIf=\"showL2Grid\">\r\n        <div class=\"col-md-12\" id=\"no-more-tables\">\r\n            <table class=\"table-bordered table-condensed cf\" id=\"dev-table\">\r\n                <thead class=\"bgTableHead cf\">\r\n                    <tr>\r\n                        <th class=\"fw\">ID</th>\r\n                        <th class=\"fw w150\">First Name</th>\r\n                        <th class=\"fw w150\">Last Name</th>\r\n                        <th class=\"fw\">Attendance</th>\r\n                        <th class=\"fw\">Homework</th>\r\n                        <th class=\"fw\">Participation</th>\r\n                        <th class=\"fw w200\">Notes</th>\r\n\r\n                    </tr>\r\n                </thead>\r\n                <tbody *ngIf=\"!isL2GridReadOnly\">\r\n\r\n                    <tr *ngFor=\"let weekGrade of StudentWeekGrades\">\r\n                        <td data-title=\"ID\">{{weekGrade.studentID}}</td>\r\n                        <td data-title=\"First Name\">{{weekGrade.firstName}}</td>\r\n                        <td data-title=\"Last Name\">{{weekGrade.lastName}}</td>\r\n                        <td data-title=\"Attendance\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectAttendance(weekGrade, $event.target.value)\" [(ngModel)]=\"weekGrade.attendance\" required>\r\n                                <option value=\"10\">Yes</option>\r\n                                <option value=\"0\">No</option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Homework\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'homework', $event.target.value)\" [(ngModel)]=\"weekGrade.homework\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Participation\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'participation', $event.target.value)\" [(ngModel)]=\"weekGrade.participation\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n\r\n                        <td data-title=\"Notes\"><textarea class=\"form-control rounded-3\" rows=\"1\" [(ngModel)]=\"weekGrade.notes\" maxlength=\"100\">{{weekGrade.notes}}</textarea></td>\r\n                    </tr>\r\n                </tbody>\r\n                <tbody *ngIf=\"isL2GridReadOnly\">\r\n                    <tr *ngFor=\"let weekGrade of StudentWeekGrades\">\r\n                        <td data-title=\"ID\">{{weekGrade.studentID}}</td>\r\n                        <td data-title=\"First Name\">{{weekGrade.firstName}}</td>\r\n                        <td data-title=\"Last Name\">{{weekGrade.lastName}}</td>\r\n                        <td data-title=\"Attendance\">{{weekGrade.attendance}}</td>\r\n                        <td data-title=\"Homework\">{{weekGrade.homework}}</td>\r\n                        <td data-title=\"Participation\">{{weekGrade.participation}}</td>\r\n                        <td data-title=\"Notes\">{{weekGrade.notes}}</td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n    </div>\r\n\r\n\r\n    <div class=\"row\" *ngIf=\"showL3Grid\">\r\n        <div class=\"col-md-12\" id=\"no-more-tables\">\r\n            <table class=\"table-bordered table-condensed cf\" id=\"dev-table\">\r\n                <thead class=\"bgTableHead cf\">\r\n                    <tr>\r\n                        <th class=\"fw\">ID</th>\r\n                        <th class=\"fw w150\">First Name</th>\r\n                        <th class=\"fw w150\">Last Name</th>\r\n                        <th class=\"fw\">Attendance</th>\r\n                        <th class=\"fw\">Homework</th>\r\n                        <th class=\"fw\">Reading</th>\r\n                        <th class=\"fw\">Writing</th>\r\n                        <th class=\"fw\">Speaking</th>\r\n                        <th class=\"fw\">Behaviour</th>\r\n                        <th class=\"fw\">Quiz</th>\r\n                        <th class=\"fw w200\">Notes</th>\r\n\r\n                    </tr>\r\n                </thead>\r\n                <tbody *ngIf=\"!isL3GridReadOnly\">\r\n\r\n                    <tr *ngFor=\"let weekGrade of StudentWeekGrades\">\r\n                        <td data-title=\"ID\">{{weekGrade.studentID}}</td>\r\n                        <td data-title=\"First Name\">{{weekGrade.firstName}}</td>\r\n                        <td data-title=\"Last Name\">{{weekGrade.lastName}}</td>\r\n                        <td data-title=\"Attendance\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectAttendance(weekGrade, $event.target.value)\" [(ngModel)]=\"weekGrade.attendance\" required>\r\n                                <option value=\"10\">Yes</option>\r\n                                <option value=\"0\">No</option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Homework\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'homework', $event.target.value)\" [(ngModel)]=\"weekGrade.homework\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Reading\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'reading', $event.target.value)\" [(ngModel)]=\"weekGrade.reading\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Writing\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'writing', $event.target.value)\" [(ngModel)]=\"weekGrade.writing\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Speaking\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'speaking', $event.target.value)\" [(ngModel)]=\"weekGrade.speaking\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Behavior\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'behavior', $event.target.value)\" [(ngModel)]=\"weekGrade.behavior\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Quiz\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'quiz', $event.target.value)\" [(ngModel)]=\"weekGrade.quiz\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Notes\"><textarea class=\"form-control rounded-3\" rows=\"1\" [(ngModel)]=\"weekGrade.notes\" maxlength=\"100\">{{weekGrade.notes}}</textarea></td>\r\n                    </tr>\r\n                </tbody>\r\n                <tbody *ngIf=\"isL2GridReadOnly\">\r\n                    <tr *ngFor=\"let weekGrade of StudentWeekGrades\">\r\n                        <td data-title=\"ID\">{{weekGrade.studentID}}</td>\r\n                        <td data-title=\"First Name\">{{weekGrade.firstName}}</td>\r\n                        <td data-title=\"Last Name\">{{weekGrade.lastName}}</td>\r\n                        <td data-title=\"Attendance\">{{weekGrade.attendance}}</td>\r\n                        <td data-title=\"Homework\">{{weekGrade.homework}}</td>\r\n                        <td data-title=\"Reading\">{{weekGrade.reading}}</td>\r\n                        <td data-title=\"Writing\">{{weekGrade.writing}}</td>\r\n                        <td data-title=\"Speaking\">{{weekGrade.speaking}}</td>\r\n                        <td data-title=\"Behavior\">{{weekGrade.behavior}}</td>\r\n                        <td data-title=\"Quiz\">{{weekGrade.quiz}}</td>\r\n                        <td data-title=\"Notes\">{{weekGrade.notes}}</td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n    </div>\r\n    <div class=\"row\">\r\n        <div *ngIf=\"studentGridServerErrorMessage\" class=\"col-md-12 mt10 ml10 errorText\"><i class=\"fa fa-exclamation-triangle\"></i> {{studentGridServerErrorMessage}} </div>\r\n        <div *ngIf=\"studentGridServerSuccessMessage\" class=\"col-md-12 mt10 ml10 successText\"><i class=\"fa fa-check-circle\"></i>  {{studentGridServerSuccessMessage}}</div>\r\n    </div>\r\n    <div class=\"row bgBar br5 m5 p5\" *ngIf=\"isGridSaving\">\r\n        <div class=\"col-md-12\">Saving Student Grades. Please wait.<img src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" /></div>\r\n    </div>\r\n    <div class=\"row bgBar br5 m5 p5\" *ngIf=\"showL3Grid && !isGridSaving\">\r\n\r\n        <div class=\"col-md-4\"></div>\r\n        <div class=\"col-md-4 \">\r\n            <button class=\"btn btn-primary btn-sm\" type=\"button\" (click)=\"cancelClick()\"><strong><i class=\"fa fa-times-circle\"></i> Cancel</strong></button>\r\n            <button class=\"btn btn-primary btn-sm ml10\" (click)=\"saveClick()\" type=\"submit\" *ngIf=\"!isL3GridReadOnly\"><strong><i class=\"fa fa-save\"></i> Save</strong></button>\r\n        </div>\r\n        <div class=\"col-md-4\"></div>\r\n    </div>\r\n</div>"
+module.exports = "<header class=\"container-fluid p0\">\r\n    <nav class=\"navbar navbar-light navbar-expand-md bgcolorMenu\">\r\n        <div class=\"row \">\r\n            <button class=\"navbar-toggler\" data-toggle=\"collapse\" data-target=\"#menuBar\">\r\n                <span class=\"navbar-toggler-icon\"></span>\r\n            </button>\r\n            <div id=\"menuBar\" class=\"navbar-collapse collapse\">\r\n                <ul class=\"navbar-nav\">\r\n                    <li class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/home\">Home</a></li>\r\n                    <li *ngIf=\"isLoggedOn\" class=\"nav-item active\"><a class=\"nav-link py-0\" routerLink=\"/attendance\">Attendance</a></li>\r\n                    <li *ngIf=\"isLoggedOn\" class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/scores\">Term Scores</a></li>\r\n                    <!--<li class=\"nav-item\"><a class=\"nav-link py-0\" routerLink=\"/contactus\">Contact Us</a></li>\r\n    <li class=\"nav-item\"><a class=\"nav-link py-0\">About Us</a></li>-->\r\n                </ul>\r\n            </div>\r\n        </div>\r\n    </nav>\r\n\r\n</header>\r\n<div class=\"container p0 mt10\">\r\n    <!--<h4 class=\"text-center\">{{pageTitle}}</h4>-->\r\n\r\n    <div class=\"row bgBar br5 m5 p5\">\r\n        <div class=\"col-md-4\">\r\n            <div class=\"input-group\">\r\n                <label for=\"selectCalenderWeek\" class=\"mt5\">Week</label>\r\n                <img *ngIf=\"isSelectCalendarWeekLoading\" src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" />\r\n                <i *ngIf=\"calendarWeekLoadError\" class=\"fa fa-exclamation-triangle form-control errorText\"> {{calendarWeekLoadError}}</i>\r\n                <select *ngIf=\"!isSelectCalendarWeekLoading && !calendarWeekLoadError\" name=\"selectCalenderWeek\" class=\"ml10 selectpicker form-control selectWidth\" (change)=\"onSelectCalendarWeek($event.target.value)\">\r\n                    <option value=\"0\">--Select Week--</option>\r\n                    <option *ngFor=\"let week of CalendarWeeks\" value={{week.id}}>\r\n                        {{week.description}} - {{week.weekDate | date: 'MM/dd/yyyy'}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n        </div>\r\n        <div class=\"col-md-4\">\r\n            <div class=\"input-group\">\r\n                <label for=\"selectGrade\" class=\"mt5\">Grade</label>\r\n                <img *ngIf=\"isSelectGradeLoading\" src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" />\r\n                <i *ngIf=\"gradeLoadError\" class=\"fa fa-exclamation-triangle form-control errorText\"> {{gradeLoadError}}</i>\r\n                <select *ngIf=\"!isSelectGradeLoading && !gradeLoadError\" name=\"selectGrade\" class=\"ml10 selectpicker form-control selectWidth\"\r\n                        (change)=\"onSelectGrade($event.target.value)\" [(ngModel)]=\"selectedGrade\" [disabled]=\"!selectGradeEnabled\">\r\n                    <option value=\"0\">--Select Grade--</option>\r\n                    <option *ngFor=\"let grade of Grades\" value={{grade.ctsGrade}}>\r\n                        {{grade.ctsGrade}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n\r\n        </div>\r\n        <div class=\"col-md-4\">\r\n            <div class=\"input-group\">\r\n                <label for=\"selectTeacher\" class=\"mt5\">Teacher</label>\r\n                <img *ngIf=\"isSelectTeacherLoading\" src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" />\r\n                <select *ngIf=\"!isSelectTeacherLoading\" name=\"selectTeacher\" class=\"ml10 selectpicker form-control selectWidth\"\r\n                        (change)=\"onSelectTeacher($event.target.value)\" [(ngModel)]=\"selectedTeacherId\" [disabled]=\"!selectTeachedEnabled\">\r\n                    <option value=\"0\">--Select Teacher--</option>\r\n                    <option *ngFor=\"let teacher of Teachers\" value={{teacher.id}}>\r\n                        {{teacher.firstName}} {{teacher.lastName}}\r\n                    </option>\r\n                </select>\r\n            </div>\r\n        </div>\r\n        <!--<div class=\"col-md-2\">\r\n            <button class=\"btn btn-primary btn-sm right mt5\"><strong><i class=\"fa fa-list-ul\"></i> List Students</strong></button>\r\n        </div>-->\r\n    </div>\r\n    <div class=\"row\">\r\n        <div *ngIf=\"isStudentWeekGradeGridLoading\" class=\"col-md-12\">Loading Student Grades. Please wait.<img src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" /></div>\r\n        <div *ngIf=\"studentGridServerWarningMessage\" class=\"col-md-12 mt10 ml10 errorText\"><i class=\"fa fa-exclamation-triangle\"></i> {{studentGridServerWarningMessage}} </div>\r\n    </div>\r\n\r\n    <div class=\"row\" *ngIf=\"showL1Grid\">\r\n        <div class=\"col-md-12\" id=\"no-more-tables\">\r\n            <table class=\"table-bordered table-condensed cf\" id=\"dev-table\">\r\n                <thead class=\"bgTableHead cf\">\r\n                    <tr>\r\n                        <th class=\"fw\">ID</th>\r\n                        <th class=\"fw w150\">First Name</th>\r\n                        <th class=\"fw w150\">Last Name</th>\r\n                        <th class=\"fw\">Attendance</th>\r\n                        <th class=\"fw\">Behaviour</th>\r\n                        <th class=\"fw\">Participation</th>\r\n                        <th class=\"fw w200\">Notes</th>\r\n\r\n                    </tr>\r\n                </thead>\r\n                <tbody *ngIf=\"!isL1GridReadOnly\">\r\n\r\n                    <tr *ngFor=\"let weekGrade of StudentWeekGrades\">\r\n                        <td data-title=\"ID\">{{weekGrade.studentID}}</td>\r\n                        <td data-title=\"First Name\">{{weekGrade.firstName}}</td>\r\n                        <td data-title=\"Last Name\">{{weekGrade.lastName}}</td>\r\n                        <td data-title=\"Attendance\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectAttendance(weekGrade, $event.target.value)\" [(ngModel)]=\"weekGrade.attendance\" required>\r\n                                <option value=\"10\">Yes</option>\r\n                                <option value=\"0\">No</option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Behavior\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'behavior', $event.target.value)\" [(ngModel)]=\"weekGrade.behavior\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Participation\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'participation', $event.target.value)\" [(ngModel)]=\"weekGrade.participation\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Notes\"><textarea class=\"form-control rounded-3\" rows=\"1\" [(ngModel)]=\"weekGrade.notes\" maxlength=\"100\">{{weekGrade.notes}}</textarea></td>\r\n                    </tr>\r\n                </tbody>\r\n                <tbody *ngIf=\"isL1GridReadOnly\">\r\n                    <tr *ngFor=\"let weekGrade of StudentWeekGrades\">\r\n                        <td data-title=\"ID\">{{weekGrade.studentID}}</td>\r\n                        <td data-title=\"First Name\">{{weekGrade.firstName}}</td>\r\n                        <td data-title=\"Last Name\">{{weekGrade.lastName}}</td>\r\n                        <td data-title=\"Attendance\">{{weekGrade.attendance}}</td>\r\n                        <td data-title=\"Behavior\">{{weekGrade.behavior}}</td>\r\n                        <td data-title=\"Participation\">{{weekGrade.participation}}</td>\r\n                        <td data-title=\"Notes\">{{weekGrade.notes}}</td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n    </div>\r\n\r\n    <div class=\"row\" *ngIf=\"showL2Grid\">\r\n        <div class=\"col-md-12\" id=\"no-more-tables\">\r\n            <table class=\"table-bordered table-condensed cf\" id=\"dev-table\">\r\n                <thead class=\"bgTableHead cf\">\r\n                    <tr>\r\n                        <th class=\"fw\">ID</th>\r\n                        <th class=\"fw w150\">First Name</th>\r\n                        <th class=\"fw w150\">Last Name</th>\r\n                        <th class=\"fw\">Attendance</th>\r\n                        <th class=\"fw\">Homework</th>\r\n                        <th class=\"fw\">Behaviour</th>\r\n                        <th class=\"fw\">Participation</th>\r\n                        <th class=\"fw w200\">Notes</th>\r\n\r\n                    </tr>\r\n                </thead>\r\n                <tbody *ngIf=\"!isL2GridReadOnly\">\r\n\r\n                    <tr *ngFor=\"let weekGrade of StudentWeekGrades\">\r\n                        <td data-title=\"ID\">{{weekGrade.studentID}}</td>\r\n                        <td data-title=\"First Name\">{{weekGrade.firstName}}</td>\r\n                        <td data-title=\"Last Name\">{{weekGrade.lastName}}</td>\r\n                        <td data-title=\"Attendance\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectAttendance(weekGrade, $event.target.value)\" [(ngModel)]=\"weekGrade.attendance\" required>\r\n                                <option value=\"10\">Yes</option>\r\n                                <option value=\"0\">No</option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Homework\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'homework', $event.target.value)\" [(ngModel)]=\"weekGrade.homework\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Behavior\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'behavior', $event.target.value)\" [(ngModel)]=\"weekGrade.behavior\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Participation\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'participation', $event.target.value)\" [(ngModel)]=\"weekGrade.participation\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n\r\n                        <td data-title=\"Notes\"><textarea class=\"form-control rounded-3\" rows=\"1\" [(ngModel)]=\"weekGrade.notes\" maxlength=\"100\">{{weekGrade.notes}}</textarea></td>\r\n                    </tr>\r\n                </tbody>\r\n                <tbody *ngIf=\"isL2GridReadOnly\">\r\n                    <tr *ngFor=\"let weekGrade of StudentWeekGrades\">\r\n                        <td data-title=\"ID\">{{weekGrade.studentID}}</td>\r\n                        <td data-title=\"First Name\">{{weekGrade.firstName}}</td>\r\n                        <td data-title=\"Last Name\">{{weekGrade.lastName}}</td>\r\n                        <td data-title=\"Attendance\">{{weekGrade.attendance}}</td>\r\n                        <td data-title=\"Homework\">{{weekGrade.homework}}</td>\r\n                        <td data-title=\"Behavior\">{{weekGrade.behavior}}</td>\r\n                        <td data-title=\"Participation\">{{weekGrade.participation}}</td>\r\n                        <td data-title=\"Notes\">{{weekGrade.notes}}</td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n    </div>\r\n\r\n\r\n    <div class=\"row\" *ngIf=\"showL3Grid\">\r\n        <div class=\"col-md-12\" id=\"no-more-tables\">\r\n            <table class=\"table-bordered table-condensed cf\" id=\"dev-table\">\r\n                <thead class=\"bgTableHead cf\">\r\n                    <tr>\r\n                        <th class=\"fw\">ID</th>\r\n                        <th class=\"fw w150\">First Name</th>\r\n                        <th class=\"fw w150\">Last Name</th>\r\n                        <th class=\"fw\">Attendance</th>\r\n                        <th class=\"fw\">Homework</th>\r\n                        <th class=\"fw\">Reading</th>\r\n                        <th class=\"fw\">Writing</th>\r\n                        <th class=\"fw\">Speaking</th>\r\n                        <th class=\"fw\">Behaviour</th>\r\n                        <th class=\"fw\">Quiz</th>\r\n                        <th class=\"fw w200\">Notes</th>\r\n\r\n                    </tr>\r\n                </thead>\r\n                <tbody *ngIf=\"!isL3GridReadOnly\">\r\n\r\n                    <tr *ngFor=\"let weekGrade of StudentWeekGrades\">\r\n                        <td data-title=\"ID\">{{weekGrade.studentID}}</td>\r\n                        <td data-title=\"First Name\">{{weekGrade.firstName}}</td>\r\n                        <td data-title=\"Last Name\">{{weekGrade.lastName}}</td>\r\n                        <td data-title=\"Attendance\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectAttendance(weekGrade, $event.target.value)\" [(ngModel)]=\"weekGrade.attendance\" required>\r\n                                <option value=\"10\">Yes</option>\r\n                                <option value=\"0\">No</option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Homework\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'homework', $event.target.value)\" [(ngModel)]=\"weekGrade.homework\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Reading\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'reading', $event.target.value)\" [(ngModel)]=\"weekGrade.reading\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Writing\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'writing', $event.target.value)\" [(ngModel)]=\"weekGrade.writing\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Speaking\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'speaking', $event.target.value)\" [(ngModel)]=\"weekGrade.speaking\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Behavior\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'behavior', $event.target.value)\" [(ngModel)]=\"weekGrade.behavior\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Quiz\">\r\n                            <select class=\"selectpicker form-control\" (change)=\"selectScore(weekGrade, 'quiz', $event.target.value)\" [(ngModel)]=\"weekGrade.quiz\">\r\n                                <option *ngFor=\"let score of Scores\" value={{score}}>\r\n                                    {{score}}\r\n                                </option>\r\n                            </select>\r\n                        </td>\r\n                        <td data-title=\"Notes\"><textarea class=\"form-control rounded-3\" rows=\"1\" [(ngModel)]=\"weekGrade.notes\" maxlength=\"100\">{{weekGrade.notes}}</textarea></td>\r\n                    </tr>\r\n                </tbody>\r\n                <tbody *ngIf=\"isL2GridReadOnly\">\r\n                    <tr *ngFor=\"let weekGrade of StudentWeekGrades\">\r\n                        <td data-title=\"ID\">{{weekGrade.studentID}}</td>\r\n                        <td data-title=\"First Name\">{{weekGrade.firstName}}</td>\r\n                        <td data-title=\"Last Name\">{{weekGrade.lastName}}</td>\r\n                        <td data-title=\"Attendance\">{{weekGrade.attendance}}</td>\r\n                        <td data-title=\"Homework\">{{weekGrade.homework}}</td>\r\n                        <td data-title=\"Reading\">{{weekGrade.reading}}</td>\r\n                        <td data-title=\"Writing\">{{weekGrade.writing}}</td>\r\n                        <td data-title=\"Speaking\">{{weekGrade.speaking}}</td>\r\n                        <td data-title=\"Behavior\">{{weekGrade.behavior}}</td>\r\n                        <td data-title=\"Quiz\">{{weekGrade.quiz}}</td>\r\n                        <td data-title=\"Notes\">{{weekGrade.notes}}</td>\r\n                    </tr>\r\n                </tbody>\r\n            </table>\r\n        </div>\r\n    </div>\r\n    <div class=\"row\">\r\n        <div *ngIf=\"studentGridServerErrorMessage\" class=\"col-md-12 mt10 ml10 errorText\"><i class=\"fa fa-exclamation-triangle\"></i> {{studentGridServerErrorMessage}} </div>\r\n        <div *ngIf=\"studentGridServerSuccessMessage\" class=\"col-md-12 mt10 ml10 successText\"><i class=\"fa fa-check-circle\"></i>  {{studentGridServerSuccessMessage}}</div>\r\n    </div>\r\n    <div class=\"row bgBar br5 m5 p5\" *ngIf=\"isGridSaving\">\r\n        <div class=\"col-md-12\">Saving Student Grades. Please wait.<img src=\"/img/Loading.gif\" height=\"40\" width=\"40\" class=\"ml10\" /></div>\r\n    </div>\r\n    <div class=\"row bgBar br5 m5 p5\" *ngIf=\"(showL1Grid || showL2Grid || showL3Grid) && !isGridSaving\">\r\n\r\n        <div class=\"col-md-4\"></div>\r\n        <div class=\"col-md-4 \">\r\n            <button class=\"btn btn-primary btn-sm\" type=\"button\" (click)=\"cancelClick()\"><strong><i class=\"fa fa-times-circle\"></i> Cancel</strong></button>\r\n            <button class=\"btn btn-primary btn-sm ml10\" (click)=\"saveClick()\" type=\"submit\" *ngIf=\"showSaveButton()\"><strong><i class=\"fa fa-save\"></i> Save</strong></button>\r\n        </div>\r\n        <div class=\"col-md-4\"></div>\r\n    </div>\r\n</div>"
 
 /***/ }),
 
@@ -1254,10 +1305,15 @@ var ScoresComponent = /** @class */ (function () {
             _this.isStudentTermScoreGridSaving = false;
             _this.studentGridServerSuccessMessage = "Student Term Scores saved successfully !";
         }, function (err) {
-            console.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
             _this.isStudentTermScoreGridSaving = false;
             _this.studentGridServerSuccessMessage = "";
-            _this.studentGridServerErrorMessage = "Save failed. ";
+            _this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+            if (err.status == "403") {
+                _this.studentGridServerErrorMessage = "Save failed.Forbidden access or Session Expired. Please log out and login back to access the system.";
+            }
+            else {
+                _this.studentGridServerErrorMessage = "Save failed. Error Occured while retrieving information : " + err.statusText;
+            }
         });
     };
     ScoresComponent = __decorate([
@@ -1304,7 +1360,7 @@ __webpack_require__.r(__webpack_exports__);
 // `ng build --prod` replaces `environment.ts` with `environment.prod.ts`.
 // The list of file replacements can be found in `angular.json`.
 var environment = {
-    production: false
+    production: true
 };
 /*
  * For easier debugging in development mode, you can import the following file
@@ -1607,10 +1663,7 @@ var AuthService = /** @class */ (function () {
                             }
                         }
                         _a.label = 3;
-                    case 3:
-                        console.log("hasAccess=" + fnName);
-                        console.log("allowed=" + allowed);
-                        return [2 /*return*/, allowed];
+                    case 3: return [2 /*return*/, allowed];
                 }
             });
         });
@@ -1807,8 +1860,12 @@ var StudentService = /** @class */ (function () {
     function StudentService(_http) {
         this._http = _http;
     }
-    StudentService.prototype.saveStudentWeekGrades = function (studentWeekGrades) {
-        return this._http.post('/api/student/savestudentweekgrades', studentWeekGrades);
+    StudentService.prototype.saveStudentWeekGrades = function (gradeLevel, studentWeekGrades) {
+        var data = {
+            gradeLevel: gradeLevel,
+            studentWeekGradeViewModelList: studentWeekGrades
+        };
+        return this._http.post('/api/student/savestudentweekgrades', data);
     };
     StudentService.prototype.saveStudentTestScores = function (studentTermScores) {
         return this._http.post('/api/student/savestudenttermscores', studentTermScores);

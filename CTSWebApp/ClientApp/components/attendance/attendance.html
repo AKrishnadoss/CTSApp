@@ -8,7 +8,7 @@
                 <ul class="navbar-nav">
                     <li class="nav-item"><a class="nav-link py-0" routerLink="/home">Home</a></li>
                     <li *ngIf="isLoggedOn" class="nav-item active"><a class="nav-link py-0" routerLink="/attendance">Attendance</a></li>
-                    <li *ngIf="isLoggedOn" class="nav-item"><a class="nav-link py-0" routerLink="/scores">Term Scores</a></li>
+                    <li *ngIf="isLoggedOn" class="nav-item"><a class="nav-link py-0" routerLink="/scores">Test Scores</a></li>
                     <!--<li class="nav-item"><a class="nav-link py-0" routerLink="/contactus">Contact Us</a></li>
     <li class="nav-item"><a class="nav-link py-0">About Us</a></li>-->
                 </ul>
@@ -80,6 +80,7 @@
                         <th class="fw w150">First Name</th>
                         <th class="fw w150">Last Name</th>
                         <th class="fw">Attendance</th>
+                        <th class="fw">Behaviour</th>
                         <th class="fw">Participation</th>
                         <th class="fw w200">Notes</th>
 
@@ -97,6 +98,13 @@
                                 <option value="0">No</option>
                             </select>
                         </td>
+                        <td data-title="Behavior">
+                            <select class="selectpicker form-control" (change)="selectScore(weekGrade, 'behavior', $event.target.value)" [(ngModel)]="weekGrade.behavior">
+                                <option *ngFor="let score of Scores" value={{score}}>
+                                    {{score}}
+                                </option>
+                            </select>
+                        </td>
                         <td data-title="Participation">
                             <select class="selectpicker form-control" (change)="selectScore(weekGrade, 'participation', $event.target.value)" [(ngModel)]="weekGrade.participation">
                                 <option *ngFor="let score of Scores" value={{score}}>
@@ -104,7 +112,6 @@
                                 </option>
                             </select>
                         </td>
-
                         <td data-title="Notes"><textarea class="form-control rounded-3" rows="1" [(ngModel)]="weekGrade.notes" maxlength="100">{{weekGrade.notes}}</textarea></td>
                     </tr>
                 </tbody>
@@ -114,6 +121,7 @@
                         <td data-title="First Name">{{weekGrade.firstName}}</td>
                         <td data-title="Last Name">{{weekGrade.lastName}}</td>
                         <td data-title="Attendance">{{weekGrade.attendance}}</td>
+                        <td data-title="Behavior">{{weekGrade.behavior}}</td>
                         <td data-title="Participation">{{weekGrade.participation}}</td>
                         <td data-title="Notes">{{weekGrade.notes}}</td>
                     </tr>
@@ -132,6 +140,7 @@
                         <th class="fw w150">Last Name</th>
                         <th class="fw">Attendance</th>
                         <th class="fw">Homework</th>
+                        <th class="fw">Behaviour</th>
                         <th class="fw">Participation</th>
                         <th class="fw w200">Notes</th>
 
@@ -156,6 +165,13 @@
                                 </option>
                             </select>
                         </td>
+                        <td data-title="Behavior">
+                            <select class="selectpicker form-control" (change)="selectScore(weekGrade, 'behavior', $event.target.value)" [(ngModel)]="weekGrade.behavior">
+                                <option *ngFor="let score of Scores" value={{score}}>
+                                    {{score}}
+                                </option>
+                            </select>
+                        </td>
                         <td data-title="Participation">
                             <select class="selectpicker form-control" (change)="selectScore(weekGrade, 'participation', $event.target.value)" [(ngModel)]="weekGrade.participation">
                                 <option *ngFor="let score of Scores" value={{score}}>
@@ -174,6 +190,7 @@
                         <td data-title="Last Name">{{weekGrade.lastName}}</td>
                         <td data-title="Attendance">{{weekGrade.attendance}}</td>
                         <td data-title="Homework">{{weekGrade.homework}}</td>
+                        <td data-title="Behavior">{{weekGrade.behavior}}</td>
                         <td data-title="Participation">{{weekGrade.participation}}</td>
                         <td data-title="Notes">{{weekGrade.notes}}</td>
                     </tr>
@@ -284,12 +301,12 @@
     <div class="row bgBar br5 m5 p5" *ngIf="isGridSaving">
         <div class="col-md-12">Saving Student Grades. Please wait.<img src="/img/Loading.gif" height="40" width="40" class="ml10" /></div>
     </div>
-    <div class="row bgBar br5 m5 p5" *ngIf="showL3Grid && !isGridSaving">
+    <div class="row bgBar br5 m5 p5" *ngIf="(showL1Grid || showL2Grid || showL3Grid) && !isGridSaving">
 
         <div class="col-md-4"></div>
         <div class="col-md-4 ">
             <button class="btn btn-primary btn-sm" type="button" (click)="cancelClick()"><strong><i class="fa fa-times-circle"></i> Cancel</strong></button>
-            <button class="btn btn-primary btn-sm ml10" (click)="saveClick()" type="submit" *ngIf="!isL3GridReadOnly"><strong><i class="fa fa-save"></i> Save</strong></button>
+            <button class="btn btn-primary btn-sm ml10" (click)="saveClick()" type="submit" *ngIf="showSaveButton()"><strong><i class="fa fa-save"></i> Save</strong></button>
         </div>
         <div class="col-md-4"></div>
     </div>

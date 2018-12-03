@@ -167,6 +167,7 @@ namespace CTSWebApp.Services
                 var cred = new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
                 int days = int.Parse(_configuration["Token:expiryDays"]);
                 var expiryDate = DateTime.Now.AddDays(days);
+                //var expiryDate = DateTime.Now.AddMinutes(1);
 
                 JwtSecurityToken jwtSecToken = new JwtSecurityToken(
                     _configuration["Token:Issuer"],

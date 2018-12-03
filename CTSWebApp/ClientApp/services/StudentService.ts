@@ -9,8 +9,13 @@ import { StudentTermScore } from '../model/StudentTermScore';
 export class StudentService {
     constructor(private _http:HttpClient) { }
 
-	saveStudentWeekGrades(studentWeekGrades : StudentWeekGrade[]){
-		return this._http.post('/api/student/savestudentweekgrades', studentWeekGrades);
+    saveStudentWeekGrades(gradeLevel : string, studentWeekGrades : StudentWeekGrade[]){
+        let data = {
+            gradeLevel : gradeLevel,
+            studentWeekGradeViewModelList : studentWeekGrades
+        }
+
+		return this._http.post('/api/student/savestudentweekgrades', data);
     }
 
     saveStudentTestScores(studentTermScores: StudentTermScore[]) {

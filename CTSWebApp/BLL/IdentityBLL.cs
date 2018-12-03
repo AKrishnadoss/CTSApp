@@ -1,6 +1,7 @@
 ﻿using CTSWebApp.Data;
 using CTSWebApp.Data.Entities;
 using CTSWebApp.ViewModels;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -13,37 +14,34 @@ namespace CTSWebApp.BLL
     {
         private readonly ILogger<IdentityBLL> _logger;
         private readonly ICTSDBRepository _ctsDBRepository;
+        private IMemoryCache _memoryCache;
 
         public IdentityBLL(ICTSDBRepository ctsDBRepository,
-            ILogger<IdentityBLL> logger)
+            ILogger<IdentityBLL> logger,
+            IMemoryCache memoryCache)
         {
             _logger = logger;
             this._ctsDBRepository = ctsDBRepository;
+            this._memoryCache = memoryCache;
         }
 
         public UserIdentity ValidateUser(string email, string password)
         {
-            UserIdentity userIdentity = _ctsDBRepository.GetUserIdentity(email, password);
-            if (userIdentity == null)
+            UserIdentity userIdentity = null;
+            if (IsValidUserId(email))
             {
-                return null;
+                userIdentity = _ctsDBRepository.GetUserIdentity(email, password);
             }
-
-            // Additional logic?
-
             return userIdentity;
         }
 
         public UserIdentity ValidateUser(string email, string familyID, string primaryPhone)
         {
-            UserIdentity userIdentity = _ctsDBRepository.GetUserIdentity(email, familyID, primaryPhone);
-            if (userIdentity == null)
+            UserIdentity userIdentity = null;
+            if (IsValidUserId(email))
             {
-                return null;
+                userIdentity = _ctsDBRepository.GetUserIdentity(email, familyID, primaryPhone);
             }
-
-            // Additional logic?
-
             return userIdentity;
         }
 
@@ -56,5 +54,32 @@ namespace CTSWebApp.BLL
         {
             return _ctsDBRepository.UpdatePassword(ctsUserId, email, hash, hashedPassword);
         }
-    }
+
+        private bool IsValidUserId(string email)
+        {
+            IEnumerable<CTSUser> dataFromCache = null;
+            if (!_memoryCache.TryGetValue("ValidAndLogonUsers", out dataFromCache))
+            {
+                var validAndlogonUsers = this._ctsDBRepository.GetValidAndLogonUsers();
+
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromHours(1));
+
+                _memoryCache.Set("ValidAndLogonUsers", validAndlogonUsers, cacheEntryOptions);
+
+                dataFromCache = validAndlogonUsers;
+            }
+
+            bool result = false;
+            if (dataFromCache != null && dataFromCache.Count() > 0 )
+            {
+                var user = dataFromCache.Where(x => x.Email == email.ToLower()).FirstOrDefault();
+                if ( user != null)
+                {
+                    result = true;
+                }
+            }
+            return result;
+        }
+    } 
 }
