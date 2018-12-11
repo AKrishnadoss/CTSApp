@@ -188,7 +188,7 @@ namespace CTSWebApp.Controllers.API
         {
             try
             {
-                System.Threading.Thread.Sleep(1000);
+                //System.Threading.Thread.Sleep(1000);
                 var result = _teacherBLL.GetAssignedStudentsWeekGrade(teacherId, weekId, gradeLevel);
                 if (result != null && result.Count() > 0)
                 {
@@ -204,15 +204,15 @@ namespace CTSWebApp.Controllers.API
         }
 
         [HttpGet]
-        [Route("assignmentById/{teacherId:int}/studentscores/{termNo:int}/{weekId:int}")]
+        [Route("assignmentById/{teacherId:int}/{gradeLevel}/studentscores/{termNo:int}/{weekId:int}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public ActionResult<StudentTermScoreResultViewModel> GetAssignedStudentsTermScore(int teacherId, int termNo, int weekId)
+        public ActionResult<StudentTermScoreResultViewModel> GetAssignedStudentsTermScore(int teacherId, string gradeLevel, int termNo, int weekId)
         {
             try
             {
-                System.Threading.Thread.Sleep(1000);
-                var result = _teacherBLL.GetAssignedStudentsTermScore(teacherId, termNo, weekId);
+                //System.Threading.Thread.Sleep(1000);
+                var result = _teacherBLL.GetAssignedStudentsTermScore(teacherId, gradeLevel, termNo, weekId);
                 if (result != null && result.Count() > 0)
                 {
 

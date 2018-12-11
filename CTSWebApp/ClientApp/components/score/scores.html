@@ -70,7 +70,53 @@
         <div *ngIf="studentGridServerWarningMessage" class="col-md-12 mt10 ml10 errorText"><i class="fa fa-exclamation-triangle"></i> {{studentGridServerWarningMessage}} </div>
     </div>
 
-    <div class="row" *ngIf="showStudentTestScoreGrid">
+
+    <div class="row" *ngIf="showL2Grid">
+        <div class="col-md-12" id="no-more-tables">
+            <table class="table-bordered table-condensed cf" id="dev-table">
+                <thead class="bgTableHead cf">
+                    <tr>
+                        <th class="fw">ID</th>
+                        <th class="fw w150">First Name</th>
+                        <th class="fw w150">Last Name</th>
+                        <th class="fw">Attendance</th>
+                        <th class="fw">Homework</th>
+                        <th class="fw">Behaviour</th>
+                        <th class="fw">Participation</th>
+                        <th class="fw">Internal Score</th>
+                        <th class="fw w60">Test Score</th>
+                        <th class="fw">Total Score</th>
+                        <th class="fw w200">Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let testScore of StudentTermScores">
+                        <td data-title="ID">{{testScore.studentID}}</td>
+                        <td data-title="First Name">{{testScore.firstName}}</td>
+                        <td data-title="Last Name">{{testScore.lastName}}</td>
+                        <td data-title="Attendance">{{testScore.attendance}}</td>
+                        <td data-title="Homework">{{testScore.homework}}</td>
+                        <td data-title="Behavior">{{testScore.behavior}}</td>
+                        <td data-title="Participation">{{testScore.participation}}</td>
+                        <td data-title="Internal">{{testScore.internalScore}}</td>
+                        <td data-title="Test Score">
+                            <input class="form-control" [(ngModel)]="testScore.termScore" value="{{testScore.termScore}}" *ngIf="studentTermScoreEntryAllowed" maxlength="3" />
+                            <span *ngIf="!studentTermScoreEntryAllowed">{{testScore.termScore}}</span>
+                        </td>
+                        <td data-title="Total Score">{{(testScore.internalScore-0) + ((testScore.termScore-0)/2)}}</td>
+                        <td data-title="Notes">
+                            <textarea class="form-control rounded-3" rows="1" [(ngModel)]="testScore.notes" maxlength="100" *ngIf="studentTermScoreEntryAllowed">{{testScore.notes}}</textarea>
+                            <span *ngIf="!studentTermScoreEntryAllowed">{{testScore.notes}}</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
+    <div class="row" *ngIf="showL3Grid">
         <div class="col-md-12" id="no-more-tables">
             <table class="table-bordered table-condensed cf" id="dev-table">
                 <thead class="bgTableHead cf">
@@ -86,7 +132,7 @@
                         <th class="fw">Behaviour</th>
                         <th class="fw">Quiz</th>
                         <th class="fw">Internal</th>
-                        <th class="fw w60">Term Score</th>
+                        <th class="fw w60">Test Score</th>
                         <th class="fw">Total Score</th>
                         <th class="fw w200">Notes</th>
                     </tr>
@@ -104,7 +150,7 @@
                         <td data-title="Behavior">{{testScore.behavior}}</td>
                         <td data-title="Quiz">{{testScore.quiz}}</td>
                         <td data-title="Internal">{{testScore.internalScore}}</td>
-                        <td data-title="Score">
+                        <td data-title="Test Score">
                             <input class="form-control" [(ngModel)]="testScore.termScore" value="{{testScore.termScore}}" *ngIf="studentTermScoreEntryAllowed" maxlength="3" />
                             <span *ngIf="!studentTermScoreEntryAllowed">{{testScore.termScore}}</span>
                         </td>
@@ -122,10 +168,10 @@
         <div *ngIf="studentGridServerErrorMessage" class="col-md-12 mt10 ml10 errorText"><i class="fa fa-exclamation-triangle"></i> {{studentGridServerErrorMessage}} </div>
         <div *ngIf="studentGridServerSuccessMessage" class="col-md-12 mt10 ml10 successText"><i class="fa fa-check-circle"></i>  {{studentGridServerSuccessMessage}}</div>
     </div>
-    <div class="row bgBar br5 m5 p5" *ngIf="isStudentTermScoreGridSaving">
+    <div class="row bgBar br5 m5 p5" *ngIf="isGridSaving">
         <div class="col-md-12">Saving Student Term Scores. Please wait.<img src="/img/Loading.gif" height="40" width="40" class="ml10" /></div>
     </div>
-    <div class="row bgBar br5 m5 p5" *ngIf="!isStudentTermScoreGridSaving && showStudentTestScoreGrid">
+    <div class="row bgBar br5 m5 p5" *ngIf="!isGridSaving && (showL1Grid || showL2Grid || showL3Grid)">
 
         <div class="col-md-4"></div>
         <div class="col-md-4 ">

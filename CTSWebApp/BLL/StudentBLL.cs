@@ -51,7 +51,7 @@ namespace CTSWebApp.BLL
             return _ctsDBRepository.SaveStudentWeekGrades(ctsUserId, gradeLevel, studentWeekGrades);
         }
 
-        public StudentErrorResult SaveStudentTermScores(int ctsUserId, IEnumerable<StudentTermScore> studentTermScores)
+        public StudentErrorResult SaveStudentTermScores(int ctsUserId, string gradeLevel, IEnumerable<StudentTermScore> studentTermScores)
         {
             if (studentTermScores == null || studentTermScores.Count() == 0)
             {
@@ -72,7 +72,7 @@ namespace CTSWebApp.BLL
             {
                 return new StudentErrorResult(false, "Invalid data", errors);
             }
-            return _ctsDBRepository.SaveStudentTermScores(ctsUserId, studentTermScores);
+            return _ctsDBRepository.SaveStudentTermScores(ctsUserId, gradeLevel, studentTermScores);
         }
 
         private StudentError ValidateStudentWeekGrade(string gradeLevel, StudentWeekGrade swg)

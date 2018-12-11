@@ -10,6 +10,6 @@ namespace CTSWebApp.BLL
     {
         IEnumerable<Student> GetAllStudents(bool includeInActive = false);
         StudentErrorResult SaveStudentWeekGrades(int ctsUserId, string gradeLevel, IEnumerable<StudentWeekGrade> studentWeekGrades);
-        StudentErrorResult SaveStudentTermScores(int ctsUserId, IEnumerable<StudentTermScore> studentTermScores);
+        StudentErrorResult SaveStudentTermScores(int ctsUserId, string gradeLevel, IEnumerable<StudentTermScore> studentTermScores);
     }
 }

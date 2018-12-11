@@ -18,7 +18,11 @@ export class StudentService {
 		return this._http.post('/api/student/savestudentweekgrades', data);
     }
 
-    saveStudentTestScores(studentTermScores: StudentTermScore[]) {
-        return this._http.post('/api/student/savestudenttermscores', studentTermScores);
+    saveStudentTestScores(gradeLevel: string, studentTermScores: StudentTermScore[]) {
+        let data = {
+            gradeLevel: gradeLevel,
+            studentTermScoreViewModelList: studentTermScores
+        }
+        return this._http.post('/api/student/savestudenttermscores', data);
     }
 }

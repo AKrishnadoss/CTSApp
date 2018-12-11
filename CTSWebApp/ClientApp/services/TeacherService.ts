@@ -30,7 +30,7 @@ export class TeacherService {
     //    return this._http.get<StudentWeekGrade[]>('/api/Teacher/assignmentById/' + teacherId + '/studentgrades/' + weekId);
     //}
 
-    getStudentTermScores(teacherId: number, termNo: number, weekId: number) {
-        return this._http.get<StudentTermScoreResult>('/api/Teacher/assignmentById/' + teacherId + '/studentscores/' + termNo + '/' + weekId);
+    getStudentTermScores(teacherId: number, gradeLevel : string, termNo: number, weekId: number) {
+        return this._http.get<StudentTermScoreResult>('/api/Teacher/assignmentById/' + teacherId + '/' + gradeLevel + '/studentscores/' + termNo + '/' + weekId);
     }
 }

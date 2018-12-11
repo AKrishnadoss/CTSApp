@@ -54,5 +54,31 @@ namespace CTSWebApp.BLL
 
             //return this._ctsDBRepository.GetGrades();
         }
+
+        public IEnumerable<Grade> GetScoringGrades()
+        {
+            IEnumerable<Grade> dataFromCache = null;
+            if (!_memoryCache.TryGetValue("Grades", out dataFromCache))
+            {
+                var grades = this._ctsDBRepository.GetGrades();
+
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromHours(1));
+
+                _memoryCache.Set("Grades", grades, cacheEntryOptions);
+
+                dataFromCache = grades;
+            }
+
+            if (dataFromCache != null)
+            {
+                // return only L2 and L3 Grades
+                return dataFromCache
+                    .Where(s => s.GradeLevel != "L1")
+                    .ToList();
+            }
+
+            return null;
+        }
     }
 }

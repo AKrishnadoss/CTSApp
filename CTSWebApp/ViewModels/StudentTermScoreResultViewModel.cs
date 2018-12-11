@@ -23,13 +23,14 @@ namespace CTSWebApp.ViewModels
         public string LastName { get; set; }
         public int CalendarWeekID { get; set; }
         public int TeacherID { get; set; }
-        public int? Attendance { get; set; }
-        public int? Homework { get; set; }
-        public int? Reading { get; set; }
-        public int? Writing { get; set; }
-        public int? Speaking { get; set; }
-        public int? Behavior { get; set; }
-        public int? Quiz { get; set; }
+        public short? Attendance { get; set; }
+        public short? Homework { get; set; }
+        public short? Reading { get; set; }
+        public short? Writing { get; set; }
+        public short? Speaking { get; set; }
+        public short? Behavior { get; set; }
+        public short? Quiz { get; set; }
+        public short? Participation { get; set; }
         public decimal? InternalScore { get; set; }
         [Required]
         public decimal? TermScore { get; set; }

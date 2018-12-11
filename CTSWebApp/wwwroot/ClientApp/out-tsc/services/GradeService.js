@@ -16,6 +16,9 @@ var GradeService = /** @class */ (function () {
     GradeService.prototype.getGrades = function () {
         return this._http.get('/api/grade/grades');
     };
+    GradeService.prototype.getScoringGrades = function () {
+        return this._http.get('/api/grade/scoringgrades');
+    };
     GradeService = __decorate([
         Injectable(),
         __metadata("design:paramtypes", [HttpClient])

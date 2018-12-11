@@ -19,6 +19,7 @@ export class StudentTermScore {
     speaking: number;
     behavior: number;
     quiz: number;
+    participation: number;
     notes: string;
     internalScore: number;
     termScore: number;

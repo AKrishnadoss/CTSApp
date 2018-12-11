@@ -14,4 +14,8 @@ export class GradeService {
 
         return this._http.get<Grade[]>('/api/grade/grades');
     }
+
+    getScoringGrades() {
+        return this._http.get<Grade[]>('/api/grade/scoringgrades');
+    }
 }

@@ -60,9 +60,9 @@ namespace CTSWebApp.BLL
             return _ctsDBRepository.GetAssignedStudentsWeekGrade(teacherID, weekId, gradeLevel);
         }
 
-        public IEnumerable<StudentTermScore> GetAssignedStudentsTermScore(int teacherID, int termNo, int weekId)
+        public IEnumerable<StudentTermScore> GetAssignedStudentsTermScore(int teacherID, string gradeLevel, int termNo, int weekId)
         {
-            return _ctsDBRepository.GetAssignedStudentsTermScore(teacherID, termNo, weekId);
+            return _ctsDBRepository.GetAssignedStudentsTermScore(teacherID, gradeLevel, termNo, weekId);
         }
     }
 }

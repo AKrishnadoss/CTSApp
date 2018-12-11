@@ -114,14 +114,14 @@ namespace CTSWebApp.Controllers.API
 
         [HttpPost]
         [ActionName("SaveStudentTermScores")]
-        public ActionResult<StudentErrorResult> SaveStudentTermScores([FromBody]IEnumerable<StudentTermScoreViewModel> viewModel)
+        public ActionResult<StudentErrorResult> SaveStudentTermScores([FromBody]SaveStudentTermScoreViewModel viewModel)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
                     int ctsUserID = GetLoggedOnCTSUserID();
-                    var result = _studentBLL.SaveStudentTermScores(ctsUserID, _mapper.Map<IEnumerable<StudentTermScoreViewModel>, IEnumerable<StudentTermScore>>(viewModel));
+                    var result = _studentBLL.SaveStudentTermScores(ctsUserID, viewModel.GradeLevel, _mapper.Map<IEnumerable<StudentTermScoreViewModel>, IEnumerable<StudentTermScore>>(viewModel.StudentTermScoreViewModelList));
                     if (result.Result == true)
                     {
                         return Created("student/savestudenttermscores", result);

@@ -21,7 +21,7 @@ namespace CTSWebApp.Data
         TeacherAssignment GetTeacherAssignment(int teacherID);
         IEnumerable<StudentEnrollment> GetAssignedStudents(int teacherID);
         IEnumerable<StudentWeekGrade> GetAssignedStudentsWeekGrade(int teacherId, int weekId, string gradeLevel);
-        IEnumerable<StudentTermScore> GetAssignedStudentsTermScore(int teacherID, int termNo, int weekId);
+        IEnumerable<StudentTermScore> GetAssignedStudentsTermScore(int teacherID, string gradeLevel, int termNo, int weekId);
 
         CTSUser SaveOrUpdate(CTSUser teacher);
 
@@ -34,6 +34,6 @@ namespace CTSWebApp.Data
         IEnumerable<Teacher> GetAssignedTeacher(int teacherId, int weekId);
 
         StudentErrorResult SaveStudentWeekGrades(int ctsUserId, string gradeLevel, IEnumerable<StudentWeekGrade> studentWeekGrades);
-        StudentErrorResult SaveStudentTermScores(int ctsUserId, IEnumerable<StudentTermScore> studentTermScores);
+        StudentErrorResult SaveStudentTermScores(int ctsUserId, string gradeLevel, IEnumerable<StudentTermScore> studentTermScores);
     }
 }

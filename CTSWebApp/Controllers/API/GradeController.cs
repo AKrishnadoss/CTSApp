@@ -53,5 +53,27 @@ namespace CTSWebApp.Controllers.API
                 return BadRequest("Exception occurred in GradeController.GetAllGrades()");
             }
         }
+
+        [HttpGet]
+        [Route("scoringgrades")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public ActionResult<IEnumerable<GradeViewModel>> GetScoringGrades()
+        {
+            try
+            {
+                var result = _gradeBLL.GetScoringGrades();
+                if (result != null)
+                {
+                    return Ok(_mapper.Map<IEnumerable<Grade>, IEnumerable<GradeViewModel>>(result));
+                }
+                return NotFound();
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError($"Exception occurred in GetScoringGrades() => {exception}");
+                return BadRequest("Exception occurred in GradeController.GetScoringGrades()");
+            }
+        }
     }
 }
