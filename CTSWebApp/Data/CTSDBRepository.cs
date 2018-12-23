@@ -274,7 +274,7 @@ namespace CTSWebApp.Data
 
             paramList.Add(new SqlParameter
             {
-                ParameterName = "@ErrorMessage",
+                ParameterName = "@Error",
                 SqlDbType = System.Data.SqlDbType.VarChar,
                 Direction = System.Data.ParameterDirection.Output,
                 Size = 100
@@ -775,6 +775,56 @@ namespace CTSWebApp.Data
                 throw exception;
             }
         }
+
+
+        public IEnumerable<CalendarWeek> GetMissingAttendanceWeeks(int teacherId)
+        {
+            _logger.LogInformation("CTSDBRepository.GetMissingAttendanceEntries() called");
+            string sql = "SELECT ID, CALENDARYEARID, WEEKNO, DESCRIPTION, WEEKDATE, TERMNO, ACTIVE, DATAFREEZE, TESTWEEK "
+                        + " FROM CALENDARWEEK CW "
+                        + " WHERE ID NOT IN( "
+                        + " SELECT DISTINCT L2.CALENDARWEEKID FROM TEACHERSTUDENTASSIGNMENT TSA "
+                        + " JOIN WEEKGRADELEVEL2 L2 ON TSA.STUDENTID = L2.STUDENTID "
+                        + " WHERE TSA.TEACHERID = @teacherId) "
+                        + " AND CW.CALENDARYEARID = (SELECT ID FROM CALENDARYEAR WHERE ACTIVEYEAR = 'Y') "
+                        + " AND CW.TESTWEEK = 'N' "
+                        + " AND CW.ACTIVE = 'Y' "
+                        + " AND CW.WEEKDATE <= GETDATE() ";
+
+
+            /*
+             * 
+             * SELECT DISTINCT CW.ID, CW.Description,CW.WEEKDATE, CW.TermNo, TSA.TEACHERID 
+FROM CALENDARWEEK CW
+LEFT JOIN WEEKGRADELEVEL2 L2
+ON CW.ID = L2.CALENDARWEEKID
+AND CW.Active = 'Y'
+LEFT JOIN TEACHERSTUDENTASSIGNMENT TSA
+ON TSA.STUDENTID = L2.STUDENTID
+AND CW.Active = 'Y'
+AND CW.TestWeek = 'N'
+AND CW.WeekDate <= GETDATE()
+
+    */
+            List<SqlParameter> paramList = new List<SqlParameter>();
+            paramList.Add(new SqlParameter
+            {
+                ParameterName = "@teacherId",
+                SqlDbType = System.Data.SqlDbType.Int,
+                SqlValue = teacherId
+            });
+
+            var result = _dbContext.CalendarWeeks.FromSql(sql, paramList.ToArray());
+            if (result != null)
+            {
+                return result.ToList();
+            }
+
+            return null;
+
+        }
+
+
 
         private StudentError SaveStudentWeekGrade(int ctsUserId, string gradeLevel, StudentWeekGrade swg)
         {

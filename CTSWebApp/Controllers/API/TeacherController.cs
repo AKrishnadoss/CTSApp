@@ -199,7 +199,7 @@ namespace CTSWebApp.Controllers.API
             catch (Exception exception)
             {
                 _logger.LogError($"Exception occurred in GetAssignedStudentsWeekGrade(teacherId, weekId) => {exception}");
-                return BadRequest("Exception occurred in teacher/assignmentById/teacherId/studentgrades/weekId");
+                return BadRequest("Exception occurred in teacher/assignmentById/teacherId/gradeLevel/studentgrades/weekId");
             }
         }
 
@@ -252,9 +252,31 @@ namespace CTSWebApp.Controllers.API
             catch (Exception exception)
             {
                 _logger.LogError($"Exception occurred in GetAssignedStudentsTermScore(teacherId, termNo, weekId) => {exception}");
-                return BadRequest("Exception occurred in teacher/assignmentById/teacherId/studentscores/termNo/weekId");
+                return BadRequest("Exception occurred in teacher/assignmentById/teacherId/gradeLevel/studentscores/termNo/weekId");
             }
         }
+
+        //[HttpGet]
+        //[Route("missingattendanceweeks")]
+        //[ProducesResponseType(200)]
+        //[ProducesResponseType(400)]
+        //public ActionResult<IEnumerable<CalendarWeekViewModel>> GetMissingAttendanceWeeks(int teacherId)
+        //{
+        //    try
+        //    {
+        //        var result = _teacherBLL.GetMissingAttendanceWeeks(teacherId);
+        //        if (result != null)
+        //        {
+        //            return Ok(_mapper.Map<IEnumerable<CalendarWeek>, IEnumerable<CalendarWeekViewModel>>(result));
+        //        }
+        //        return NotFound();
+        //    }
+        //    catch (Exception exception)
+        //    {
+        //        _logger.LogError($"Exception occurred in GetMissingAttendanceWeeks(weekId) => {exception}");
+        //        return BadRequest("Exception occurred in teacher/missingattendanceweeks");
+        //    }
+        //}
 
         private int GetLoggedOnCTSUserID()
         {

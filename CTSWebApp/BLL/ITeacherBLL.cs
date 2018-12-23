@@ -16,5 +16,6 @@ namespace CTSWebApp.BLL
         IEnumerable<StudentEnrollment> GetAssignedStudents(int teacherID);
         IEnumerable<StudentWeekGrade> GetAssignedStudentsWeekGrade(int teacherID, int weekId, string gradeLevel);
         IEnumerable<StudentTermScore> GetAssignedStudentsTermScore(int teacherID, string gradeLevel, int termNo, int weekId);
+        IEnumerable<CalendarWeek> GetMissingAttendanceWeeks(int teacherId);
     }
 }

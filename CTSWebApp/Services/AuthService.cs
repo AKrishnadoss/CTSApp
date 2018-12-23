@@ -135,6 +135,11 @@ namespace CTSWebApp.Services
             var userIdentity = _idenityBLL.ValidateUser(email, password);
             if (userIdentity != null)
             {
+                if ( userIdentity.Active == null || userIdentity.Password == null || userIdentity.Hash == null)
+                {
+                    return errorResult;
+                }
+
                 bool acctLocked = (!string.IsNullOrEmpty(userIdentity.Locked) && (userIdentity.Locked.ToUpper()) == "Y") ? true : false;
 
                 if (acctLocked)

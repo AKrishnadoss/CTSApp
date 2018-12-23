@@ -64,5 +64,10 @@ namespace CTSWebApp.BLL
         {
             return _ctsDBRepository.GetAssignedStudentsTermScore(teacherID, gradeLevel, termNo, weekId);
         }
+
+        public IEnumerable<CalendarWeek> GetMissingAttendanceWeeks(int teacherId)
+        {
+            return _ctsDBRepository.GetMissingAttendanceWeeks(teacherId);
+        }
     }
 }
