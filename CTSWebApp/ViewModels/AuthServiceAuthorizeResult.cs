@@ -7,6 +7,7 @@ namespace CTSWebApp.ViewModels
 {
     public class AuthServiceAuthorizeResult
     {
+        public int CTSUserID { get; set; }
         public string Token { get; set; }
         public DateTime Expires { get; set; }
         public string UserName { get; set; }

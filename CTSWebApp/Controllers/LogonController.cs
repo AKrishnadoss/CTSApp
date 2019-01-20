@@ -65,6 +65,7 @@ namespace CTSWebApp.Controllers
                     else if (result.ResetPassword)
                     {
                         ResetPasswordViewModel resetViewModel = CreateResetPasswordViewModel(result);
+                        ViewBag.AppName = "Cary Tamil School - Attendance & Scores";
                         return View("reset", resetViewModel);
                     }
                     else

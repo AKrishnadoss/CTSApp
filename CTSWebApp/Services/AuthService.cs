@@ -68,7 +68,23 @@ namespace CTSWebApp.Services
 
         private AuthServiceAuthorizeResult AuthorizeInternalAsync(ResetPasswordViewModel model)
         {
-            return AuthenticateUser(model.Email, model.OldPassword);
+            AuthServiceAuthorizeResult authServiceAuthorizeResult = AuthenticateUser(model.Email, model.OldPassword);
+            if (authServiceAuthorizeResult != null && authServiceAuthorizeResult.IsSucceeded)
+            {
+                // Reset password
+                // Get New hashed password
+                byte[] salt = GetPasswordHash();
+                string hashedPassword = GeneratePassword(model.ConfirmNewPassword, salt);
+
+                // Save New Credentials
+                bool res = _idenityBLL.UpdatePassword(authServiceAuthorizeResult.CTSUserID, model.Email, salt, hashedPassword);
+                if (res == false)
+                {
+                    authServiceAuthorizeResult.IsSucceeded = false;
+                    authServiceAuthorizeResult.ErrorMessage = "Password update failed. Contact System adminstrator !";
+                }
+            }
+            return authServiceAuthorizeResult;
         }
 
         private AuthServiceAuthorizeResult AuthorizeInternalAsync(ForgotPasswordViewModel model)
@@ -184,6 +200,7 @@ namespace CTSWebApp.Services
                 // Create Result object
                 AuthServiceAuthorizeResult result = new AuthServiceAuthorizeResult
                 {
+                    CTSUserID = userIdentity.CTSUserID,
                     Token = new JwtSecurityTokenHandler().WriteToken(jwtSecToken),
                     Expires = expiryDate,
                     UserName = userIdentity.UserName,
