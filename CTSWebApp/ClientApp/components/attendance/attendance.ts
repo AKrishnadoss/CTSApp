@@ -480,17 +480,26 @@ export class AttendanceComponent  implements OnInit {
 	}
 
 	selectAttendance(weekGrade : StudentWeekGrade, value:string){
-		if ( value == '0')
-		{
-			weekGrade.homework = 0;
-			weekGrade.reading = 0;
-			weekGrade.writing = 0;
-			weekGrade.speaking = 0;
-			weekGrade.behavior = 0;
+        if (value == '0') {
+            weekGrade.homework = 0;
+            weekGrade.reading = 0;
+            weekGrade.writing = 0;
+            weekGrade.speaking = 0;
+            weekGrade.behavior = 0;
             weekGrade.quiz = 0;
             weekGrade.participation = 0;
-			weekGrade.notes = null;
-		}
+            weekGrade.notes = null;
+        }
+        else if (value == '10') {
+            weekGrade.homework = 10;
+            weekGrade.reading = 10;
+            weekGrade.writing = 10;
+            weekGrade.speaking = 10;
+            weekGrade.behavior = 10;
+            weekGrade.quiz = 10;
+            weekGrade.participation = 10;
+            weekGrade.notes = null;
+        }
 	}
 
 	cancelClick(){
