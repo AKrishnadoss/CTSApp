@@ -70,7 +70,14 @@
         <div *ngIf="isStudentWeekGradeGridLoading" class="col-md-12">Loading Student Grades. Please wait.<img src="/img/Loading.gif" height="40" width="40" class="ml10" /></div>
         <div *ngIf="studentGridServerWarningMessage" class="col-md-12 mt10 ml10 errorText"><i class="fa fa-exclamation-triangle"></i> {{studentGridServerWarningMessage}} </div>
     </div>
-
+    <!--Copy from Previous week-->
+    <div class="row" *ngIf="showCopyFromPrevWeek && gradeSelectionAllowed">
+        <div class="col-md-12 mt10 ml10 infoText"><i class="fa fa-info-circle"></i> Would you like to Copy from Previous week ? 
+            <button class="btn btn-success btn-sm ml10" (click)="copyFromPrevWeek()" type="submit">
+                <strong>Yes, Copy from Previous week !</strong>
+            </button>
+        </div>
+    </div>
     <div class="row" *ngIf="showL1Grid">
         <div class="col-md-12" id="no-more-tables">
             <table class="table-bordered table-condensed cf" id="dev-table">

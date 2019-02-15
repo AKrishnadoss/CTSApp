@@ -24,6 +24,10 @@
     font-size:small
 }
 
+.font-smaller {
+    font-size:smaller
+}
+
 .h40{
    height:40px; 
 }
@@ -90,6 +94,11 @@
 
 .successText {
     color: #28a745;
+    font-weight: bold;
+}
+
+.infoText {
+    color:dodgerblue;
     font-weight: bold;
 }
 

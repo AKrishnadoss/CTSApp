@@ -12,6 +12,7 @@ import { StudentWeekGrade } from '../../model/StudentWeekGrade';
 import { StudentService } from '../../services/StudentService';
 import {LoggerService} from '../../services/LoggerService';
 import { reserveSlots } from '@angular/core/src/render3/instructions';
+import { fail } from 'assert';
 
 @Component ({
 	templateUrl : './attendance.html'
@@ -63,6 +64,8 @@ export class AttendanceComponent  implements OnInit {
 
     gradeSelectionAllowed: boolean;
     teacherSelectionAllowed: boolean;
+
+    showCopyFromPrevWeek: boolean;
 
     constructor(private _authService: AuthService,
         private _calendarService: CalendarService,
@@ -119,6 +122,7 @@ export class AttendanceComponent  implements OnInit {
 
         this.gradeSelectionAllowed = false;
         this.teacherSelectionAllowed = false;
+        this.showCopyFromPrevWeek = false;
         this._authService.hasAccess("Attendance.GradeSelection").then((x) => {
             this.gradeSelectionAllowed = x;
             if (this.gradeSelectionAllowed == true) {
@@ -220,7 +224,7 @@ export class AttendanceComponent  implements OnInit {
         this.studentGridServerErrorMessage = "";
         this.studentGridServerWarningMessage = "";
         this.studentGridServerSuccessMessage = "";
-
+        this.showCopyFromPrevWeek = false;
         if (this.gradeSelectionAllowed == true) {
             this.selectedGrade = "0";
             this.selectedTeacherId = 0;
@@ -236,7 +240,7 @@ export class AttendanceComponent  implements OnInit {
         this.studentGridServerErrorMessage = "";
         this.studentGridServerWarningMessage = "";
         this.studentGridServerSuccessMessage = "";
-
+        this.showCopyFromPrevWeek = false;
         if (value != "0") {
             var selectedGrade = this.Grades.find(x => x.ctsGrade == value);
             this.selectedGradeLevel = selectedGrade.gradeLevel;
@@ -261,7 +265,7 @@ export class AttendanceComponent  implements OnInit {
         this.studentGridServerErrorMessage = "";
         this.studentGridServerWarningMessage = "";
         this.studentGridServerSuccessMessage = "";
-
+        this.showCopyFromPrevWeek = false;
 		this.displayStudentWeekGradeGrid();
 	}
 
@@ -293,17 +297,17 @@ export class AttendanceComponent  implements OnInit {
             if (this.selectedGradeLevel == "L1") {
                 this.showL2Grid = false;
                 this.showL3Grid = false;
-                this.getL1WeekGrades();
+                this.getL1WeekGrades(this.calendarWeekId, true);
             }
             else if (this.selectedGradeLevel == "L2") {
                 this.showL1Grid = false;
                 this.showL3Grid = false;
-                this.getL2WeekGrades();
+                this.getL2WeekGrades(this.calendarWeekId, true);
             }
             else if (this.selectedGradeLevel == "L3") {
                 this.showL1Grid = false;
                 this.showL2Grid = false;
-                this.getL3WeekGrades();
+                this.getL3WeekGrades(this.calendarWeekId, true);
             }
 		}
 		else {
@@ -313,13 +317,14 @@ export class AttendanceComponent  implements OnInit {
 		}
 	}
 
-    getL1WeekGrades() {
+    getL1WeekGrades(calendarWeekId : number, copyFromPrevWeekFlag : boolean) {
+        this.showCopyFromPrevWeek = false;
         this.isStudentWeekGradeGridLoading = true;
         this.showL1Grid = false;
         this.studentGridServerErrorMessage = "";
 
         this.studentGridServerWarningMessage = "";
-        this._teacherService.getWeekGrades(this.selectedTeacherId, this.selectedGradeLevel, this.calendarWeekId)
+        this._teacherService.getWeekGrades(this.selectedTeacherId, this.selectedGradeLevel, calendarWeekId)
             .subscribe(result => {
                 this.isStudentWeekGradeGridLoading = false;
                 this.StudentWeekGrades = result;
@@ -336,9 +341,22 @@ export class AttendanceComponent  implements OnInit {
                         else {
                             this.isL1GridReadOnly = false;
                         }
+
+                        this.showCopyFromPrevWeek = copyFromPrevWeekFlag;
                         if (result[0].id == 0) {
-                            this.studentGridServerWarningMessage = "Note: Data not entered for this week, showing default entries";
+                            this.studentGridServerWarningMessage = "Note: Data not entered for the selected week " + calendarWeekId + ", showing default entries.";
                         }
+
+                        if (copyFromPrevWeekFlag == false) {
+                            // If copying from prev week, then set all ids to 0, calendarweek to currently selected calendarweek, so the records will be created for selected week
+                            result.forEach(x => {
+                                x.id = 0;
+                                x.calendarWeekID = this.calendarWeekId;
+                            });
+
+                            this.studentGridServerWarningMessage = "Note: Data copied data from week " + calendarWeekId + ", make appropriate changes and click save.";
+                        }
+
                     }
 
                     this.showL1Grid = true;
@@ -359,13 +377,14 @@ export class AttendanceComponent  implements OnInit {
                 });
     }
 
-    getL2WeekGrades() {
+    getL2WeekGrades(calendarWeekId: number, copyFromPrevWeekFlag: boolean) {
+        this.showCopyFromPrevWeek = false;
         this.isStudentWeekGradeGridLoading = true;
         this.showL2Grid = false;
         this.studentGridServerErrorMessage = "";
 
         this.studentGridServerWarningMessage = "";
-        this._teacherService.getWeekGrades(this.selectedTeacherId, this.selectedGradeLevel, this.calendarWeekId)
+        this._teacherService.getWeekGrades(this.selectedTeacherId, this.selectedGradeLevel, calendarWeekId)
             .subscribe(result => {
                 this.isStudentWeekGradeGridLoading = false;
                 this.StudentWeekGrades = result;
@@ -382,8 +401,20 @@ export class AttendanceComponent  implements OnInit {
                         else {
                             this.isL2GridReadOnly = false;
                         }
+
+                        this.showCopyFromPrevWeek = copyFromPrevWeekFlag;
                         if (result[0].id == 0) {
-                            this.studentGridServerWarningMessage = "Note: Data not entered for this week, showing default entries";
+                            this.studentGridServerWarningMessage = "Note: Data not entered for the selected week " + calendarWeekId + ", showing default entries.";
+                        }
+
+                        if (copyFromPrevWeekFlag == false) {
+                            // If copying from prev week, then set all ids to 0, calendarweek to currently selected calendarweek, so the records will be created for selected week
+                            result.forEach(x => {
+                                x.id = 0;
+                                x.calendarWeekID = this.calendarWeekId;
+                            });
+
+                            this.studentGridServerWarningMessage = "Note: Data copied data from week " + calendarWeekId + ", make appropriate changes and click save.";
                         }
                     }
 
@@ -406,13 +437,14 @@ export class AttendanceComponent  implements OnInit {
     }
 
 
-	getL3WeekGrades(){
+    getL3WeekGrades(calendarWeekId: number, copyFromPrevWeekFlag: boolean) {
+        this.showCopyFromPrevWeek = false;
 		this.isStudentWeekGradeGridLoading = true;
         this.showL3Grid = false;
 		this.studentGridServerErrorMessage = "";
 
         this.studentGridServerWarningMessage = "";
-        this._teacherService.getWeekGrades(this.selectedTeacherId, this.selectedGradeLevel, this.calendarWeekId)
+        this._teacherService.getWeekGrades(this.selectedTeacherId, this.selectedGradeLevel, calendarWeekId)
             .subscribe(result => {
                 this.isStudentWeekGradeGridLoading = false;
                 this.StudentWeekGrades = result;
@@ -429,8 +461,24 @@ export class AttendanceComponent  implements OnInit {
                         else {
                             this.isL3GridReadOnly = false;
                         }
+                        //if (result[0].id == 0) {
+                        //    this.studentGridServerWarningMessage = "Note: Data not entered for this week, showing default entries";
+                        //    this.showCopyFromPrevWeek = true;
+                        //}
+
+                        this.showCopyFromPrevWeek = copyFromPrevWeekFlag;
                         if (result[0].id == 0) {
-                            this.studentGridServerWarningMessage = "Note: Data not entered for this week, showing default entries";
+                            this.studentGridServerWarningMessage = "Note: Data not entered for the selected week " + calendarWeekId + ", showing default entries.";
+                        }
+
+                        if (copyFromPrevWeekFlag == false) {
+                            // If copying from prev week, then set all ids to 0, calendarweek to currently selected calendarweek, so the records will be created for selected week
+                            result.forEach(x => {
+                                x.id = 0;
+                                x.calendarWeekID = this.calendarWeekId;
+                            });
+
+                            this.studentGridServerWarningMessage = "Note: Data copied data from week " + calendarWeekId + ", make appropriate changes and click save.";
                         }
                     }
 
@@ -512,10 +560,12 @@ export class AttendanceComponent  implements OnInit {
         this.studentGridServerWarningMessage = "";
 		this.StudentWeekGrades = null;
         this.selectedTeacherId = 0;
+        this.showCopyFromPrevWeek = false;
 	}
 
 	saveClick(){
         this.isGridSaving = true;
+        this.showCopyFromPrevWeek = false;
 
 		this.studentGridServerErrorMessage = "";
         this.studentGridServerSuccessMessage = "";
@@ -539,6 +589,101 @@ export class AttendanceComponent  implements OnInit {
 			});
 
     }
+
+
+    copyFromPrevWeek() {
+        this.showCopyFromPrevWeek = false;
+        this.studentGridServerSuccessMessage = "";
+        if (this.calendarWeekId != 0 && this.selectedTeacherId != 0) {
+            this.studentGridServerErrorMessage = "";
+            this.studentGridServerWarningMessage = "";
+
+            let idx = this.CalendarWeeks.findIndex(x => x.id == this.calendarWeekId);
+            let prevWeekIdx = idx;
+            if (idx < (this.CalendarWeeks.length - 1)) {
+                idx++;
+            }
+            let prevCalendarWeek = this.CalendarWeeks[idx];
+            let prevCalendarWeekId = prevCalendarWeek.id;
+
+            if (this.selectedGradeLevel == "L1") {
+                this.showL2Grid = false;
+                this.showL3Grid = false;
+                this.getL1WeekGrades(prevCalendarWeekId, false);
+            }
+            else if (this.selectedGradeLevel == "L2") {
+                this.showL1Grid = false;
+                this.showL3Grid = false;
+                this.getL2WeekGrades(prevCalendarWeekId, false);
+            }
+            else if (this.selectedGradeLevel == "L3") {
+                this.showL1Grid = false;
+                this.showL2Grid = false;
+                this.getL3WeekGrades(prevCalendarWeekId, false);
+            }
+        }
+        else {
+            this.showL1Grid = false;
+            this.showL2Grid = false;
+            this.showL3Grid = false;
+        }
+    }
+
+    //copyFromPrevWeekForL1() {
+        
+    //    this.isStudentWeekGradeGridLoading = true;
+    //    this.showL1Grid = false;
+    //    this.studentGridServerErrorMessage = "";
+
+    //    this.studentGridServerWarningMessage = "";
+    //    // get prev calendar week 
+    //    let idx = this.CalendarWeeks.findIndex(x => x.id == this.calendarWeekId);
+    //    if (idx < (this.CalendarWeeks.length - 1)) {
+    //        idx++;
+    //    }
+    //    let prevCalendarWeek = this.CalendarWeeks[idx];
+    //    let prevCalendarWeekId = prevCalendarWeek.id;
+
+    //    this._teacherService.getWeekGrades(this.selectedTeacherId, this.selectedGradeLevel, prevCalendarWeekId)
+    //        .subscribe(result => {
+    //            this.isStudentWeekGradeGridLoading = false;
+    //            this.StudentWeekGrades = result;
+    //            if (this.StudentWeekGrades == null) {
+
+    //                this.showL1Grid = false;
+    //                this.studentGridServerErrorMessage = "No Student(s) assigned to selected teacher.";
+    //            }
+    //            else {
+    //                if (result.length > 0) {
+    //                    if (result[0].dataFreeze == 'Y') {
+    //                        this.isL1GridReadOnly = true;
+    //                    }
+    //                    else {
+    //                        this.isL1GridReadOnly = false;
+    //                    }
+    //                    if (result[0].id == 0) {
+    //                        this.studentGridServerWarningMessage = "Note: Data not entered for this week " + prevCalendarWeek + ", showing default entries";
+    //                        this.showCopyFromPrevWeek = false;
+    //                    }
+    //                }
+
+    //                this.showL1Grid = true;
+    //            }
+
+    //        },
+    //            err => {
+    //                this.isStudentWeekGradeGridLoading = false;
+    //                this.showL1Grid = false;
+    //                this.StudentWeekGrades = null;
+    //                this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+    //                if (err.status == "401" || err.status == "403") {
+    //                    this.studentGridServerErrorMessage = "UnAuthorized/Forbidden access or Session Expired. Please log out and login back to access the system."
+    //                }
+    //                else {
+    //                    this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.status + ". Please try later or contact system administrator.";
+    //                }
+    //            });
+    //}
 
     showSaveButton(): boolean {
         let show: boolean = false;
