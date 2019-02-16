@@ -342,9 +342,10 @@ export class AttendanceComponent  implements OnInit {
                             this.isL1GridReadOnly = false;
                         }
 
-                        this.showCopyFromPrevWeek = copyFromPrevWeekFlag;
+                        
                         if (result[0].id == 0) {
                             this.studentGridServerWarningMessage = "Note: Data not entered for the selected week " + calendarWeekId + ", showing default entries.";
+                            this.showCopyFromPrevWeek = copyFromPrevWeekFlag;
                         }
 
                         if (copyFromPrevWeekFlag == false) {
@@ -354,7 +355,7 @@ export class AttendanceComponent  implements OnInit {
                                 x.calendarWeekID = this.calendarWeekId;
                             });
 
-                            this.studentGridServerWarningMessage = "Note: Data copied data from week " + calendarWeekId + ", make appropriate changes and click save.";
+                            this.studentGridServerWarningMessage = "Note: Data copied from week " + calendarWeekId + ", make appropriate changes and click save.";
                         }
 
                     }
@@ -402,9 +403,10 @@ export class AttendanceComponent  implements OnInit {
                             this.isL2GridReadOnly = false;
                         }
 
-                        this.showCopyFromPrevWeek = copyFromPrevWeekFlag;
+                        
                         if (result[0].id == 0) {
                             this.studentGridServerWarningMessage = "Note: Data not entered for the selected week " + calendarWeekId + ", showing default entries.";
+                            this.showCopyFromPrevWeek = copyFromPrevWeekFlag;
                         }
 
                         if (copyFromPrevWeekFlag == false) {
@@ -414,7 +416,7 @@ export class AttendanceComponent  implements OnInit {
                                 x.calendarWeekID = this.calendarWeekId;
                             });
 
-                            this.studentGridServerWarningMessage = "Note: Data copied data from week " + calendarWeekId + ", make appropriate changes and click save.";
+                            this.studentGridServerWarningMessage = "Note: Data copied from week " + calendarWeekId + ", make appropriate changes and click save.";
                         }
                     }
 
@@ -466,9 +468,10 @@ export class AttendanceComponent  implements OnInit {
                         //    this.showCopyFromPrevWeek = true;
                         //}
 
-                        this.showCopyFromPrevWeek = copyFromPrevWeekFlag;
+                        
                         if (result[0].id == 0) {
                             this.studentGridServerWarningMessage = "Note: Data not entered for the selected week " + calendarWeekId + ", showing default entries.";
+                            this.showCopyFromPrevWeek = copyFromPrevWeekFlag;
                         }
 
                         if (copyFromPrevWeekFlag == false) {
@@ -478,7 +481,7 @@ export class AttendanceComponent  implements OnInit {
                                 x.calendarWeekID = this.calendarWeekId;
                             });
 
-                            this.studentGridServerWarningMessage = "Note: Data copied data from week " + calendarWeekId + ", make appropriate changes and click save.";
+                            this.studentGridServerWarningMessage = "Note: Data copied from week " + calendarWeekId + ", make appropriate changes and click save.";
                         }
                     }
 
