@@ -153,6 +153,13 @@ export class ScoresComponent implements OnInit {
     }
 
     onSelectGrade(value: any) {
+
+        this.showL1Grid = false;
+        this.showL2Grid = false;
+        this.showL3Grid = false;
+        this.studentGridServerErrorMessage = "";
+        this.studentGridServerWarningMessage = "";
+
         this.selectedGrade = value;
         if (value != "0") {
             var selectedGrade = this.Grades.find(x => x.ctsGrade == value);

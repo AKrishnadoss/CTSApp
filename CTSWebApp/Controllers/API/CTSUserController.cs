@@ -94,7 +94,16 @@ namespace CTSWebApp.Controllers.API
                             return Unauthorized();
                         }
 
-                        int ctsUserId = int.Parse(claim.Value);
+                        int ctsUserId = -1;
+                        if ( ! int.TryParse(claim.Value, out ctsUserId))
+                        {
+                            return Unauthorized();
+                        }
+
+                        if ( ctsUserId <= 0)
+                        {
+                            return Unauthorized();
+                        }
 
                         // GetUserRoles
                         var roles = _idenityBLL.GetUserRoles(ctsUserId);
@@ -131,6 +140,13 @@ namespace CTSWebApp.Controllers.API
 
                                 viewModel.Functions.Add("TermScores");
                                 viewModel.Functions.Add("TermScores.Save");
+                            }
+                            else if (roles.Contains("DataEntry"))
+                            {
+                                viewModel.Functions.Add("Attendance");
+                                viewModel.Functions.Add("Attendance.GradeSelection");
+                                viewModel.Functions.Add("Attendance.TeacherSelection");
+                                viewModel.Functions.Add("Attendance.Save");
                             }
 
                             if (viewModel.Functions.Count > 0)

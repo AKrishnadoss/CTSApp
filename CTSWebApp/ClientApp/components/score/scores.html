@@ -100,7 +100,7 @@
                         <td data-title="Participation">{{testScore.participation}}</td>
                         <td data-title="Internal">{{testScore.internalScore}}</td>
                         <td data-title="Test Score">
-                            <input class="form-control" [(ngModel)]="testScore.termScore" value="{{testScore.termScore}}" *ngIf="studentTermScoreEntryAllowed" maxlength="3" />
+                            <input class="form-control" [(ngModel)]="testScore.termScore" value="{{testScore.termScore}}" *ngIf="studentTermScoreEntryAllowed" maxlength="5" />
                             <span *ngIf="!studentTermScoreEntryAllowed">{{testScore.termScore}}</span>
                         </td>
                         <td data-title="Total Score">{{(testScore.internalScore-0) + ((testScore.termScore-0)/2)}}</td>

@@ -55,6 +55,33 @@ namespace CTSWebApp.BLL
             return _ctsDBRepository.UpdatePassword(ctsUserId, email, hash, hashedPassword);
         }
 
+        public bool IsValidLogonUser(int ctsUserId)
+        {
+            IEnumerable<CTSUser> dataFromCache = null;
+            if (!_memoryCache.TryGetValue("ValidAndLogonUsers", out dataFromCache))
+            {
+                var validAndlogonUsers = this._ctsDBRepository.GetValidAndLogonUsers();
+
+                var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromHours(1));
+
+                _memoryCache.Set("ValidAndLogonUsers", validAndlogonUsers, cacheEntryOptions);
+
+                dataFromCache = validAndlogonUsers;
+            }
+
+            bool result = false;
+            if (dataFromCache != null && dataFromCache.Count() > 0)
+            {
+                var user = dataFromCache.Where(x => x.Id == ctsUserId).FirstOrDefault();
+                if (user != null)
+                {
+                    result = true;
+                }
+            }
+            return result;
+        }
+
         private bool IsValidUserId(string email)
         {
             IEnumerable<CTSUser> dataFromCache = null;

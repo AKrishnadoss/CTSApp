@@ -223,6 +223,11 @@ namespace CTSWebApp.Data
                 {
                     roles.Add("Volunteer");
                 }
+
+                if (ctsUser.DataEntry == "Y")
+                {
+                    roles.Add("DataEntry");
+                }
             }
             return roles;
         }

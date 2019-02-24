@@ -73,5 +73,28 @@ namespace CTSWebApp.BLL
             // return all Calendar Test Week
             return dataFromCache.ToList();
         }
+
+        public CalendarWeek GetCalendarWeek(int weekId)
+        {
+            IEnumerable<CalendarWeek> calendarWeeks = GetCalendarWeeks(true);
+            CalendarWeek calendarWeek = calendarWeeks.Where(x => x.ID == weekId).FirstOrDefault();
+            return calendarWeek;
+        }
+
+        public CalendarWeek GetCurrentCalendarWeek()
+        {
+            DateTime today = DateTime.Today;
+            IEnumerable<CalendarWeek> calendarWeeks = GetCalendarWeeks(false);
+            List< CalendarWeek> filteredWeeks = calendarWeeks.Where(x => x.WeekDate < today)
+                .OrderByDescending(x => x.WeekDate)
+                .ToList();
+
+            if (filteredWeeks != null && filteredWeeks.Count > 0)
+            {
+                return filteredWeeks[0];
+            }
+            return null;
+
+        }
     }
 }

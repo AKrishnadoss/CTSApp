@@ -24,6 +24,7 @@ namespace CTSWebApp.Data.Entities
         public string LeadTeacher { get; set; }
         public string SubTeacher { get; set; }
         public string Volunteer { get; set; }
+        public string DataEntry { get; set; }
         public string FamilyId { get; set; }
         public string LogonAccess { get; set; }
         //public string Password { get; set; }

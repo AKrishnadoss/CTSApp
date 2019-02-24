@@ -22,6 +22,7 @@ export class AttendanceComponent  implements OnInit {
 	pageTitle = "Attendance";
 	userName = '';
     isLoggedOn: boolean;
+    isTermScoreEntryAllowed: boolean;
     CalendarWeeks: CalendarWeek[];
     Grades: Grade[];
 	Teachers : Teacher[];
@@ -78,6 +79,7 @@ export class AttendanceComponent  implements OnInit {
 
     ngOnInit() {
         this.isLoggedOn = this._authService.getIsLoggedOn();
+        this.isTermScoreEntryAllowed = false;
         if (this.isLoggedOn == false) {
             this._loggerService.log("Not logged in");
             this._router.navigate(["loggedOut"]);
@@ -91,6 +93,11 @@ export class AttendanceComponent  implements OnInit {
                     this._router.navigate(["accessDenied"]);
                 }
             }); 
+
+        this._authService.hasAccess("TermScores")
+            .then((x) => {
+                this.isTermScoreEntryAllowed = x;
+            });
 
         this.userName = this._authService.getUserName();
 

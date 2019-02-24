@@ -12,5 +12,6 @@ namespace CTSWebApp.BLL
         UserIdentity ValidateUser(string email, string familyID, string primaryPhone);
         bool UpdatePassword(int ctsUserId, string email, byte[] hash, string hashedPassword);
         IEnumerable<string> GetUserRoles(int ctsUserId);
+        bool IsValidLogonUser(int ctsUserId);
     }
 }

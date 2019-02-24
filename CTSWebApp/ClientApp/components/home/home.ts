@@ -9,10 +9,11 @@ import { LoggerService } from '../../services/LoggerService';
 export class HomeComponent  implements OnInit {
     pageTitle = 'Home Page';
     appTitle: string;
-  userName = '';
+    userName = '';
 
-  isLoggedOn : boolean;
-  CarouselImages : any[];
+    isLoggedOn: boolean;
+    isTermScoreEntryAllowed: boolean;
+    CarouselImages : any[];
 
     constructor(private _authService: AuthService,
         private _loggerService: LoggerService,
@@ -21,7 +22,8 @@ export class HomeComponent  implements OnInit {
 
   ngOnInit(){
 
-	this.isLoggedOn = this._authService.getIsLoggedOn();
+      this.isLoggedOn = this._authService.getIsLoggedOn();
+      this.isTermScoreEntryAllowed = false;
       this.userName = this._authService.getUserName();
       this.appTitle = "Cary Tamil School - Attendance and Score System";
 
@@ -34,10 +36,11 @@ export class HomeComponent  implements OnInit {
               this._authService.getAuthFunctions()
                   .subscribe(result => {
                       this._authService.authFunctions = result;
-                  },
-                      err => {
-                          this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
-                      });
+                      this.enableMenus();
+                    },
+                    err => {
+                        this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+                    });
           }
       }
 
@@ -47,23 +50,32 @@ export class HomeComponent  implements OnInit {
 		{src :"/img/Carousel-3.jpg", alt :'Third', slideTo:"2"},
 		{src :"/img/Carousel-4.jpg", alt :'Fourth', slideTo:"3"},
 		{src :"/img/Carousel-5.jpg", alt :'Fifth', slideTo:"4"}
-	]
+      ]
+
+      this.enableMenus();
   }
 
-  resetLoginControls(){
-	var loginLinkElement = document.getElementById("loginLink");
-	var logoutLinkElement = document.getElementById("logoutLink");
-	var loggedinElement = document.getElementById("loggedInAs");
-	if ( loggedinElement != null){
-		loggedinElement.innerText = "";
-	}
-		
-	if ( loginLinkElement != null){
-		loginLinkElement.style.display = "block";
-	}
-		
-	if ( logoutLinkElement != null){
-		logoutLinkElement.style.display = "none";
-	}
-  }
+    resetLoginControls() {
+        var loginLinkElement = document.getElementById("loginLink");
+        var logoutLinkElement = document.getElementById("logoutLink");
+        var loggedinElement = document.getElementById("loggedInAs");
+        if (loggedinElement != null) {
+            loggedinElement.innerText = "";
+        }
+
+        if (loginLinkElement != null) {
+            loginLinkElement.style.display = "block";
+        }
+
+        if (logoutLinkElement != null) {
+            logoutLinkElement.style.display = "none";
+        }
+    }
+
+    enableMenus() {
+        this._authService.hasAccess("TermScores")
+            .then((x) => {
+                this.isTermScoreEntryAllowed = x;
+            });
+    }
 }

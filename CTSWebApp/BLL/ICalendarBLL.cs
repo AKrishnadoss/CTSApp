@@ -10,5 +10,7 @@ namespace CTSWebApp.BLL
     {
         IEnumerable<CalendarWeek> GetCalendarWeeks(bool includeInactive=false);
         IEnumerable<CalendarWeek> GetCalendarTestWeeks();
+        CalendarWeek GetCalendarWeek(int weekId);
+        CalendarWeek GetCurrentCalendarWeek();
     }
 }

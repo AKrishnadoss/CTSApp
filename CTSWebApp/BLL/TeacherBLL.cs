@@ -12,12 +12,15 @@ namespace CTSWebApp.BLL
     {
         private readonly ILogger<TeacherBLL> _logger;
         private readonly ICTSDBRepository _ctsDBRepository;
+        private readonly ICalendarBLL _calendarBLL;
 
         public TeacherBLL(ICTSDBRepository ctsDBRepository,
-            ILogger<TeacherBLL> logger)
+            ILogger<TeacherBLL> logger,
+            ICalendarBLL calendarBLL)
         {
             _logger = logger;
             this._ctsDBRepository = ctsDBRepository;
+            this._calendarBLL = calendarBLL;
         }
 
         public IEnumerable<CTSUser> GetAllTeachers()
@@ -62,6 +65,11 @@ namespace CTSWebApp.BLL
 
         public IEnumerable<StudentTermScore> GetAssignedStudentsTermScore(int teacherID, string gradeLevel, int termNo, int weekId)
         {
+            CalendarWeek cw = _calendarBLL.GetCurrentCalendarWeek();
+            if (cw != null )
+            {
+                weekId = cw.ID;
+            }
             return _ctsDBRepository.GetAssignedStudentsTermScore(teacherID, gradeLevel, termNo, weekId);
         }
 

@@ -6,16 +6,19 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using System.IdentityModel.Tokens.Jwt;
+using CTSWebApp.BLL;
 
 namespace CTSWebApp.Security
 {
     public class JwtTokenAuthHandler : AuthorizationHandler<JwtTokenAuthRequirement>
     {
         private readonly IConfiguration _configuration;
+        private readonly IIdentityBLL _identityBLL;
 
-        public JwtTokenAuthHandler(IConfiguration configuration)
+        public JwtTokenAuthHandler(IConfiguration configuration, IIdentityBLL identityBLL)
         {
             _configuration = configuration;
+            _identityBLL = identityBLL;
         }
 
         protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, JwtTokenAuthRequirement requirement)
@@ -58,6 +61,18 @@ namespace CTSWebApp.Security
 
             claim = claims.Where(x => x.Type == "CTSUserID").FirstOrDefault();
             if (claim == null || string.IsNullOrEmpty(claim.Value) )
+            {
+                return false;
+            }
+
+            // TODO: Check user id with cache to validate
+            int ctsUserId = -1;
+            if (!int.TryParse(claim.Value, out ctsUserId))
+            {
+                return false;
+            }
+
+            if (!_identityBLL.IsValidLogonUser(ctsUserId))
             {
                 return false;
             }

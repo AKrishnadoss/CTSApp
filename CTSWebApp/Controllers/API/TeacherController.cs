@@ -228,9 +228,8 @@ namespace CTSWebApp.Controllers.API
 
                     if (resultViewModel.DataFreeze == false)
                     {
-                        IEnumerable<CalendarWeek> calendarWeeks = this._calendarBLL.GetCalendarWeeks();
-                        CalendarWeek cw = calendarWeeks.Where(c => c.ID == vm.CalendarWeekID).FirstOrDefault();
-
+                        
+                        CalendarWeek cw = this._calendarBLL.GetCalendarWeek(weekId);
                         if (cw != null)
                         {
                             resultViewModel.TermScoreEntryAllowed = DateTime.Today >= cw.WeekDate ? true : false;
