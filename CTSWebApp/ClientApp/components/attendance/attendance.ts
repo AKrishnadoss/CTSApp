@@ -13,6 +13,7 @@ import { StudentService } from '../../services/StudentService';
 import {LoggerService} from '../../services/LoggerService';
 import { reserveSlots } from '@angular/core/src/render3/instructions';
 import { fail } from 'assert';
+import { transformAll } from '@angular/compiler/src/render3/r3_ast';
 
 @Component ({
 	templateUrl : './attendance.html'
@@ -59,6 +60,7 @@ export class AttendanceComponent  implements OnInit {
 
     // Search criteria
     calendarWeekId: number;
+    selectedCalendarWeek: any;
     selectedGrade: string;
     selectedGradeLevel: string;
     selectedTeacherId: number;
@@ -67,6 +69,10 @@ export class AttendanceComponent  implements OnInit {
     teacherSelectionAllowed: boolean;
 
     showCopyFromPrevWeek: boolean;
+
+    isPrevWeekEnabled: boolean;
+    isNextWeekEnabled: boolean;
+    isNavMode: boolean;
 
     constructor(private _authService: AuthService,
         private _calendarService: CalendarService,
@@ -94,10 +100,7 @@ export class AttendanceComponent  implements OnInit {
                 }
             }); 
 
-        this._authService.hasAccess("TermScores")
-            .then((x) => {
-                this.isTermScoreEntryAllowed = x;
-            });
+        
 
         this.userName = this._authService.getUserName();
 
@@ -143,6 +146,16 @@ export class AttendanceComponent  implements OnInit {
         this._authService.hasAccess("Attendance.TeacherSelection").then((x) => {
             this.teacherSelectionAllowed = x;
         });
+
+        this._authService.hasAccess("TermScores")
+            .then((x) => {
+                this.isTermScoreEntryAllowed = x;
+            });
+
+        this.isPrevWeekEnabled = true;
+        this.isNextWeekEnabled = true;
+        this.isNavMode = false;
+        this.selectedCalendarWeek = "0";
     }
 
     getGrades() {
@@ -232,14 +245,20 @@ export class AttendanceComponent  implements OnInit {
         this.studentGridServerWarningMessage = "";
         this.studentGridServerSuccessMessage = "";
         this.showCopyFromPrevWeek = false;
-        if (this.gradeSelectionAllowed == true) {
-            this.selectedGrade = "0";
-            this.selectedTeacherId = 0;
-            this.selectedGradeLevel = ""; 
+        console.log("onSelectCalendarWeek,Nav mode=" + this.isNavMode);
+        if (this.isNavMode == false) {
+            // if not in NavMode do additional logic
+            if (this.gradeSelectionAllowed == true) {
+                this.selectedGrade = "0";
+                this.selectedTeacherId = 0;
+                this.selectedGradeLevel = "";
+                this.Teachers = null;
+            }
+            else {
+                this.getGradeAndTeacherDetails();
+            }
         }
-        else {
-            this.getGradeAndTeacherDetails();
-        }
+
         this.displayStudentWeekGradeGrid();
     }
 
@@ -568,9 +587,17 @@ export class AttendanceComponent  implements OnInit {
 		this.studentGridServerSuccessMessage = "";
         this.studentGridServerErrorMessage = "";
         this.studentGridServerWarningMessage = "";
-		this.StudentWeekGrades = null;
+        this.StudentWeekGrades = null;
+        this.calendarWeekId = 0;
+        this.selectedGrade = "0";
         this.selectedTeacherId = 0;
         this.showCopyFromPrevWeek = false;
+
+        this.isNavMode = false;
+        this.selectGradeEnabled = true;
+        this.selectTeachedEnabled = true;
+        this.selectedCalendarWeek = "0";
+        this.Teachers = null;
 	}
 
 	saveClick(){
@@ -637,6 +664,60 @@ export class AttendanceComponent  implements OnInit {
             this.showL2Grid = false;
             this.showL3Grid = false;
         }
+    }
+
+    prevWeekClick() {
+        this.isNavMode = true;
+        this.selectGradeEnabled = false;
+        this.selectTeachedEnabled = false;
+
+        let idx = this.CalendarWeeks.findIndex(x => x.id == this.calendarWeekId);
+        let prevWeekIdx = idx;
+        if (idx < (this.CalendarWeeks.length - 1)) {
+            idx++;
+            this.isNextWeekEnabled = true;
+        }
+        let prevCalendarWeek = this.CalendarWeeks[idx];
+        let prevCalendarWeekId = prevCalendarWeek.id;
+        this.calendarWeekId = prevCalendarWeekId;
+
+        console.log('prevWeekIdx :' + prevWeekIdx);
+        console.log("Prev week id : " + prevCalendarWeekId);
+        this.selectedCalendarWeek = prevCalendarWeek.id;//.description;
+        console.log("selectedWeek : " + this.selectedCalendarWeek);
+        if (idx == this.CalendarWeeks.length) {
+            this.isPrevWeekEnabled = false;
+        }
+
+        this.displayStudentWeekGradeGrid();
+    }
+
+    nextWeekClick() {
+        this.isNavMode = true;
+        this.selectGradeEnabled = false;
+        this.selectTeachedEnabled = false;
+
+        let idx = this.CalendarWeeks.findIndex(x => x.id == this.calendarWeekId);
+        let nextWeekIdx = idx;
+        if (idx > 0) {
+            idx--;
+            this.isPrevWeekEnabled = true;
+        }
+        let nextCalendarWeek = this.CalendarWeeks[idx];
+        let nextCalendarWeekId = nextCalendarWeek.id;
+        this.calendarWeekId = nextCalendarWeekId;
+
+        console.log('nextWeekIdx :' + nextWeekIdx);
+        console.log("Next week id : " + nextCalendarWeekId);
+
+        this.selectedCalendarWeek = nextCalendarWeek.id;
+        //var o = document.getElementById("").value = this.selectedCalendarWeek;
+        console.log("selectedWeek : " + this.selectedCalendarWeek );
+        if (idx == 0) {
+            this.isNextWeekEnabled = false;
+        }
+
+        this.displayStudentWeekGradeGrid();
     }
 
     //copyFromPrevWeekForL1() {

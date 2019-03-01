@@ -130,7 +130,7 @@ namespace CTSWebApp.BLL
             StringBuilder builder = new StringBuilder();
             if (sts.TermScore < 0 || sts.TermScore > 100)
             {
-                builder.Append("Invalid TermScore: Attendance must be between 0 and 100.");
+                builder.Append("Invalid TermScore: TermScore must be between 0 and 100.");
             }
 
             

@@ -26,7 +26,8 @@
                 <label for="selectCalenderWeek" class="mt5">Week</label>
                 <img *ngIf="isSelectCalendarWeekLoading" src="/img/Loading.gif" height="40" width="40" class="ml10" />
                 <i *ngIf="calendarWeekLoadError" class="fa fa-exclamation-triangle form-control errorText"> {{calendarWeekLoadError}}</i>
-                <select *ngIf="!isSelectCalendarWeekLoading && !calendarWeekLoadError" name="selectCalenderWeek" class="ml10 selectpicker form-control selectWidth" (change)="onSelectCalendarWeek($event.target.value)">
+                <select *ngIf="!isSelectCalendarWeekLoading && !calendarWeekLoadError" name="selectCalenderWeek" class="ml10 selectpicker form-control selectWidth" 
+                        (change)="onSelectCalendarWeek($event.target.value)" [(ngModel)]="selectedCalendarWeek">
                     <option value="0">--Select Week--</option>
                     <option *ngFor="let week of CalendarWeeks" value={{week.id}}>
                         {{week.description}} - {{week.weekDate | date: 'MM/dd/yyyy'}}
@@ -77,6 +78,14 @@
                 <strong>Yes, Copy from Previous week !</strong>
             </button>
         </div>
+    </div>
+    <div class="row bgBar br5 m5 p5" *ngIf="(showL1Grid || showL2Grid || showL3Grid) && !isGridSaving">
+        <div class="col-md-4"><button class="btn btn-primary btn-sm ml10" (click)="prevWeekClick()" type="button" [disabled]="!isPrevWeekEnabled">
+            <strong><i class="fa fa-arrow-left"></i> Previous Week</strong></button></div>
+        <div class="col-md-4 ">
+        </div>
+        <div class="col-md-4"><button class="btn btn-primary btn-sm right" type="button" (click)="nextWeekClick()" [disabled]="!isNextWeekEnabled">
+            <strong>Next Week <i class="fa fa-arrow-right"></i></strong></button></div>
     </div>
     <div class="row" *ngIf="showL1Grid">
         <div class="col-md-12" id="no-more-tables">
@@ -283,7 +292,7 @@
                         <td data-title="Notes"><textarea class="form-control rounded-3" rows="1" [(ngModel)]="weekGrade.notes" maxlength="100">{{weekGrade.notes}}</textarea></td>
                     </tr>
                 </tbody>
-                <tbody *ngIf="isL2GridReadOnly">
+                <tbody *ngIf="isL3GridReadOnly">
                     <tr *ngFor="let weekGrade of StudentWeekGrades">
                         <td data-title="ID">{{weekGrade.studentID}}</td>
                         <td data-title="First Name">{{weekGrade.firstName}}</td>
@@ -312,8 +321,8 @@
 
         <div class="col-md-4"></div>
         <div class="col-md-4 ">
-            <button class="btn btn-primary btn-sm" type="button" (click)="cancelClick()"><strong><i class="fa fa-times-circle"></i> Cancel</strong></button>
-            <button class="btn btn-primary btn-sm ml10" (click)="saveClick()" type="submit" *ngIf="showSaveButton()"><strong><i class="fa fa-save"></i> Save</strong></button>
+            <button class="btn btn-primary btn-sm " (click)="saveClick()" type="submit" *ngIf="showSaveButton()"><strong><i class="fa fa-save"></i> Save</strong></button>
+            <button class="btn btn-danger btn-sm ml10" type="button" (click)="cancelClick()"><strong><i class="fa fa-times-circle"></i> Cancel</strong></button>
         </div>
         <div class="col-md-4"></div>
     </div>

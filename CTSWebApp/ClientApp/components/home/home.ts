@@ -52,7 +52,7 @@ export class HomeComponent  implements OnInit {
 		{src :"/img/Carousel-5.jpg", alt :'Fifth', slideTo:"4"}
       ]
 
-      this.enableMenus();
+      //this.enableMenus();
   }
 
     resetLoginControls() {

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using Microsoft.Extensions.Configuration;
 
 namespace CTSWebApp.Controllers
 {
@@ -16,16 +17,19 @@ namespace CTSWebApp.Controllers
     {
         private readonly IMailService _mailService;
         private readonly ICTSDBRepository _dbRepository;
+        private readonly IConfiguration _configuration;
 
-        public AppController(IMailService mailService, ICTSDBRepository dbRepository)
+        public AppController(IMailService mailService, ICTSDBRepository dbRepository, IConfiguration configuration)
         {
             _mailService = mailService;
             _dbRepository = dbRepository;
+            _configuration = configuration;
         }
 
         public IActionResult Index()
         {
             ViewBag.AppName = "Cary Tamil School - Attendance & Scores";
+            ViewBag.AppVersion = _configuration["App:Version"];
             string sessionData = HttpContext.Session.GetString("identity");
             if ( !string.IsNullOrEmpty(sessionData) )
             {

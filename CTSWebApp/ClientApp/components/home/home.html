@@ -22,10 +22,10 @@
         <div class="col-md-3">
             <h5 *ngIf="isLoggedOn">Vanakkam {{userName}}</h5>
             <p *ngIf="!isLoggedOn" class="paraStyle">
-                Welcome to <strong>{{appTitle}}</strong>. Once you are authenticated, You can enter your weekly attendance for your class in "Attendance" page. Term scores can be entered in "Term Scores" page. Contact system administrator to get access.
+                Welcome to <strong>{{appTitle}}</strong>. Authorized teachers can enter your weekly attendance for your class in "Attendance" page. Term scores can be entered in "Test Scores" page. Contact system administrator to get access.
             </p>
             <p *ngIf="isLoggedOn" class="paraStyle">
-                Welcome to <strong>{{appTitle}}</strong>. You can enter your weekly attendance for your class in "Attendance" page. Term scores can be entered in "Term Scores" page. 
+                Welcome to <strong>{{appTitle}}</strong>. You can enter your weekly attendance for your class in "Attendance" page. Term scores can be entered in "Test Scores" page. 
             </p>
         </div>
         <div class="col-md-6">
@@ -68,10 +68,18 @@
                 </a>
             </div>
         </div>
-        <div class="col-md-3" >
-            <p class="paraStyle">
-                More features are coming soon. Stay tuned!
-            </p>
+        <div class="col-md-3" *ngIf="isLoggedOn">
+            <div >
+                <h5>Check out our New Features !</h5>
+                <div class="paraStyle">
+                    <p >
+                        Attendance entry : Quick data entry is now possible using "<b>Copy From Previous Week</b>".
+                    </p>
+                    <p >
+                        Attendance entry : Navigation between weeks is made easy using "<b>Previous Week</b>" and "<b>Next Week</b>" buttons.
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace CTSWebApp.Controllers
 {
@@ -20,23 +21,26 @@ namespace CTSWebApp.Controllers
         private readonly IAuthService _authService;
         private readonly ICTSDBRepository _ctsDBRepository;
         private readonly IMapper _mapper;
+        private readonly Microsoft.Extensions.Configuration.IConfiguration _configuration;
 
         public LogonController(ICTSDBRepository ctsDBRepository, IMapper mapper,
              ILogger<LogonController> logger, 
-             IAuthService authService) // : 
+             IAuthService authService,
+             Microsoft.Extensions.Configuration.IConfiguration configuration) // : 
             //base (ctsDBRepository, mapper, configuration)
         {
             _logger = logger;
             this._authService = authService;
             this._ctsDBRepository = ctsDBRepository;
             this._mapper = mapper;
-            //this._configuration = configuration;
+            this._configuration = configuration;
         }
 
         [HttpGet]
         public IActionResult Login()
         {
             ViewBag.AppName = "Cary Tamil School - Attendance & Scores";
+            ViewBag.AppVersion = _configuration["App:Version"];
             UserIdentityViewModel model = new UserIdentityViewModel();
             return View(model);
         }
@@ -45,6 +49,7 @@ namespace CTSWebApp.Controllers
         public IActionResult Forgot()
         {
             ViewBag.AppName = "Cary Tamil School - Attendance & Scores";
+            ViewBag.AppVersion = _configuration["App:Version"];
             ForgotPasswordViewModel model = new ForgotPasswordViewModel();
             return View(model);
         }
@@ -66,6 +71,7 @@ namespace CTSWebApp.Controllers
                     {
                         ResetPasswordViewModel resetViewModel = CreateResetPasswordViewModel(result);
                         ViewBag.AppName = "Cary Tamil School - Attendance & Scores";
+                        ViewBag.AppVersion = _configuration["App:Version"];
                         return View("reset", resetViewModel);
                     }
                     else
@@ -87,6 +93,7 @@ namespace CTSWebApp.Controllers
                 model.ErrorMessage = "Invalid Email or bad password";
             }
             ViewBag.AppName = "Cary Tamil School - Attendance & Scores";
+            ViewBag.AppVersion = _configuration["App:Version"];
             return View(model);
         }
 
@@ -124,6 +131,7 @@ namespace CTSWebApp.Controllers
                 model.ErrorMessage = "Invalid logon data";
             }
             ViewBag.AppName = "Cary Tamil School - Attendance & Scores";
+            ViewBag.AppVersion = _configuration["App:Version"];
             return View("reset", model);
         }
 
@@ -157,6 +165,7 @@ namespace CTSWebApp.Controllers
                 model.ErrorMessage = "Invalid logon data";
             }
             ViewBag.AppName = "Cary Tamil School - Attendance & Scores";
+            ViewBag.AppVersion = _configuration["App:Version"];
             return View("forgot", model);
         }
 
