@@ -80,12 +80,12 @@
         </div>
     </div>
     <div class="row bgBar br5 m5 p5" *ngIf="(showL1Grid || showL2Grid || showL3Grid) && !isGridSaving">
-        <div class="col-md-4"><button class="btn btn-primary btn-sm ml10" (click)="prevWeekClick()" type="button" [disabled]="!isPrevWeekEnabled">
-            <strong><i class="fa fa-arrow-left"></i> Previous Week</strong></button></div>
-        <div class="col-md-4 ">
+        <div class="col-md-12">
+        <button class="btn btn-primary btn-sm ml10 left" (click)="prevWeekClick()" type="button" [disabled]="!isPrevWeekEnabled">
+            <strong><i class="fa fa-arrow-left"></i> Previous Week</strong></button>
+        <button class="btn btn-primary btn-sm right" type="button" (click)="nextWeekClick()" [disabled]="!isNextWeekEnabled">
+            <strong>Next Week <i class="fa fa-arrow-right"></i></strong></button>
         </div>
-        <div class="col-md-4"><button class="btn btn-primary btn-sm right" type="button" (click)="nextWeekClick()" [disabled]="!isNextWeekEnabled">
-            <strong>Next Week <i class="fa fa-arrow-right"></i></strong></button></div>
     </div>
     <div class="row" *ngIf="showL1Grid">
         <div class="col-md-12" id="no-more-tables">

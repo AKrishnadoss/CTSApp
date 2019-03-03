@@ -245,7 +245,6 @@ export class AttendanceComponent  implements OnInit {
         this.studentGridServerWarningMessage = "";
         this.studentGridServerSuccessMessage = "";
         this.showCopyFromPrevWeek = false;
-        console.log("onSelectCalendarWeek,Nav mode=" + this.isNavMode);
         if (this.isNavMode == false) {
             // if not in NavMode do additional logic
             if (this.gradeSelectionAllowed == true) {
@@ -681,10 +680,7 @@ export class AttendanceComponent  implements OnInit {
         let prevCalendarWeekId = prevCalendarWeek.id;
         this.calendarWeekId = prevCalendarWeekId;
 
-        console.log('prevWeekIdx :' + prevWeekIdx);
-        console.log("Prev week id : " + prevCalendarWeekId);
         this.selectedCalendarWeek = prevCalendarWeek.id;//.description;
-        console.log("selectedWeek : " + this.selectedCalendarWeek);
         if (idx == this.CalendarWeeks.length) {
             this.isPrevWeekEnabled = false;
         }
@@ -707,12 +703,8 @@ export class AttendanceComponent  implements OnInit {
         let nextCalendarWeekId = nextCalendarWeek.id;
         this.calendarWeekId = nextCalendarWeekId;
 
-        console.log('nextWeekIdx :' + nextWeekIdx);
-        console.log("Next week id : " + nextCalendarWeekId);
 
         this.selectedCalendarWeek = nextCalendarWeek.id;
-        //var o = document.getElementById("").value = this.selectedCalendarWeek;
-        console.log("selectedWeek : " + this.selectedCalendarWeek );
         if (idx == 0) {
             this.isNextWeekEnabled = false;
         }

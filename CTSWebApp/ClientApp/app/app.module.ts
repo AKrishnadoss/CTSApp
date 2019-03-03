@@ -23,10 +23,13 @@ import { ScoresComponent } from '../components/score/Scores';
 import { LoggedOutComponent } from '../components/loggedOut/loggedOut';
 import { AccessDeniedComponent } from '../components/accessDenied/accessDenied';
 
+import { RoundPipe } from '../pipes/round.pipe';
+
 
 @NgModule({
   declarations: [
-    AppComponent,
+      AppComponent,
+      RoundPipe,
 	HomeComponent,
 	AttendanceComponent,
       ContactComponent,

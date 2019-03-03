@@ -84,7 +84,7 @@
                         <th class="fw">Behaviour</th>
                         <th class="fw">Participation</th>
                         <th class="fw">Internal Score</th>
-                        <th class="fw w60">Test Score</th>
+                        <th class="fw w80">Test Score</th>
                         <th class="fw">Total Score</th>
                         <th class="fw w200">Notes</th>
                     </tr>
@@ -103,7 +103,7 @@
                             <input class="form-control" [(ngModel)]="testScore.termScore" value="{{testScore.termScore}}" *ngIf="studentTermScoreEntryAllowed" maxlength="5" />
                             <span *ngIf="!studentTermScoreEntryAllowed">{{testScore.termScore}}</span>
                         </td>
-                        <td data-title="Total Score">{{(testScore.internalScore-0) + ((testScore.termScore-0)/2)}}</td>
+                        <td data-title="Total Score">{{(testScore.internalScore-0) + ((testScore.termScore-0)/2)| round}}</td>
                         <td data-title="Notes">
                             <textarea class="form-control rounded-3" rows="1" [(ngModel)]="testScore.notes" maxlength="100" *ngIf="studentTermScoreEntryAllowed">{{testScore.notes}}</textarea>
                             <span *ngIf="!studentTermScoreEntryAllowed">{{testScore.notes}}</span>
@@ -132,7 +132,7 @@
                         <th class="fw">Behaviour</th>
                         <th class="fw">Quiz</th>
                         <th class="fw">Internal</th>
-                        <th class="fw w60">Test Score</th>
+                        <th class="fw w80">Test Score</th>
                         <th class="fw">Total Score</th>
                         <th class="fw w200">Notes</th>
                     </tr>
@@ -151,10 +151,10 @@
                         <td data-title="Quiz">{{testScore.quiz}}</td>
                         <td data-title="Internal">{{testScore.internalScore}}</td>
                         <td data-title="Test Score">
-                            <input class="form-control" [(ngModel)]="testScore.termScore" value="{{testScore.termScore}}" *ngIf="studentTermScoreEntryAllowed" maxlength="3" />
+                            <input class="form-control" [(ngModel)]="testScore.termScore" value="{{testScore.termScore}}" *ngIf="studentTermScoreEntryAllowed" maxlength="5" />
                             <span *ngIf="!studentTermScoreEntryAllowed">{{testScore.termScore}}</span>
                         </td>
-                        <td data-title="Total Score">{{(testScore.internalScore-0) + ((testScore.termScore-0)/2)}}</td>
+                        <td data-title="Total Score">{{(testScore.internalScore-0) + ((testScore.termScore-0)/2) | round}}</td>
                         <td data-title="Notes">
                             <textarea class="form-control rounded-3" rows="1" [(ngModel)]="testScore.notes" maxlength="100" *ngIf="studentTermScoreEntryAllowed">{{testScore.notes}}</textarea>
                             <span *ngIf="!studentTermScoreEntryAllowed">{{testScore.notes}}</span>

@@ -65,7 +65,7 @@ namespace CTSWebApp.BLL
 
         public IEnumerable<StudentTermScore> GetAssignedStudentsTermScore(int teacherID, string gradeLevel, int termNo, int weekId)
         {
-            CalendarWeek cw = _calendarBLL.GetCurrentCalendarWeek();
+            CalendarWeek cw = _calendarBLL.GetCurrentCalendarWeek(termNo);
             if (cw != null )
             {
                 weekId = cw.ID;

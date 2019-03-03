@@ -37,10 +37,13 @@ export class HomeComponent  implements OnInit {
                   .subscribe(result => {
                       this._authService.authFunctions = result;
                       this.enableMenus();
-                    },
-                    err => {
-                        this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
-                    });
+                  },
+                      err => {
+                          this._loggerService.log("Error occurred : Code=" + err.status + ",Error=" + err.statusText);
+                      });
+          }
+          else {
+              this.enableMenus();
           }
       }
 

@@ -81,11 +81,12 @@ namespace CTSWebApp.BLL
             return calendarWeek;
         }
 
-        public CalendarWeek GetCurrentCalendarWeek()
+        public CalendarWeek GetCurrentCalendarWeek(int termNo)
         {
             DateTime today = DateTime.Today;
             IEnumerable<CalendarWeek> calendarWeeks = GetCalendarWeeks(false);
-            List< CalendarWeek> filteredWeeks = calendarWeeks.Where(x => x.WeekDate < today)
+            List< CalendarWeek> filteredWeeks = calendarWeeks
+                .Where(x => x.WeekDate < today && x.TermNo == termNo && x.TestWeek == "N")
                 .OrderByDescending(x => x.WeekDate)
                 .ToList();
 

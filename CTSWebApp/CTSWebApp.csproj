@@ -20,6 +20,7 @@
     <None Remove="ClientApp\model\StudentWeekGrade.ts" />
     <None Remove="ClientApp\model\Teacher.ts" />
     <None Remove="ClientApp\model\Term.ts" />
+    <None Remove="ClientApp\pipes\round.pipe.ts" />
     <None Remove="ClientApp\routes.ts" />
     <None Remove="ClientApp\services\AuthService.ts" />
     <None Remove="ClientApp\services\CalendarService.ts" />
@@ -57,6 +58,7 @@
     <TypeScriptCompile Include="ClientApp\model\StudentWeekGrade.ts" />
     <TypeScriptCompile Include="ClientApp\model\Teacher.ts" />
     <TypeScriptCompile Include="ClientApp\model\Term.ts" />
+    <TypeScriptCompile Include="ClientApp\pipes\round.pipe.ts" />
     <TypeScriptCompile Include="ClientApp\routes.ts" />
     <TypeScriptCompile Include="ClientApp\services\AuthService.ts" />
     <TypeScriptCompile Include="ClientApp\services\CalendarService.ts" />

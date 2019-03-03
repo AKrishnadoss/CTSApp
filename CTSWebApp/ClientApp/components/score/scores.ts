@@ -330,7 +330,7 @@ export class ScoresComponent implements OnInit {
                     this.StudentTermScores = result.studentTermScores;
                     if (this.StudentTermScores != null) {
                         this.studentTermScoreDataFreeze = result.dataFreeze;
-                        //this.studentTermScoreEntryAllowed = result.termScoreEntryAllowed;
+                        this.studentTermScoreEntryAllowed = result.termScoreEntryAllowed;
                         this.showL2Grid = true;
                         if (this.studentTermScoreDataFreeze == true || this.studentTermScoreEntryAllowed == false) {
                             this.studentGridServerWarningMessage = "Term Score entry is not allowed !";
@@ -374,7 +374,7 @@ export class ScoresComponent implements OnInit {
                     this.StudentTermScores = result.studentTermScores;
                     if (this.StudentTermScores != null) {
                         this.studentTermScoreDataFreeze = result.dataFreeze;
-                        //this.studentTermScoreEntryAllowed = result.termScoreEntryAllowed;
+                        this.studentTermScoreEntryAllowed = result.termScoreEntryAllowed;
                         this.showL3Grid = true;
                         if (this.studentTermScoreDataFreeze == true || this.studentTermScoreEntryAllowed == false) {
                             this.studentGridServerWarningMessage = "Term Score entry is not allowed !";
@@ -392,7 +392,7 @@ export class ScoresComponent implements OnInit {
                         this.studentGridServerErrorMessage = "UnAuthorized/Forbidden access or Session Expired. Please log out and login back to access the system."
                     }
                     else {
-                        this.studentGridServerErrorMessage = "Error Occured while retrieving information : " + err.status + ". Please try later or contact system administrator";
+                        this.studentGridServerErrorMessage = "Error Occured while retrieving information. Please try later or contact system administrator";
                     }
 
                 });
@@ -435,7 +435,7 @@ export class ScoresComponent implements OnInit {
                         this.studentGridServerErrorMessage = "UnAuthorized/Forbidden access or Session Expired. Please log out and login back to access the system."
                     }
                     else {
-                        this.studentGridServerErrorMessage = "Error Occured while Saving information : " + err.status + ". Please correct your data and save again. Contact system administrator if you continue to experience error.";
+                        this.studentGridServerErrorMessage = "Error Occured while Saving information. Please correct your data and save again. Contact system administrator if you continue to experience error.";
                     }
 
                 });

@@ -36,6 +36,11 @@
     width: 60px;
 }
 
+.w80 {
+    width: 80px;
+}
+
+
 .w90p{
     width:90%;
 }
@@ -85,6 +90,7 @@
 
 .errorText {
     color:red;
+    font-size:small;
     font-weight:bold;
 }
 
