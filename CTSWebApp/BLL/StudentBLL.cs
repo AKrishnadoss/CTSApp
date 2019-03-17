@@ -128,9 +128,9 @@ namespace CTSWebApp.BLL
         private StudentError ValidateStudentTermScore(StudentTermScore sts)
         {
             StringBuilder builder = new StringBuilder();
-            if (sts.TermScore < 0 || sts.TermScore > 100)
+            if (sts.TermScore < 0 || sts.TermScore > 150)
             {
-                builder.Append("Invalid TermScore: TermScore must be between 0 and 100.");
+                builder.Append("Invalid TermScore: TermScore must be between 0 and 150.");
             }
 
             

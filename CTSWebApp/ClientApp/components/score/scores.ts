@@ -400,7 +400,7 @@ export class ScoresComponent implements OnInit {
         
     }
 
-    cancelClick() {
+    closeClick() {
         this.showL1Grid = false;
         this.showL2Grid = false;
         this.showL3Grid = false;

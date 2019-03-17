@@ -578,7 +578,7 @@ export class AttendanceComponent  implements OnInit {
         }
 	}
 
-	cancelClick(){
+	closeClick(){
         this.showL1Grid = false;
         this.showL2Grid = false;
         this.showL3Grid = false;
@@ -667,8 +667,8 @@ export class AttendanceComponent  implements OnInit {
 
     prevWeekClick() {
         this.isNavMode = true;
-        this.selectGradeEnabled = false;
-        this.selectTeachedEnabled = false;
+        //this.selectGradeEnabled = false;
+        //this.selectTeachedEnabled = false;
 
         let idx = this.CalendarWeeks.findIndex(x => x.id == this.calendarWeekId);
         let prevWeekIdx = idx;
@@ -690,8 +690,8 @@ export class AttendanceComponent  implements OnInit {
 
     nextWeekClick() {
         this.isNavMode = true;
-        this.selectGradeEnabled = false;
-        this.selectTeachedEnabled = false;
+        //this.selectGradeEnabled = false;
+        //this.selectTeachedEnabled = false;
 
         let idx = this.CalendarWeeks.findIndex(x => x.id == this.calendarWeekId);
         let nextWeekIdx = idx;
